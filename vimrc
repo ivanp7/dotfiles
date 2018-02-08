@@ -104,6 +104,8 @@ Plug 'tpope/vim-surround'
 Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-commentary'
 
+Plug 'tpope/vim-fugitive'
+
 " Fixes for things
 Plug 'godlygeek/csapprox'
 Plug 'vim-utils/vim-alt-mappings'
