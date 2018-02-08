@@ -59,7 +59,7 @@ set undodir     =$HOME/.vim/files/undo/
 set viminfo     ='100,n$HOME/.vim/files/info/viminfo
 
 " ####################################################################################
-" Custom key bindings
+" Custom key mappings
 
 nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 
@@ -98,13 +98,15 @@ call plug#begin('~/.vim/plugged')
 
 " Basic things
 Plug 'tpope/vim-sensible'
-
 Plug 'tpope/vim-repeat'
+
 Plug 'tpope/vim-surround'
 Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-commentary'
 
 Plug 'tpope/vim-fugitive'
+
+Plug 'scrooloose/nerdtree'
 
 " Fixes for things
 Plug 'godlygeek/csapprox'
@@ -141,6 +143,21 @@ let g:EasyClipShareYanksDirectory='$HOME/.vim'
 " Vim Commentary **********************
 
 autocmd FileType lisp setlocal commentstring=;\ %s
+
+" NERDTree ****************************
+
+map <C-n> :NERDTreeToggle<CR>
+
+" NERDTress File highlighting
+function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+    exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+    exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+endfunction
+
+call NERDTreeHighlightFile('lisp', 'red', 'none', 'red', '#151515')
+call NERDTreeHighlightFile('lsp', 'red', 'none', 'red', '#151515')
+call NERDTreeHighlightFile('sexp', 'blue', 'none', 'blue', '#151515')
+call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
 
 " ####################################################################################
 " Fixes for things
@@ -208,4 +225,5 @@ let g:vlime_enable_autodoc = v:true
 let g:vlime_window_settings = {'sldb': {'pos': 'belowright', 'vertical': v:true}, 
             \ 'inspector': {'pos': 'belowright', 'vertical': v:true}, 
             \ 'preview': {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
+
 
