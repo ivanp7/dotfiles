@@ -70,8 +70,30 @@ nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 :nmap <silent> <C-k> :wincmd k<CR>
 :nmap <silent> <C-l> :wincmd l<CR>
 
-:nnoremap <C-n> :bnext<CR>
-:nnoremap <C-p> :bprevious<CR>
+function! SwitchToNextBuffer(incr)
+    let help_buffer = (&filetype == 'help')
+    let current = bufnr("%")
+    let last = bufnr("$")
+    let new = current + a:incr
+    while 1
+        if new != 0 && bufexists(new) && ((getbufvar(new, "&filetype") == 'help') == help_buffer)
+            execute ":buffer ".new
+            break
+        else
+            let new = new + a:incr
+            if new < 1
+                let new = last
+            elseif new > last
+                let new = 1
+            endif
+            if new == current
+                break
+            endif
+        endif
+    endwhile
+endfunction
+nnoremap <silent> <C-n> :call SwitchToNextBuffer(1)<CR>
+nnoremap <silent> <C-p> :call SwitchToNextBuffer(-1)<CR>
 
 let mapleader=","
 let maplocalleader=";"
