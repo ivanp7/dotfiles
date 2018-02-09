@@ -171,7 +171,7 @@ call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
 " after CSApprox work we re-enable the transparent background
 let g:CSApprox_hook_post = [
             \ 'highlight Normal            ctermbg=NONE',
-            \ 'highlight LineNr            ctermbg=NONE',
+            \ 'highlight LineNr            ctermbg=NONE ctermfg=gray',
             \ 'highlight SignifyLineAdd    cterm=bold ctermbg=NONE ctermfg=green',
             \ 'highlight SignifyLineDelete cterm=bold ctermbg=NONE ctermfg=red',
             \ 'highlight SignifyLineChange cterm=bold ctermbg=NONE ctermfg=yellow',
@@ -179,12 +179,15 @@ let g:CSApprox_hook_post = [
             \ 'highlight SignifySignDelete cterm=bold ctermbg=NONE ctermfg=red',
             \ 'highlight SignifySignChange cterm=bold ctermbg=NONE ctermfg=yellow',
             \ 'highlight SignColumn        ctermbg=NONE',
-            \ 'highlight CursorLine        ctermbg=NONE cterm=underline',
+            \ 'highlight CursorLine        term=underline cterm=NONE ctermbg=236',
+            \ 'highlight CursorLineNR      cterm=bold ctermfg=red',
             \ 'highlight Folded            ctermbg=NONE cterm=bold',
             \ 'highlight FoldColumn        ctermbg=NONE cterm=bold',
-            \ 'highlight NonText           ctermbg=NONE',
-            \ 'highlight clear LineNr'
+            \ 'highlight NonText           ctermbg=NONE'
             \]
+" \ 'highlight clear LineNr'
+" \ 'highlight CursorLine        ctermbg=NONE cterm=underline',
+
 " let g:CSApprox_hook_post = ['hi Normal  ctermbg=NONE ctermfg=NONE',
 "             \ 'hi NonText ctermbg=NONE ctermfg=NONE']
 
