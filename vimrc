@@ -29,6 +29,8 @@ set wrapscan               " Searches wrap around end-of-file.
 set report      =0         " Always report changed lines.
 set synmaxcol   =200       " Only highlight the first 200 columns.
 
+set hlsearch
+
 set clipboard=unnamed
 
 set list                   " Show non-printable characters.
@@ -72,16 +74,16 @@ let mapleader=","
 let maplocalleader=";"
 
 " Search for selected text, forwards or backwards.
-vnoremap <silent> * :<C-U>
-            \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-            \gvy/<C-R><C-R>=substitute(
-            \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-            \gV:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent> # :<C-U>
-            \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-            \gvy?<C-R><C-R>=substitute(
-            \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-            \gV:call setreg('"', old_reg, old_regtype)<CR>
+" vnoremap <silent> * :<C-U>
+"             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+"             \gvy/<C-R><C-R>=substitute(
+"             \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+"             \gV:call setreg('"', old_reg, old_regtype)<CR>
+" vnoremap <silent> # :<C-U>
+"             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+"             \gvy?<C-R><C-R>=substitute(
+"             \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+"             \gV:call setreg('"', old_reg, old_regtype)<CR>
 
 " ####################################################################################
 " Plug.vim plugin system
@@ -117,6 +119,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'smancill/darkglass'
 Plug 'vim-scripts/vim-niji'
+Plug 'inkarkat/vim-ingo-library'
+Plug 'inkarkat/vim-mark'
 
 " S-expressions and Lisp
 Plug 'guns/vim-sexp'
@@ -154,9 +158,9 @@ function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
     exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
 endfunction
 
-call NERDTreeHighlightFile('lisp', 'red', 'none', 'red', '#151515')
-call NERDTreeHighlightFile('lsp', 'red', 'none', 'red', '#151515')
-call NERDTreeHighlightFile('sexp', 'blue', 'none', 'blue', '#151515')
+call NERDTreeHighlightFile('lisp', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('lsp', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('sexp', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
 
 " ####################################################################################
@@ -204,6 +208,19 @@ let g:airline_theme='term'
 " set termguicolors
 
 colorscheme darkglass
+
+" Vim-mark ****************************
+
+let g:mwHistAdd = ''
+
+nmap <Plug>IgnoreMarkSearchNext <Plug>MarkSearchNext
+nmap <Plug>IgnoreMarkSearchPrev <Plug>MarkSearchPrev
+
+nmap * <Plug>MarkSearchGroupNext
+nmap # <Plug>MarkSearchGroupPrev
+
+nmap <Leader>1  <Plug>MarkSearchGroup1Next
+nmap <Leader>!  <Plug>MarkSearchGroup1Prev
 
 " ####################################################################################
 " S-expressions and Lisp
