@@ -31,7 +31,7 @@ set synmaxcol   =200       " Only highlight the first 200 columns.
 
 set hlsearch
 
-set clipboard=unnamed
+set clipboard=unnamedplus
 
 set list                   " Show non-printable characters.
 if has('multi_byte') && &encoding ==# 'utf-8'
@@ -70,6 +70,9 @@ nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 :nmap <silent> <C-k> :wincmd k<CR>
 :nmap <silent> <C-l> :wincmd l<CR>
 
+:nnoremap <C-n> :bnext<CR>
+:nnoremap <C-p> :bprevious<CR>
+
 let mapleader=","
 let maplocalleader=";"
 
@@ -107,8 +110,8 @@ Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-commentary'
 
 Plug 'tpope/vim-fugitive'
-
 Plug 'scrooloose/nerdtree'
+Plug 'qpkorr/vim-bufkill'
 
 " Fixes for things
 Plug 'godlygeek/csapprox'
@@ -150,7 +153,7 @@ autocmd FileType lisp setlocal commentstring=;\ %s
 
 " NERDTree ****************************
 
-map <C-n> :NERDTreeToggle<CR>
+map <C-t> :NERDTreeToggle<CR>
 
 " NERDTress File highlighting
 function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
