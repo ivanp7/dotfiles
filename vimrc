@@ -45,6 +45,8 @@ set iminsert=0
 set imsearch=0
 set spelllang=ru_yo,en_us
 
+set timeoutlen=1000
+
 " 256-colors support
 set t_Co=256
 
@@ -143,7 +145,7 @@ Plug 'vim-utils/vim-alt-mappings'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'smancill/darkglass'
-Plug 'vim-scripts/vim-niji'
+Plug 'raymond-w-ko/vim-niji'
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
 
