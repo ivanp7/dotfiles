@@ -45,7 +45,7 @@ set iminsert=0
 set imsearch=0
 set spelllang=ru_yo,en_us
 
-set timeoutlen=1000
+set timeoutlen=3000
 
 " 256-colors support
 set t_Co=256
@@ -142,6 +142,7 @@ Plug 'godlygeek/csapprox'
 Plug 'vim-utils/vim-alt-mappings'
 
 " Color theme and highlighting
+Plug 'guns/xterm-color-table.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'smancill/darkglass'
@@ -264,6 +265,24 @@ let g:sexp_mappings = {
             \ 'sexp_flow_to_next_open':         '<M-(>',
             \ 'sexp_flow_to_prev_open':         '<M-9>',
             \ 'sexp_flow_to_next_close':        '<M-0>',
+            \ 'sexp_round_head_wrap_list':      '<Leader>si',
+            \ 'sexp_round_tail_wrap_list':      '<Leader>sI',
+            \ 'sexp_square_head_wrap_list':     '<Leader>s[',
+            \ 'sexp_square_tail_wrap_list':     '<Leader>s]',
+            \ 'sexp_curly_head_wrap_list':      '<Leader>s{',
+            \ 'sexp_curly_tail_wrap_list':      '<Leader>s}',
+            \ 'sexp_round_head_wrap_element':   '<Leader>sw',
+            \ 'sexp_round_tail_wrap_element':   '<Leader>sW',
+            \ 'sexp_square_head_wrap_element':  '<Leader>se[',
+            \ 'sexp_square_tail_wrap_element':  '<Leader>se]',
+            \ 'sexp_curly_head_wrap_element':   '<Leader>se{',
+            \ 'sexp_curly_tail_wrap_element':   '<Leader>se}',
+            \ 'sexp_insert_at_list_head':       '<Leader>sh',
+            \ 'sexp_insert_at_list_tail':       '<Leader>sl',
+            \ 'sexp_splice_list':               '<Leader>s@',
+            \ 'sexp_convolute':                 '<Leader>s?',
+            \ 'sexp_raise_list':                '<Leader>so',
+            \ 'sexp_raise_element':             '<Leader>sO',
             \ }
 
 " Vlime *******************************
