@@ -14,6 +14,7 @@ set hidden                 " Switch between buffers without having to save first
 set laststatus  =2         " Always show statusline.
 set display     =lastline  " Show as much as possible of the last line.
 set number
+set scroll      =10
 
 set showmode               " Show current mode in command-line.
 set showcmd                " Show already typed keys when more are expected.
@@ -143,10 +144,12 @@ Plug 'vim-utils/vim-alt-mappings'
 
 " Color theme and highlighting
 Plug 'guns/xterm-color-table.vim'
+
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'smancill/darkglass'
 Plug 'raymond-w-ko/vim-niji'
+
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
 
@@ -292,4 +295,5 @@ let g:vlime_window_settings = {'sldb': {'pos': 'belowright', 'vertical': v:true}
             \ 'inspector': {'pos': 'belowright', 'vertical': v:true}, 
             \ 'preview': {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
 
+let g:vlime_force_default_keys = v:true
 
