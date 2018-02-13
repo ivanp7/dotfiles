@@ -32,7 +32,7 @@ set synmaxcol   =200       " Only highlight the first 200 columns.
 
 set hlsearch
 
-set clipboard=unnamedplus
+"set clipboard^=unnamedplus
 
 set list                   " Show non-printable characters.
 if has('multi_byte') && &encoding ==# 'utf-8'
@@ -62,56 +62,6 @@ set updatecount =100
 set undofile
 set undodir     =$HOME/.vim/files/undo/
 set viminfo     ='100,n$HOME/.vim/files/info/viminfo
-
-" ####################################################################################
-" Custom key mappings
-
-nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
-
-:nmap <silent> <C-h> :wincmd h<CR>
-:nmap <silent> <C-j> :wincmd j<CR>
-:nmap <silent> <C-k> :wincmd k<CR>
-:nmap <silent> <C-l> :wincmd l<CR>
-
-function! SwitchToNextBuffer(incr)
-    let help_buffer = (&filetype == 'help')
-    let current = bufnr("%")
-    let last = bufnr("$")
-    let new = current + a:incr
-    while 1
-        if new != 0 && bufexists(new) && ((getbufvar(new, "&filetype") == 'help') == help_buffer)
-            execute ":buffer ".new
-            break
-        else
-            let new = new + a:incr
-            if new < 1
-                let new = last
-            elseif new > last
-                let new = 1
-            endif
-            if new == current
-                break
-            endif
-        endif
-    endwhile
-endfunction
-nnoremap <silent> <C-n> :call SwitchToNextBuffer(1)<CR>
-nnoremap <silent> <C-p> :call SwitchToNextBuffer(-1)<CR>
-
-let mapleader=","
-let maplocalleader=";"
-
-" Search for selected text, forwards or backwards.
-" vnoremap <silent> * :<C-U>
-"             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-"             \gvy/<C-R><C-R>=substitute(
-"             \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-"             \gV:call setreg('"', old_reg, old_regtype)<CR>
-" vnoremap <silent> # :<C-U>
-"             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-"             \gvy?<C-R><C-R>=substitute(
-"             \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-"             \gV:call setreg('"', old_reg, old_regtype)<CR>
 
 " ####################################################################################
 " Plug.vim plugin system
@@ -296,4 +246,57 @@ let g:vlime_window_settings = {'sldb': {'pos': 'belowright', 'vertical': v:true}
             \ 'preview': {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
 
 let g:vlime_force_default_keys = v:true
+
+" ####################################################################################
+" Custom key mappings
+
+nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
+
+nmap <silent> <C-h> :wincmd h<CR>
+nmap <silent> <C-j> :wincmd j<CR>
+nmap <silent> <C-k> :wincmd k<CR>
+nmap <silent> <C-l> :wincmd l<CR>
+
+function! SwitchToNextBuffer(incr)
+    let help_buffer = (&filetype == 'help')
+    let current = bufnr("%")
+    let last = bufnr("$")
+    let new = current + a:incr
+    while 1
+        if new != 0 && bufexists(new) && ((getbufvar(new, "&filetype") == 'help') == help_buffer)
+            execute ":buffer ".new
+            break
+        else
+            let new = new + a:incr
+            if new < 1
+                let new = last
+            elseif new > last
+                let new = 1
+            endif
+            if new == current
+                break
+            endif
+        endif
+    endwhile
+endfunction
+nnoremap <silent> gb :call SwitchToNextBuffer(1)<CR>
+nnoremap <silent> gB :call SwitchToNextBuffer(-1)<CR>
+
+let mapleader=","
+let maplocalleader=";"
+
+" Search for selected text, forwards or backwards.
+" vnoremap <silent> * :<C-U>
+"             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+"             \gvy/<C-R><C-R>=substitute(
+"             \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+"             \gV:call setreg('"', old_reg, old_regtype)<CR>
+" vnoremap <silent> # :<C-U>
+"             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+"             \gvy?<C-R><C-R>=substitute(
+"             \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+"             \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+command CCI let @" = @+
+command CCO let @+ = @"
 
