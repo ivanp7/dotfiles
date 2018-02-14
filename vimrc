@@ -91,6 +91,7 @@ Plug 'qpkorr/vim-bufkill'
 " Fixes for things
 Plug 'godlygeek/csapprox'
 Plug 'vim-utils/vim-alt-mappings'
+Plug 'powerman/vim-plugin-AnsiEsc'
 
 " Color theme and highlighting
 Plug 'guns/xterm-color-table.vim'
