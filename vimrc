@@ -51,6 +51,9 @@ set timeoutlen=3000
 " 256-colors support
 set t_Co=256
 
+" No error sound&visual bells
+set belloff=all
+
 " Put all temporary files under the same directory.
 " https://github.com/mhinz/vim-galore#handling-backup-swap-undo-and-viminfo-files
 set backup
