@@ -54,6 +54,12 @@ set t_Co=256
 " No error sound&visual bells
 set belloff=all
 
+" Save cursor position in files
+" augroup resCur
+"   autocmd!
+"   autocmd BufReadPost * call setpos(".", getpos("'\""))
+" augroup END
+
 " Put all temporary files under the same directory.
 " https://github.com/mhinz/vim-galore#handling-backup-swap-undo-and-viminfo-files
 set backup
@@ -82,6 +88,7 @@ call plug#begin('~/.vim/plugged')
 " Basic things
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
+Plug 'farmergreg/vim-lastplace'
 
 Plug 'tpope/vim-surround'
 Plug 'svermeulen/vim-easyclip'
@@ -89,11 +96,13 @@ Plug 'tpope/vim-commentary'
 
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/nerdtree'
+Plug 'vim-scripts/taglist.vim'
 Plug 'qpkorr/vim-bufkill'
 
 " Fixes for things
 Plug 'godlygeek/csapprox'
-Plug 'vim-utils/vim-alt-mappings'
+" Plug 'vim-utils/vim-alt-mappings'
+" Plug 'drmikehenry/vim-fixkey'
 Plug 'powerman/vim-plugin-AnsiEsc'
 
 " Color theme and highlighting
@@ -148,6 +157,11 @@ call NERDTreeHighlightFile('lsp', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('sexp', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
 
+" Taglist.vim *************************
+
+" set Tlist_Inc_Winwidth=0
+map <C-i> :TlistToggle<CR>
+
 " ####################################################################################
 " Fixes for things
 
@@ -156,6 +170,7 @@ call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
 " after CSApprox work we re-enable the transparent background
 let g:CSApprox_hook_post = [
             \ 'highlight Normal            ctermbg=NONE',
+            \ 'highlight Visual            ctermbg=244',
             \ 'highlight LineNr            ctermbg=NONE ctermfg=gray',
             \ 'highlight SignifyLineAdd    cterm=bold ctermbg=NONE ctermfg=green',
             \ 'highlight SignifyLineDelete cterm=bold ctermbg=NONE ctermfg=red',
@@ -164,7 +179,7 @@ let g:CSApprox_hook_post = [
             \ 'highlight SignifySignDelete cterm=bold ctermbg=NONE ctermfg=red',
             \ 'highlight SignifySignChange cterm=bold ctermbg=NONE ctermfg=yellow',
             \ 'highlight SignColumn        ctermbg=NONE',
-            \ 'highlight CursorLine        term=underline cterm=NONE ctermbg=236',
+            \ 'highlight CursorLine        term=underline cterm=NONE ctermbg=234',
             \ 'highlight CursorLineNR      cterm=bold ctermfg=red',
             \ 'highlight Folded            ctermbg=NONE cterm=bold',
             \ 'highlight FoldColumn        ctermbg=NONE cterm=bold',
@@ -218,10 +233,14 @@ nmap <Leader>!  <Plug>MarkSearchGroup1Prev
 let g:sexp_insert_after_wrap = 0
 
 let g:sexp_mappings = {
-            \ 'sexp_flow_to_prev_close':        '<M-)>',
-            \ 'sexp_flow_to_next_open':         '<M-(>',
-            \ 'sexp_flow_to_prev_open':         '<M-9>',
-            \ 'sexp_flow_to_next_close':        '<M-0>',
+            \ 'sexp_flow_to_prev_close':        'g<)',
+            \ 'sexp_flow_to_next_open':         'g>(',
+            \ 'sexp_flow_to_prev_open':         'g<(',
+            \ 'sexp_flow_to_next_close':        'g>)',
+            \ 'sexp_flow_to_prev_leaf_head':    'g<h',
+            \ 'sexp_flow_to_next_leaf_head':    'g>h',
+            \ 'sexp_flow_to_prev_leaf_tail':    'g<t',
+            \ 'sexp_flow_to_next_leaf_tail':    'g>t',
             \ 'sexp_round_head_wrap_list':      '<Leader>si',
             \ 'sexp_round_tail_wrap_list':      '<Leader>sI',
             \ 'sexp_square_head_wrap_list':     '<Leader>s[',
