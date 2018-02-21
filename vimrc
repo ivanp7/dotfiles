@@ -133,6 +133,8 @@ call plug#end()
 nnoremap gm m
 nnoremap gM M
 nmap M <Plug>MoveMotionEndOfLinePlug
+let g:EasyClipUseSubstituteDefaults = 1
+
 let g:EasyClipAutoFormat = 1
 let g:EasyClipPreserveCursorPositionAfterYank = 1
 let g:EasyClipShareYanks = 1
