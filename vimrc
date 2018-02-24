@@ -104,6 +104,7 @@ Plug 'godlygeek/csapprox'
 " Plug 'vim-utils/vim-alt-mappings'
 " Plug 'drmikehenry/vim-fixkey'
 Plug 'powerman/vim-plugin-AnsiEsc'
+Plug 'tpope/vim-capslock'
 
 " Color theme and highlighting
 Plug 'guns/xterm-color-table.vim'
