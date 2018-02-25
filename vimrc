@@ -32,6 +32,8 @@ set synmaxcol   =200       " Only highlight the first 200 columns.
 
 set hlsearch
 
+set mouse       =a
+
 "set clipboard^=unnamedplus
 
 set list                   " Show non-printable characters.
