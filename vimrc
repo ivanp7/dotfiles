@@ -62,6 +62,10 @@ set belloff=all
 "   autocmd BufReadPost * call setpos(".", getpos("'\""))
 " augroup END
 
+" Enable calculator functionality (:Calc)
+:command! -nargs=+ Calc :py print <args>
+:py from math import *
+
 " Put all temporary files under the same directory.
 " https://github.com/mhinz/vim-galore#handling-backup-swap-undo-and-viminfo-files
 set backup
