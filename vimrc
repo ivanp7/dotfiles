@@ -330,5 +330,5 @@ let maplocalleader=";"
 "             \gV:call setreg('"', old_reg, old_regtype)<CR>
 
 command CCI let @" = @+
-command CCO let @+ = @"
+command CCO let @+ = @" | let @* = @"
 
