@@ -102,7 +102,7 @@ Plug 'tpope/vim-commentary'
 
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/nerdtree'
-Plug 'vim-scripts/taglist.vim'
+" Plug 'vim-scripts/taglist.vim'
 Plug 'qpkorr/vim-bufkill'
 
 " Fixes for things
@@ -169,7 +169,7 @@ call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
 " Taglist.vim *************************
 
 " set Tlist_Inc_Winwidth=0
-map <C-i> :TlistToggle<CR>
+" map <C-i> :TlistToggle<CR>
 
 " ####################################################################################
 " Fixes for things
