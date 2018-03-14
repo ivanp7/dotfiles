@@ -315,7 +315,7 @@ nnoremap <silent> gb :call SwitchToNextBuffer(1)<CR>
 nnoremap <silent> gB :call SwitchToNextBuffer(-1)<CR>
 
 let mapleader=","
-let maplocalleader=";"
+let maplocalleader="\\"
 
 " Search for selected text, forwards or backwards.
 " vnoremap <silent> * :<C-U>
