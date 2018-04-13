@@ -184,6 +184,17 @@ call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
 " Tagbar ******************************
 
 nmap <F8> :TagbarToggle<CR>
+
+" ####################################################################################
+" Filetypes support
+
+" Vim-orgmode
+
+let g:org_heading_shade_leading_stars = 1
+" let g:org_indent = 1
+
+let g:org_todo_keywords = ['TODO', 'DELAYED', 'INPROGRESS', '|', 'CANCELED', 'DONE']
+
 " ####################################################################################
 " Fixes for things
 
@@ -294,6 +305,8 @@ let g:vlime_force_default_keys = v:true
 
 " ####################################################################################
 " Custom key mappings
+
+map <F7> gmzgg=G`z
 
 nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 
