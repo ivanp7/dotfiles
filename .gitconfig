@@ -1,0 +1,14 @@
+# This is Git's per-user configuration file.
+[user]
+    name = ivanp7
+    email = 3432246+ivanp7@users.noreply.github.com
+[core]
+    editor = vim
+    excludesfile = /home/ivanp7/.gitignore_global
+
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
+[alias]
+	d = difftool
