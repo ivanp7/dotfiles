@@ -38,12 +38,28 @@ BCYN="\[\033[46m\]" # background cyan
 BWHT="\[\033[47m\]" # background white
 
 # prompt
-#PS1='[\u@\h \W]\$ '
-if (( $EUID == 0 )); then
-    PS1="$HC$FRED\u$RS@$FCYN\h$RS:$HC$FBLE\w$RS# "
-else
-    PS1="$FGRN\u$RS@$FCYN\h$RS:$HC$FBLE\w$RS\$ "
-fi
+PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
+
+__prompt_command() {
+    local EXIT="$?"             # This needs to be first
+    PS1=""
+
+    local UsernameColor=$RS$(if [[ $EUID == 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
+    local HostnameColor=$RS$HC$FBLE
+    local PWDColor=$RS$HC$FYEL
+    local ReturnStatusColor=$RS$HC$FRED
+    local OtherColor=$RS$HC$FWHT
+
+    local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo \#; else echo \$; fi)
+    local LastCommandStatus=$(if [[ $EXIT == 0 ]]; then echo -n; else echo ${RS}code $ReturnStatusColor$EXIT$RS; fi)
+    local PromptPrefix=$'\u2514\u2500\u2500'
+
+    PS1="$OtherColor$(echo $'\u250C\u2500')[$UsernameColor\u$OtherColor@$HostnameColor\h$OtherColor]\
+$(echo $'\u2500')[$PWDColor\w$OtherColor] $LastCommandStatus\n\
+$OtherColor$PromptPrefix $PromptCharacter $RS"
+
+    PS2="$OtherColor$PromptPrefix > "
+}
 
 # Use bash-completion, if available
 [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
