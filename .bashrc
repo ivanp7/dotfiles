@@ -42,7 +42,6 @@ PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
 __prompt_command() {
     local EXIT="$?"             # This needs to be first
-    PS1=""
 
     local UsernameColor=$RS$(if [[ $EUID == 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local HostnameColor=$RS$HC$FBLE
@@ -58,7 +57,7 @@ __prompt_command() {
 $(echo $'\u2500')[$PWDColor\w$OtherColor] $LastCommandStatus\n\
 $OtherColor$PromptPrefix $PromptCharacter $RS"
 
-    PS2="$OtherColor$PromptPrefix > "
+    PS2="$OtherColor$PromptPrefix > $RS"
 }
 
 # Use bash-completion, if available
