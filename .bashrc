@@ -53,7 +53,7 @@ __prompt_command() {
     local LastCommandStatus=$(if [[ $EXIT == 0 ]]; then echo -n; else echo ${RS}code $ReturnStatusColor$EXIT$RS; fi)
     local PromptPrefix=$'\u2514\u2500\u2500'
 
-    PS1="$OtherColor$(echo $'\u250C\u2500')[$UsernameColor\u$OtherColor@$HostnameColor\h$OtherColor]\
+    PS1="$OtherColor\n$(echo $'\u250C\u2500')[$UsernameColor\u$OtherColor@$HostnameColor\h$OtherColor]\
 $(echo $'\u2500')[$PWDColor\w$OtherColor] $LastCommandStatus\n\
 $OtherColor$PromptPrefix $PromptCharacter $RS"
 
