@@ -2,8 +2,10 @@
 # ~/.bash_profile
 #
 
-echo
-echo
+# echo
+# echo
+clear
+
 echo
 neofetch
 echo
