@@ -14,14 +14,15 @@ alias egrep='egrep --color=auto'
 
 alias diff='diff --color=auto'
 
-alias ssh='TERM=xterm-256color ssh'
-
 alias less='/usr/share/vim/vim81/macros/less.sh'
 # alias less='less -Q'
 alias man='man -P "less -Q"'
 
-alias pwd2='printf "%q\n" "$(pwd)"'
-alias xclip2='xclip -selection clipboard'
+alias pwd_='printf "%q\n" "$(pwd)"'
 
+alias ssh='TERM=xterm-256color ssh'
+alias ranger='SHELL=r.shell ranger'
+
+alias xclip2='xclip -selection clipboard'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 

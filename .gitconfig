@@ -1,7 +1,7 @@
 # This is Git's per-user configuration file.
 [user]
     name = ivanp7
-    email = 3432246+ivanp7@users.noreply.github.com
+    email = ivanp7.git@gmail.com
 [core]
     editor = vim
     excludesfile = /home/ivanp7/.gitignore_global
