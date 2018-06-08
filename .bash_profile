@@ -12,3 +12,5 @@ echo
 echo
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
+eval $(ssh-agent) > /dev/null
+
