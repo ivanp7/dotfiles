@@ -1,4 +1,0 @@
-#!/bin/bash
-
-SHELL=$HOME/dotfiles/scripts/r.shell ranger
-
