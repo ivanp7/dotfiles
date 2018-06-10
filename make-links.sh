@@ -9,5 +9,8 @@ ln -s dotfiles/.inputrc ../
 ln -s dotfiles/.gitconfig ../
 ln -s dotfiles/.gitignore_global ../
 
-ln -s ../dotfiles/.ssh/config ../.ssh
+ln -s ../dotfiles/.ssh/config ../.ssh/
+
+ln -s ../dotfiles/.config/ranger ../.config/
+ln -s ../dotfiles/.config/neofetch ../.config/
 
