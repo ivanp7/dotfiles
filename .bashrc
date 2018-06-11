@@ -73,7 +73,7 @@ stty -ixon
 source ${HOME}/.aliases
 
 # variables
-export PATH="${PATH}:${HOME}/bin:${HOME}/scripts:${HOME}/dotfiles/scripts"
+export PATH="${PATH}:${HOME}/bin:${HOME}/scripts:${HOME}/dotfiles/scripts:${HOME}/soft"
 
 export LESS=-R
 export LESS_TERMCAP_mb=$'\E[1;31m'     # begin bold
