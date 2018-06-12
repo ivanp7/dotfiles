@@ -306,10 +306,28 @@ let g:vlime_force_default_keys = v:true
 " ####################################################################################
 " Custom key mappings
 
+" Visual mode blockwise indent
+vmap > >gv
+vmap < <gv
+
+" Ident the whole buffer
 map <F7> gmzgg=G`z
 
+" Record into register 'q', playback with 'Q'
+nnoremap Q @q
+
+" Map the cursor keys for precision scrolling by visual lines
+imap <up> <C-O>gk
+imap <down> <C-O>gj
+nmap <up> gk
+nmap <down> gj
+vmap <up> gk
+vmap <down> gj
+
+" Switch language
 nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 
+" Switch between windows
 nmap <silent> <C-h> :wincmd h<CR>
 nmap <silent> <C-j> :wincmd j<CR>
 nmap <silent> <C-k> :wincmd k<CR>
