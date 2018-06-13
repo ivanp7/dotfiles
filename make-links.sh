@@ -25,4 +25,4 @@ make_links ~
 
 # Make links in root home directory
 MAKE_LINKS_FUNC=$(declare -f make_links)
-sudo bash -c "MAKE_LINKS_FUNC; make_links /root"
+sudo bash -c "$MAKE_LINKS_FUNC; make_links /root"
