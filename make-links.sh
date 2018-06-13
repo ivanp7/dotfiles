@@ -1,33 +1,28 @@
 #!/bin/bash
 
+cd `dirname $0`
 CONF_DIR=$(pwd)
 
-ln -sf $CONF_DIR/.aliases ~/
-ln -sf $CONF_DIR/.bash_logout ~/
-ln -sf $CONF_DIR/.bash_profile ~/
-ln -sf $CONF_DIR/.bashrc ~/
-ln -sf $CONF_DIR/.inputrc ~/
-ln -sf $CONF_DIR/.gitconfig ~/
-ln -sf $CONF_DIR/.gitignore_global ~/
+make_links() {
+    ln -sf $CONF_DIR/.aliases $1/
+    ln -sf $CONF_DIR/.bash_logout $1/
+    ln -sf $CONF_DIR/.bash_profile $1/
+    ln -sf $CONF_DIR/.bashrc $1/
+    ln -sf $CONF_DIR/.inputrc $1/
+    ln -sf $CONF_DIR/.gitconfig $1/
+    ln -sf $CONF_DIR/.gitignore_global $1/
+    
+    mkdir -p $1/.ssh/
+    ln -sf $CONF_DIR/.ssh/config $1/.ssh/
+    
+    mkdir -p $1/.config/
+    ln -sf $CONF_DIR/.config/ranger $1/.config/
+    ln -sf $CONF_DIR/.config/neofetch $1/.config/
+}
 
-mkdir -p ~/.ssh/
-ln -sf $CONF_DIR/.ssh/config ~/.ssh/
+# Make links in our home directory
+make_links ~
 
-mkdir -p ~/.config/
-ln -sf $CONF_DIR/.config/ranger ~/.config/
-ln -sf $CONF_DIR/.config/neofetch ~/.config/
-
-sudo ln -sf $CONF_DIR/.aliases /root/
-sudo ln -sf $CONF_DIR/.bash_logout /root/
-sudo ln -sf $CONF_DIR/.bash_profile /root/
-sudo ln -sf $CONF_DIR/.bashrc /root/
-sudo ln -sf $CONF_DIR/.inputrc /root/
-sudo ln -sf $CONF_DIR/.gitconfig /root/
-sudo ln -sf $CONF_DIR/.gitignore_global /root/
-
-sudo mkdir -p /root/.ssh/
-sudo ln -sf $CONF_DIR/.ssh/config /root/.ssh/
-
-sudo mkdir -p /root/.config/
-sudo ln -sf $CONF_DIR/.config/ranger /root/.config/
-sudo ln -sf $CONF_DIR/.config/neofetch /root/.config/
+# Make links in root home directory
+MAKE_LINKS_FUNC=$(declare -f make_links)
+sudo bash -c "MAKE_LINKS_FUNC; make_links /root"
