@@ -75,7 +75,7 @@ source ${HOME}/.aliases
 # variables
 if [[ ! -v PATH_SET ]]
 then
-    export PATH="${PATH}:${HOME}/dotfiles/scripts:${HOME}/scripts"
+    export PATH="${PATH}:${HOME}/scripts"
     export PATH_SET=true
 fi
 

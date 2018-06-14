@@ -18,6 +18,11 @@ make_links() {
     mkdir -p $1/.config/
     ln -sf $CONF_DIR/.config/ranger $1/.config/
     ln -sf $CONF_DIR/.config/neofetch $1/.config/
+
+    mkdir -p $1/scripts/
+    ln -sf $CONF_DIR/scripts/lambda-in-parens.sh $1/scripts/
+    ln -sf $CONF_DIR/scripts/pkg.sh $1/scripts/
+    ln -sf $CONF_DIR/scripts/r.shell $1/scripts/
 }
 
 # Make links in our home directory
