@@ -2,8 +2,8 @@
 
 if type trizen > /dev/null
 then
-    PKGMANAGER="trizen"
-    PKGMANAGER_SUDO="trizen"
+    PKGMANAGER="aurman"
+    PKGMANAGER_SUDO="aurman"
 else
     PKGMANAGER="pacman"
     PKGMANAGER_SUDO="sudo pacman"
