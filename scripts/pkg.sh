@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if type trizen > /dev/null
+if type aurman > /dev/null
 then
     PKGMANAGER="aurman"
     PKGMANAGER_SUDO="aurman"
