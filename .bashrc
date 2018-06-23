@@ -90,3 +90,6 @@ export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
 export EDITOR='/usr/bin/vim'
 
+# custom apps
+complete -F _todo todo
+
