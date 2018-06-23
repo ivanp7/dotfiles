@@ -63,8 +63,8 @@ set belloff=all
 " augroup END
 
 " Enable calculator functionality (:Calc)
-:command! -nargs=+ Calc :py print <args>
-:py from math import *
+" :command! -nargs=+ Calc :py print <args>
+" :py from math import *
 
 " Put all temporary files under the same directory.
 " https://github.com/mhinz/vim-galore#handling-backup-swap-undo-and-viminfo-files
@@ -106,14 +106,14 @@ Plug 'scrooloose/nerdtree'
 Plug 'majutsushi/tagbar'
 Plug 'qpkorr/vim-bufkill'
 
-Plug 'vim-scripts/utl.vim'
-Plug 'tpope/vim-speeddating'
-Plug 'chrisbra/NrrwRgn'
-Plug 'mattn/calendar-vim'
-Plug 'inkarkat/vim-SyntaxRange'
+" Plug 'vim-scripts/utl.vim'
+" Plug 'tpope/vim-speeddating'
+" Plug 'chrisbra/NrrwRgn'
+" Plug 'mattn/calendar-vim'
+" Plug 'inkarkat/vim-SyntaxRange'
 
 " Filetypes support
-Plug 'jceb/vim-orgmode'
+" Plug 'jceb/vim-orgmode'
 
 " Fixes for things
 Plug 'godlygeek/csapprox'
