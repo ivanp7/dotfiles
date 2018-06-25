@@ -71,6 +71,8 @@ stty -ixon
 
 # aliases
 source ${HOME}/.aliases
+type xhost >& /dev/null && xhost >& /dev/null &&
+    [ -f ${HOME}/.xaliases ] && source ${HOME}/.xaliases
 
 # variables
 if [[ ! -v PATH_SET ]]
