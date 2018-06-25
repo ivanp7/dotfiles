@@ -22,6 +22,7 @@ alias pwd_='printf "%q\n" "$(pwd)"'
 
 alias ssh='TERM=xterm-256color ssh'
 alias ranger='SHELL=r.shell ranger'
+alias rr='SHELL=r.shell ranger'
 
 alias todo='todo.sh -c'
 
