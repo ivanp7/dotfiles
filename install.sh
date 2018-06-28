@@ -19,10 +19,10 @@ install_links() {
     ln -sf $CONF_DIR/.config/ranger $HOME/.config/
     ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
 
-    mkdir -p $HOME/scripts/
-    ln -sf $CONF_DIR/scripts/lambda-in-parens.sh $HOME/scripts/
-    ln -sf $CONF_DIR/scripts/pkg.sh $HOME/scripts/
-    ln -sf $CONF_DIR/scripts/r.shell $HOME/scripts/
+    mkdir -p $HOME/bin/
+    ln -sf $CONF_DIR/scripts/lambda-in-parens.sh $HOME/bin/
+    ln -sf $CONF_DIR/scripts/pkg.sh $HOME/bin/
+    ln -sf $CONF_DIR/scripts/r.shell $HOME/bin/
 }
 
 # Make links in our home directory

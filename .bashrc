@@ -77,7 +77,7 @@ type xhost >& /dev/null && xhost >& /dev/null &&
 # variables
 if [[ ! -v PATH_SET ]]
 then
-    export PATH="${PATH}:${HOME}/scripts"
+    export PATH="${PATH}:${HOME}/scripts:${HOME}/bin"
     export PATH_SET=true
 fi
 
