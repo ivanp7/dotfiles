@@ -30,8 +30,8 @@ echo Creating symbolic links in the home directory
 install_links
 
 # Make links in root home directory
-echo Now creating symbolic links in the /root directory
-read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n'
-INSTALL_LINKS_FUNC=$(declare -f install_links)
-sudo bash -c "CONF_DIR=$CONF_DIR;$INSTALL_LINKS_FUNC; install_links"
+# echo Now creating symbolic links in the /root directory
+# read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n'
+# INSTALL_LINKS_FUNC=$(declare -f install_links)
+# sudo bash -c "CONF_DIR=$CONF_DIR;$INSTALL_LINKS_FUNC; install_links"
 
