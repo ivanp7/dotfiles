@@ -1,9 +1,11 @@
 #!/bin/bash
 
-if type aurman > /dev/null
+AUR_HELPER=yay
+
+if type $AUR_HELPER > /dev/null
 then
-    PKGMANAGER="aurman"
-    PKGMANAGER_SUDO="aurman"
+    PKGMANAGER="$AUR_HELPER"
+    PKGMANAGER_SUDO="$AUR_HELPER"
 else
     PKGMANAGER="pacman"
     PKGMANAGER_SUDO="sudo pacman"
