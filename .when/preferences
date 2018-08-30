@@ -1,3 +1,4 @@
+future = 31
 calendar = ~/.when/calendar
 editor = vim
 
