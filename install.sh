@@ -19,6 +19,8 @@ install_links() {
     ln -sf $CONF_DIR/.when/preferences $HOME/.when/
     mkdir -p $HOME/.todo/
     ln -sf $CONF_DIR/.todo/config $HOME/.todo/
+    mkdir -p $HOME/Org/
+    touch $HOME/Org/calendar
     
     mkdir -p $HOME/.config/
     ln -sf $CONF_DIR/.config/ranger $HOME/.config/

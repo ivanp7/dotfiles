@@ -1,4 +1,4 @@
 future = 31
-calendar = ~/.when/calendar
+calendar = ~/Org/calendar
 editor = vim
 
