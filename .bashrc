@@ -40,12 +40,14 @@ BWHT="\[\033[47m\]" # background white
 # prompt
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
-__prompt_command() {
+__prompt_command()
+{
     local EXIT="$?"             # This needs to be first
 
     local UsernameColor=$RS$(if [[ $EUID == 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local HostnameColor=$RS$HC$FBLE
     local PWDColor=$RS$HC$FYEL
+    local TimeColor=$RS$FWHT
     local ReturnStatusColor=$RS$HC$FRED
     local OtherColor=$RS$HC$FWHT
 
@@ -54,7 +56,7 @@ __prompt_command() {
     local PromptPrefix=$'\u2514\u2500\u2500'
 
     PS1="$OtherColor\n$(echo $'\u250C\u2500')[$UsernameColor\u$OtherColor@$HostnameColor\h$OtherColor]\
-$(echo $'\u2500')[$PWDColor\w$OtherColor] $LastCommandStatus\n\
+$(echo $'\u2500')[$PWDColor\w$OtherColor] (($TimeColor\D{%T}$OtherColor)) $LastCommandStatus\n\
 $OtherColor$PromptPrefix $PromptCharacter $RS"
 
     PS2="$OtherColor$PromptPrefix > $RS"
