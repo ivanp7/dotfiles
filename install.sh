@@ -13,6 +13,7 @@ install_links() {
     ln -sf $CONF_DIR/.gitignore_global $HOME/
     
     mkdir -p $HOME/.ssh/
+    chmod 700 $HOME/.ssh/
     ln -sf $CONF_DIR/.ssh/config $HOME/.ssh/
 
     mkdir -p $HOME/.when/
