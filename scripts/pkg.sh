@@ -11,25 +11,16 @@ else
     PKGMANAGER_SUDO="sudo pacman"
 fi
 
-if [[ "$1" == "update" ]]
-then
-    PKG_COMMAND="$PKGMANAGER_SUDO -Syu"
-elif [[ "$1" == "install" ]]
-then
-    PKG_COMMAND="$PKGMANAGER_SUDO -S ${@:2}"
-elif [[ "$1" == "remove" ]]
-then
-    PKG_COMMAND="$PKGMANAGER_SUDO -Rns ${@:2}"
-elif [[ "$1" == "remove-orphans" ]]
-then
-    PKG_COMMAND="$PKGMANAGER_SUDO -Rns \$($PKGMANAGER -Qtdq)"
-elif [[ "$1" == "list" ]]
-then
-    PKG_COMMAND="$PKGMANAGER -Qqet"
-else
-    echo Error: unknown command "$1"
-    exit 1
-fi
+case $1 in
+    update) PKG_COMMAND="$PKGMANAGER_SUDO -Syu" ;;
+    install) PKG_COMMAND="$PKGMANAGER_SUDO -S ${@:2}" ;;
+    uninstall) PKG_COMMAND="$PKGMANAGER_SUDO -Rns ${@:2}" ;;
+    uninstall-orphans) PKG_COMMAND="$PKGMANAGER_SUDO -Rns \$($PKGMANAGER -Qtdq)" ;;
+    list) PKG_COMMAND="$PKGMANAGER -Qqet" ;;
+    *)
+        echo Error: unknown command "$1"
+        exit 1
+esac
 
 echo $PKG_COMMAND
 bash -c "$PKG_COMMAND"
