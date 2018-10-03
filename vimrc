@@ -102,18 +102,8 @@ Plug 'tpope/vim-commentary'
 
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/nerdtree'
-" Plug 'vim-scripts/taglist.vim'
 Plug 'majutsushi/tagbar'
 Plug 'qpkorr/vim-bufkill'
-
-" Plug 'vim-scripts/utl.vim'
-" Plug 'tpope/vim-speeddating'
-" Plug 'chrisbra/NrrwRgn'
-" Plug 'mattn/calendar-vim'
-" Plug 'inkarkat/vim-SyntaxRange'
-
-" Filetypes support
-" Plug 'jceb/vim-orgmode'
 
 " Fixes for things
 Plug 'godlygeek/csapprox'
