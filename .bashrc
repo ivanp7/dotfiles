@@ -120,6 +120,6 @@ function sudo_ranger ()
 
 # aliases
 source ${HOME}/.aliases
-type xhost >& /dev/null && xhost >& /dev/null &&
-    [ -f ${HOME}/.xaliases ] && source ${HOME}/.xaliases
+{ type xhost >& /dev/null && xhost >& /dev/null &&
+    [ -f ${HOME}/.xaliases ] && source ${HOME}/.xaliases; } || true
 
