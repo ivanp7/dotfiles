@@ -47,16 +47,18 @@ __prompt_command()
     local UsernameColor=$RS$(if [[ $EUID == 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local HostnameColor=$RS$HC$FBLE
     local PWDColor=$RS$HC$FYEL
-    local TimeColor=$RS$FWHT
+    local TimeColor=$RS$FCYN
+    local RangerColor=$RS$FWHT
     local ReturnStatusColor=$RS$HC$FRED
     local OtherColor=$RS$HC$FWHT
 
-    local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo \#; else echo \$; fi)
-    local LastCommandStatus=$(if [[ $EXIT == 0 ]]; then echo -n; else echo ${RS}code $ReturnStatusColor$EXIT$RS; fi)
+    local RangerIndicator=$(if [[ -z $RANGER_LEVEL ]]; then echo -n; else echo "<${RangerColor}ranger$OtherColor> "; fi)
+    local LastCommandStatus=$(if [[ $EXIT == 0 ]]; then echo -n; else echo ": ${RS}code $ReturnStatusColor$EXIT$RS"; fi)
     local PromptPrefix=$'\u2514\u2500\u2500'
+    local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo \#; else echo \$; fi)
 
     PS1="$OtherColor\n$(echo $'\u250C\u2500')[$UsernameColor\u$OtherColor@$HostnameColor\h$OtherColor]\
-$(echo $'\u2500')[$PWDColor\w$OtherColor] (($TimeColor\D{%T}$OtherColor)) $LastCommandStatus\n\
+$(echo $'\u2500')[$PWDColor\w$OtherColor] $TimeColor\D{%T}${OtherColor} $RangerIndicator$LastCommandStatus\n\
 $OtherColor$PromptPrefix $PromptCharacter $RS"
 
     PS2="$OtherColor$PromptPrefix > $RS"
@@ -96,4 +98,15 @@ export EDITOR='/usr/bin/vim'
 
 # custom apps
 complete -F _todo todo
+
+# functions
+
+function ranger ()
+{
+    if [ -z "$RANGER_LEVEL" ]; then
+        /usr/bin/ranger "$@"
+    else
+        exit
+    fi
+}
 
