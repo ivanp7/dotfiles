@@ -52,8 +52,9 @@ __prompt_command()
     local ReturnStatusColor=$RS$HC$FRED
     local OtherColor=$RS$HC$FWHT
 
-    local RangerIndicator=$(if [[ -z $RANGER_LEVEL ]]; then echo -n; else echo "<${RangerColor}ranger$OtherColor> "; fi)
-    local LastCommandStatus=$(if [[ $EXIT == 0 ]]; then echo -n; else echo ": ${RS}code $ReturnStatusColor$EXIT$RS"; fi)
+    local RangerIndicator=$(if [[ ! -z $RANGER_LEVEL ]]; then 
+        echo "<${RangerColor}ranger$(if [[ $RANGER_LEVEL -gt 1 ]]; then echo -n "-$RANGER_LEVEL"; fi)$OtherColor> "; fi)
+    local LastCommandStatus=$(if [[ $EXIT -ne 0 ]]; then echo ": ${RS}code $ReturnStatusColor$EXIT$RS"; fi)
     local PromptPrefix=$'\u2514\u2500\u2500'
     local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo \#; else echo \$; fi)
 
@@ -72,11 +73,6 @@ $OtherColor$PromptPrefix $PromptCharacter $RS"
 source /usr/share/doc/pkgfile/command-not-found.bash
 
 stty -ixon
-
-# aliases
-source ${HOME}/.aliases
-type xhost >& /dev/null && xhost >& /dev/null &&
-    [ -f ${HOME}/.xaliases ] && source ${HOME}/.xaliases
 
 # variables
 if [[ ! -v PATH_SET ]]
@@ -100,13 +96,30 @@ export EDITOR='/usr/bin/vim'
 complete -F _todo todo
 
 # functions
-
 function ranger ()
 {
+    local SHELL=$HOME/bin/r.shell
+
     if [ -z "$RANGER_LEVEL" ]; then
         /usr/bin/ranger "$@"
     else
         exit
     fi
 }
+
+function sudo_ranger ()
+{
+    local SHELL=$HOME/bin/r.shell
+
+    if [ -z "$RANGER_LEVEL" ] || [ $EUID -ne 0 ]; then
+        sudo -E /usr/bin/ranger "$@"
+    else
+        exit
+    fi
+}
+
+# aliases
+source ${HOME}/.aliases
+type xhost >& /dev/null && xhost >& /dev/null &&
+    [ -f ${HOME}/.xaliases ] && source ${HOME}/.xaliases
 
