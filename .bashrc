@@ -49,17 +49,20 @@ __prompt_command()
     local PWDColor=$RS$HC$FYEL
     local TimeColor=$RS$FCYN
     local RangerColor=$RS$FWHT
+    local VimColor=$RS$FWHT
     local ReturnStatusColor=$RS$HC$FRED
     local OtherColor=$RS$HC$FWHT
 
     local RangerIndicator=$(if [[ ! -z $RANGER_LEVEL ]]; then 
         echo "<${RangerColor}ranger$(if [[ $RANGER_LEVEL -gt 1 ]]; then echo -n "-$RANGER_LEVEL"; fi)$OtherColor> "; fi)
+    local VimIndicator=$(if [[ ! -z $VIM ]]; then 
+        echo "<${VimColor}vim$OtherColor> "; fi)
     local LastCommandStatus=$(if [[ $EXIT -ne 0 ]]; then echo ": ${RS}code $ReturnStatusColor$EXIT$RS"; fi)
     local PromptPrefix=$'\u2514\u2500\u2500'
     local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo \#; else echo \$; fi)
 
     PS1="$OtherColor\n$(echo $'\u250C\u2500')[$UsernameColor\u$OtherColor@$HostnameColor\h$OtherColor]\
-$(echo $'\u2500')[$PWDColor\w$OtherColor] $TimeColor\D{%T}${OtherColor} $RangerIndicator$LastCommandStatus\n\
+$(echo $'\u2500')[$PWDColor\w$OtherColor] $TimeColor\D{%T}${OtherColor} $RangerIndicator$VimIndicator$LastCommandStatus\n\
 $OtherColor$PromptPrefix $PromptCharacter $RS"
 
     PS2="$OtherColor$PromptPrefix > $RS"
