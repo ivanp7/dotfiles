@@ -70,11 +70,11 @@ $OtherColor$PromptPrefix1\[\e[3C\]$PromptPrefix2 $PromptCharacter $RS"
 }
 
 # Use bash-completion, if available
-[[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
+[[ -f /usr/share/bash-completion/bash_completion ]] && \
     . /usr/share/bash-completion/bash_completion
 
 # other settings
-source /usr/share/doc/pkgfile/command-not-found.bash
+. /usr/share/doc/pkgfile/command-not-found.bash
 
 stty -ixon
 
@@ -123,7 +123,7 @@ function sudo_ranger ()
 }
 
 # aliases
-source ${HOME}/.aliases
+. ${HOME}/.aliases
 { type xhost >& /dev/null && xhost >& /dev/null &&
-    [ -f ${HOME}/.xaliases ] && source ${HOME}/.xaliases; } || true
+    [ -f ${HOME}/.xaliases ] && . ${HOME}/.xaliases; } || true
 
