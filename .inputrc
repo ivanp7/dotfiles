@@ -4,9 +4,20 @@ $if Bash
     Space: magic-space
 $endif
 
+# Use Unicode & do NOT use the "8bit hack" to input/output non-ASCII characters
+# See http://code.google.com/p/iterm2/wiki/Keybindings
+set input-meta on
+set output-meta on
+set convert-meta off
+
 # Key bindings, up/down arrow searches through history
 "\e[A": history-search-backward
 "\e[B": history-search-forward
 "\eOA": history-search-backward
 "\eOB": history-search-forward
+
+set editing-mode vi
+set show-mode-in-prompt on
+set vi-ins-mode-string "\1\e[2C\e[1m\e[37m\2ins\1\e[5D\e[0m\2"
+set vi-cmd-mode-string "\1\e[2C\e[1m\e[33m\2cmd\1\e[5D\e[0m\2"
 
