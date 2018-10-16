@@ -53,10 +53,8 @@ __prompt_command()
     local ReturnStatusColor=$RS$HC$FRED
     local OtherColor=$RS$HC$FWHT
 
-    local RangerIndicator=$(if [[ ! -z $RANGER_LEVEL ]]; then 
-        echo "<${RangerColor}ranger$(if [[ $RANGER_LEVEL -gt 1 ]]; then echo -n "-$RANGER_LEVEL"; fi)$OtherColor> "; fi)
-    local VimIndicator=$(if [[ ! -z $VIM ]]; then 
-        echo "<${VimColor}vim$OtherColor> "; fi)
+    local RangerIndicator=$(if [[ ! -z $RANGER_LEVEL ]]; then echo "<${RangerColor}ranger$OtherColor> "; fi)
+    local VimIndicator=$(if [[ ! -z $VIM ]]; then echo "<${VimColor}vim$OtherColor> "; fi)
     local LastCommandStatus=$(if [[ $EXIT -ne 0 ]]; then echo ": ${RS}code $ReturnStatusColor$EXIT$RS"; fi)
     local PromptPrefix1=$'\u2514\u2500'
     local PromptPrefix2=$'\u2500'
@@ -102,10 +100,8 @@ complete -F _todo todo
 # functions
 function ranger ()
 {
-    local SHELL=$HOME/bin/r.shell
-
     if [ -z "$RANGER_LEVEL" ]; then
-        /usr/bin/ranger "$@"
+        ranger.sh "$@"
     else
         exit
     fi
@@ -113,10 +109,8 @@ function ranger ()
 
 function sudo_ranger ()
 {
-    local SHELL=$HOME/bin/r.shell
-
     if [ -z "$RANGER_LEVEL" ] || [ $EUID -ne 0 ]; then
-        sudo -E /usr/bin/ranger "$@"
+        sudo ranger.sh "$@"
     else
         exit
     fi
