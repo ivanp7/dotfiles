@@ -66,7 +66,7 @@ __prompt_command()
 $(echo $'\u2500')[$PWDColor\w$OtherColor] $TimeColor\D{%T}${OtherColor} $RangerIndicator$VimIndicator$LastCommandStatus\n\
 $OtherColor$PromptPrefix1\[\e[3C\]$PromptPrefix2 $PromptCharacter $RS"
 
-    PS2="$OtherColor$PromptPrefix > $RS"
+    PS2="$OtherColor$PromptPrefix1\[\e[3C\]$PromptPrefix2 > $RS"
 }
 
 # Use bash-completion, if available
