@@ -2,6 +2,8 @@
 # ~/.bash_profile
 #
 
+[[ -f ~/.bashrc ]] && . ~/.bashrc
+
 # echo
 # echo
 clear
@@ -11,6 +13,5 @@ neofetch
 echo
 echo
 
-[[ -f ~/.bashrc ]] && . ~/.bashrc
 eval $(ssh-agent) > /dev/null
 
