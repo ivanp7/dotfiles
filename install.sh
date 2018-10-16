@@ -34,6 +34,7 @@ install_links() {
     ln -sf $CONF_DIR/scripts/lambda-in-parens.sh $HOME/bin/
 
     ln -sf $CONF_DIR/scripts/r.shell $HOME/bin/
+    ln -sf $CONF_DIR/scripts/ranger.sh $HOME/bin/
 }
 
 # Make links in our home directory
