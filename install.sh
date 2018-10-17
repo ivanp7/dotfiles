@@ -30,13 +30,8 @@ install_links() {
     ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
 
     mkdir -p $HOME/bin/
-    ln -sf $CONF_DIR/scripts/external-drive.sh $HOME/bin/
-    ln -sf $CONF_DIR/scripts/issue-picture.sh $HOME/bin/
-    ln -sf $CONF_DIR/scripts/pkg.sh $HOME/bin/
-    ln -sf $CONF_DIR/scripts/lambda-in-parens.sh $HOME/bin/
-
-    ln -sf $CONF_DIR/scripts/r.shell $HOME/bin/
-    ln -sf $CONF_DIR/scripts/ranger.sh $HOME/bin/
+    chmod +x $CONF_DIR/scripts/*
+    ln -sf $CONF_DIR/scripts/* $HOME/bin/
 }
 
 # Make links in our home directory
