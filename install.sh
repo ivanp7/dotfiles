@@ -14,7 +14,9 @@ install_links() {
     
     mkdir -p $HOME/.ssh/
     chmod 700 $HOME/.ssh/
-    ln -sf $CONF_DIR/.ssh/config $HOME/.ssh/
+    cp $CONF_DIR/.ssh/config $HOME/.ssh/
+    chmod 644 $HOME/.ssh/config
+    # ln -sf $CONF_DIR/.ssh/config $HOME/.ssh/
 
     mkdir -p $HOME/.when/
     ln -sf $CONF_DIR/.when/preferences $HOME/.when/
