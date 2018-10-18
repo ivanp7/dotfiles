@@ -57,7 +57,8 @@ __prompt_command()
     local LBCornerCharacter=$(echo $'\u2514')
     local DashCharacter=$(echo $'\u2500')
 
-    local RangerIndicator=$(if [[ ! -z $RANGER_LEVEL ]]; then echo "<${RangerColor}ranger$OtherColor> "; fi)
+    local RangerIndicatorLevel=$(if [[ ! -z $RANGER_LEVEL ]] && [[ $RANGER_LEVEL -gt 1 ]]; then echo -n "#$RANGER_LEVEL"; fi)
+    local RangerIndicator=$(if [[ ! -z $RANGER_LEVEL ]]; then echo "<${RangerColor}ranger$RangerIndicatorLevel$OtherColor> "; fi)
     local VimIndicator=$(if [[ ! -z $VIM ]]; then echo "<${VimColor}vim$OtherColor> "; fi)
     local LastCommandStatus=$(if [[ $EXIT -ne 0 ]]; then echo ": ${RS}code $ReturnStatusColor$EXIT$RS"; fi)
     local PromptPrefix1=$LBCornerCharacter$DashCharacter
@@ -104,20 +105,28 @@ complete -F _todo todo
 # functions
 function ranger ()
 {
-    if [ -z "$RANGER_LEVEL" ]; then
-        ranger.sh "$@"
-    else
-        exit
-    fi
+    tempfile="$(mktemp -t tmp.XXXXXX)"
+    ranger.sh --choosedir="$tempfile" "${@:-$(pwd)}"
+    test -f "$tempfile" &&
+        if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
+            cd -- "$(cat "$tempfile")"
+        fi
+        rm -f -- "$tempfile"
+
+    # if [ -z "$RANGER_LEVEL" ]; then ranger.sh "$@"; else exit; fi
 }
 
 function sudo_ranger ()
 {
-    if [ -z "$RANGER_LEVEL" ] || [ $EUID -ne 0 ]; then
-        sudo ranger.sh "$@"
-    else
-        exit
-    fi
+    tempfile="$(mktemp -t tmp.XXXXXX)"
+    sudo ranger.sh --choosedir="$tempfile" "${@:-$(pwd)}"
+    test -f "$tempfile" &&
+        if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
+            cd -- "$(cat "$tempfile")"
+        fi
+        rm -f -- "$tempfile"
+
+    # if [ -z "$RANGER_LEVEL" ] || [ $EUID -ne 0 ]; then sudo ranger.sh "$@"; else exit; fi
 }
 
 # aliases
