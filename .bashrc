@@ -44,32 +44,63 @@ __prompt_command()
 {
     local EXIT="$?"             # This needs to be first
 
+##########################################
+
+    local DashCharacter=$(echo $'\u2500')
+
+    local OtherColor=$RS$HC$FWHT
+
+##########################################
+
     local UsernameColor=$RS$(if [[ $EUID == 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local HostnameColor=$RS$HC$FBLE
+    local UserHostInfo="[${UsernameColor}\u${OtherColor}@${HostnameColor}\h${OtherColor}]"
+
     local PWDColor=$RS$HC$FYEL
+    local PWDInfo="[${PWDColor}\w${OtherColor}]"
+
     local TimeColor=$RS$FCYN
-    local RangerColor=$RS$FWHT
-    local VimColor=$RS$FWHT
+    local TimeInfo="[${TimeColor}\D{%T}${OtherColor}]"
+
+    local ExitCodeColor=$RS$(if [[ $EXIT == 0 ]]; then echo $FGRN; else echo $HC$FRED; fi)
+    local ExitCodeInfo="<${ExitCodeColor}$EXIT${OtherColor}>"
+
+    local BasicPromptInfo="${UserHostInfo}-${PWDInfo}-${TimeInfo}"
+
+##########################################
+
+    local ProcessTreeColor=$RS
+    local PromptIndicators="${ProcessTreeColor}$(sed "
+s/systemd//;
+s/---login//;
+s/---pstree//;
+s/---bash//g;
+s/^---//;
+s/sshd---sshd/... -> ssh/;
+s/screen---screen/screen/;
+s/---/ -> /g; 
+" <<< $(pstree -ls $$))"
+
+##########################################
+
     local ReturnStatusColor=$RS$HC$FRED
-    local OtherColor=$RS$HC$FWHT
+    local LastCommandExitCode=$(if [[ $EXIT -ne 0 ]]; then echo " ${OtherColor}(error ${ReturnStatusColor}$EXIT${OtherColor})"; fi)
+
+##########################################
 
     local LTCornerCharacter=$(echo $'\u250C')
     local LBCornerCharacter=$(echo $'\u2514')
-    local DashCharacter=$(echo $'\u2500')
 
-    local RangerIndicatorLevel=$(if [[ ! -z $RANGER_LEVEL ]] && [[ $RANGER_LEVEL -gt 1 ]]; then echo -n "#$RANGER_LEVEL"; fi)
-    local RangerIndicator=$(if [[ ! -z $RANGER_LEVEL ]]; then echo "<${RangerColor}ranger$RangerIndicatorLevel$OtherColor> "; fi)
-    local VimIndicator=$(if [[ ! -z $VIM ]]; then echo "<${VimColor}vim$OtherColor> "; fi)
-    local LastCommandStatus=$(if [[ $EXIT -ne 0 ]]; then echo ": ${RS}code $ReturnStatusColor$EXIT$RS"; fi)
-    local PromptPrefix1=$LBCornerCharacter$DashCharacter
-    local PromptPrefix2=$DashCharacter
-    local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo \#; else echo \$; fi)
+    local PromptLine1Prefix="${OtherColor}${LTCornerCharacter}${DashCharacter}"
+    local PromptLine2Prefix="${OtherColor}${LBCornerCharacter}${DashCharacter}\[\e[3C\]${DashCharacter} "
 
-    PS1="$OtherColor\n$LTCornerCharacter$DashCharacter[$UsernameColor\u$OtherColor@$HostnameColor\h$OtherColor]\
-$DashCharacter[$PWDColor\w$OtherColor]$DashCharacter[$TimeColor\D{%T}${OtherColor}] $RangerIndicator$VimIndicator$LastCommandStatus\n\
-$OtherColor$PromptPrefix1\[\e[3C\]$PromptPrefix2 $PromptCharacter $RS"
+    local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo '#'; else echo '$'; fi)
 
-    PS2="$OtherColor$PromptPrefix1\[\e[3C\]$PromptPrefix2 > $RS"
+    PS1="$RS
+${PromptLine1Prefix}${BasicPromptInfo}${LastCommandExitCode} ${PromptIndicators}
+${PromptLine2Prefix}${PromptCharacter} $RS"
+
+    PS2="${PromptLine2Prefix} > $RS"
 }
 
 # Use bash-completion, if available
@@ -106,7 +137,7 @@ complete -F _todo todo
 function ranger ()
 {
     tempfile="$(mktemp -t tmp.XXXXXX)"
-    ranger.sh --choosedir="$tempfile" "${@:-$(pwd)}"
+    SHELL=$HOME/bin/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
     test -f "$tempfile" &&
         if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
             cd -- "$(cat "$tempfile")"
@@ -119,7 +150,7 @@ function ranger ()
 function sudo_ranger ()
 {
     tempfile="$(mktemp -t tmp.XXXXXX)"
-    sudo ranger.sh --choosedir="$tempfile" "${@:-$(pwd)}"
+    sudo SHELL=$HOME/bin/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
     test -f "$tempfile" &&
         if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
             cd -- "$(cat "$tempfile")"
