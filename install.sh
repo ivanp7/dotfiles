@@ -11,6 +11,7 @@ install_links() {
     ln -sf $CONF_DIR/.inputrc $HOME/
     ln -sf $CONF_DIR/.gitconfig $HOME/
     ln -sf $CONF_DIR/.gitignore_global $HOME/
+    ln -sf $CONF_DIR/.screenrc $HOME/
     
     mkdir -p $HOME/.ssh/
     chmod 700 $HOME/.ssh/
