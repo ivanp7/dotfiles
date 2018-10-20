@@ -74,6 +74,7 @@ __prompt_command()
 s/systemd//;
 s/---login//;
 s/---pstree//;
+s/---sh//g;
 s/---bash//g;
 s/^---//;
 s/sshd---sshd/... -> ssh/;
