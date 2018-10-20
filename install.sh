@@ -30,7 +30,7 @@ install_links() {
     ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
 
     mkdir -p $HOME/bin/
-    chmod +x $CONF_DIR/scripts/*
+    # chmod +x $CONF_DIR/scripts/*
     ln -sf $CONF_DIR/scripts/* $HOME/bin/
 }
 
