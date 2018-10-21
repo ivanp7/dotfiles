@@ -56,21 +56,22 @@ __prompt_command()
     local HostnameColor=$RS$HC$FBLE
     local UserHostInfo="[${UsernameColor}\u${OtherColor}@${HostnameColor}\h${OtherColor}]"
 
-    local PWDColor=$RS$HC$FYEL
+    local PWDColor=$RS$FCYN
     local PWDInfo="[${PWDColor}\w${OtherColor}]"
 
-    local TimeColor=$RS$FCYN
-    local TimeInfo="[${TimeColor}\D{%T}${OtherColor}]"
+    local ExitCodeColor=$RS$(if [[ $EXIT -eq 0 ]]; then echo $FWHT; else echo $FRED; fi)
+    local LastCommandExitCode="[${ExitCodeColor}$EXIT${OtherColor}]"
+    # local LastCommandExitCode=$(if [[ $EXIT -ne 0 ]]; then echo " ${OtherColor}(error ${ExitCodeColor}$EXIT${OtherColor})"; fi)
 
-    local ExitCodeColor=$RS$(if [[ $EXIT == 0 ]]; then echo $FGRN; else echo $HC$FRED; fi)
-    local ExitCodeInfo="<${ExitCodeColor}$EXIT${OtherColor}>"
+    local TimeColor=$RS$HC$FWHT
+    local TimeInfo="${TimeColor}\D{%T}${OtherColor}"
 
-    local BasicPromptInfo="${UserHostInfo}-${PWDInfo}-${TimeInfo}"
+    local BasicPromptInfo="${UserHostInfo}=${PWDInfo}--${LastCommandExitCode} ${TimeInfo}"
 
 ##########################################
 
-    local ProcessTreeColor=$RS
-    local PromptIndicators="${ProcessTreeColor}$(sed "
+    local ProcessTreeColor=$RS$FWHT
+    local ProcessTreeBranch="$(sed "
 s/systemd//;
 s/---login//;
 s/---pstree//;
@@ -81,11 +82,7 @@ s/sshd---sshd/... -> ssh/;
 s/screen---screen/screen/;
 s/---/ -> /g; 
 " <<< $(pstree -ls $$))"
-
-##########################################
-
-    local ReturnStatusColor=$RS$HC$FRED
-    local LastCommandExitCode=$(if [[ $EXIT -ne 0 ]]; then echo " ${OtherColor}(error ${ReturnStatusColor}$EXIT${OtherColor})"; fi)
+    local ProcessTreeIndicator="${ProcessTreeColor}(${ProcessTreeBranch})"
 
 ##########################################
 
@@ -98,7 +95,7 @@ s/---/ -> /g;
     local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo '#'; else echo '$'; fi)
 
     PS1="$RS
-${PromptLine1Prefix}${BasicPromptInfo}${LastCommandExitCode} ${PromptIndicators}
+${PromptLine1Prefix}${BasicPromptInfo} ${ProcessTreeIndicator}
 ${PromptLine2Prefix}${PromptCharacter} $RS"
 
     PS2="${PromptLine2Prefix} > $RS"
