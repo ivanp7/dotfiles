@@ -1,4 +1,5 @@
 future = 31
 calendar = ~/Org/calendar
 editor = vim
+ampm = 0
 
