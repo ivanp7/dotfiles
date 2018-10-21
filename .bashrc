@@ -60,13 +60,13 @@ __prompt_command()
     local PWDInfo="[${PWDColor}\w${OtherColor}]"
 
     local ExitCodeColor=$RS$(if [[ $EXIT -eq 0 ]]; then echo $FWHT; else echo $FRED; fi)
-    local LastCommandExitCode="[${ExitCodeColor}$EXIT${OtherColor}]"
-    # local LastCommandExitCode=$(if [[ $EXIT -ne 0 ]]; then echo " ${OtherColor}(error ${ExitCodeColor}$EXIT${OtherColor})"; fi)
+    # local LastCommandExitCode="[${ExitCodeColor}$EXIT${OtherColor}]"
+    local LastCommandExitCode=$(if [[ $EXIT -ne 0 ]]; then echo " [error ${ExitCodeColor}$EXIT${OtherColor}]"; fi)
 
     local TimeColor=$RS$HC$FWHT
     local TimeInfo="${TimeColor}\D{%T}${OtherColor}"
 
-    local BasicPromptInfo="${UserHostInfo}=${PWDInfo}--${LastCommandExitCode} ${TimeInfo}"
+    local BasicPromptInfo="${UserHostInfo}${DashCharacter}${PWDInfo} ${TimeInfo}${LastCommandExitCode}"
 
 ##########################################
 
@@ -82,7 +82,7 @@ s/sshd---sshd/... -> ssh/;
 s/screen---screen/screen/;
 s/---/ -> /g; 
 " <<< $(pstree -ls $$))"
-    local ProcessTreeIndicator="${ProcessTreeColor}(${ProcessTreeBranch})"
+    local ProcessTreeIndicator=$(if [[ ! -z $ProcessTreeBranch ]]; then echo "${ProcessTreeColor}(${ProcessTreeBranch})"; fi)
 
 ##########################################
 
