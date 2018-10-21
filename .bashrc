@@ -60,7 +60,6 @@ __prompt_command()
     local PWDInfo="[${PWDColor}\w${OtherColor}]"
 
     local ExitCodeColor=$RS$(if [[ $EXIT -eq 0 ]]; then echo $FWHT; else echo $FRED; fi)
-    # local LastCommandExitCode="[${ExitCodeColor}$EXIT${OtherColor}]"
     local LastCommandExitCode=$(if [[ $EXIT -ne 0 ]]; then echo " [error ${ExitCodeColor}$EXIT${OtherColor}]"; fi)
 
     local TimeColor=$RS$HC$FWHT
