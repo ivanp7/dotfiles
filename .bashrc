@@ -44,13 +44,21 @@ __prompt_command()
 {
     local EXIT="$?"             # This needs to be first
 
-##########################################
-
-    local DashCharacter=$(echo $'\u2500')
-
     local OtherColor=$RS$HC$FWHT
+    local DashCh=$(echo $'\u2500')
 
-##########################################
+    ### Prompt line 1 ###
+
+    local TimeColor=$RS$HC$FWHT
+    local TimeInfo="[${TimeColor}\D{%T}${OtherColor}]"
+
+    local ExitCodeColor=$RS$(if [[ $EXIT -ne 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
+    local LastCommandStatus="[${ExitCodeColor}$(if [[ $EXIT -ne 0 ]]; then echo "error $EXIT"; else echo "ok"; fi)${OtherColor}]"
+
+    local LTCornerCh=$(echo $'\u250C')
+    local PromptLine1="${OtherColor}${LTCornerCh}${DashCh}${TimeInfo}${DashCh}${LastCommandStatus}"
+
+    ### Prompt line 2 ###
 
     local UsernameColor=$RS$(if [[ $EUID == 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local HostnameColor=$RS$HC$FBLE
@@ -59,45 +67,46 @@ __prompt_command()
     local PWDColor=$RS$FCYN
     local PWDInfo="[${PWDColor}\w${OtherColor}]"
 
-    local ExitCodeColor=$RS$(if [[ $EXIT -eq 0 ]]; then echo $FWHT; else echo $FRED; fi)
-    local LastCommandExitCode=$(if [[ $EXIT -ne 0 ]]; then echo " [error ${ExitCodeColor}$EXIT${OtherColor}]"; fi)
+    local BasicPromptInfo="${UserHostInfo}${DashCh}${PWDInfo}"
 
-    local TimeColor=$RS$HC$FWHT
-    local TimeInfo="${TimeColor}\D{%T}${OtherColor}"
 
-    local BasicPromptInfo="${UserHostInfo}${DashCharacter}${PWDInfo} ${TimeInfo}${LastCommandExitCode}"
-
-##########################################
-
-    local ProcessTreeColor=$RS$FWHT
-    local ProcessTreeBranch="$(sed "
+    local RightArrowCh=$(echo $'\u2192')
+    local ProcessSeqStr="$(sed "
 s/systemd//;
 s/---login//;
 s/---pstree//;
 s/---sh//g;
 s/---bash//g;
 s/^---//;
-s/sshd---sshd/... -> ssh/;
+s/sshd---sshd/... ${RightArrowCh} ssh/;
 s/screen---screen/screen/;
-s/---/ -> /g; 
+s/---/ ${RightArrowCh} /g; 
 " <<< $(pstree -ls $$))"
-    local ProcessTreeIndicator=$(if [[ ! -z $ProcessTreeBranch ]]; then echo "${ProcessTreeColor}(${ProcessTreeBranch})"; fi)
 
-##########################################
+    local ProcessSeqNameColor=$RS$HC$FWHT
+    local ProcessSeqArrowColor=$RS$HC$FYEL
+    local ProcessSeqParensColor=$RS$HC$FYEL
+    local ProcessSeqIndicator=$(if [[ ! -z $ProcessSeqStr ]]
+        then echo "${ProcessSeqParensColor}((${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
+${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor}))"; fi)
 
-    local LTCornerCharacter=$(echo $'\u250C')
-    local LBCornerCharacter=$(echo $'\u2514')
+    local LMiddleCh=$(echo $'\u251C')
+    local PromptLine2="${OtherColor}${LMiddleCh}${DashCh}${BasicPromptInfo} ${ProcessSeqIndicator}"
 
-    local PromptLine1Prefix="${OtherColor}${LTCornerCharacter}${DashCharacter}"
-    local PromptLine2Prefix="${OtherColor}${LBCornerCharacter}${DashCharacter}\[\e[3C\]${DashCharacter} "
+    ### Prompt line 3 ###
 
     local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo '#'; else echo '$'; fi)
 
-    PS1="$RS
-${PromptLine1Prefix}${BasicPromptInfo} ${ProcessTreeIndicator}
-${PromptLine2Prefix}${PromptCharacter} $RS"
+    local LBCornerCh=$(echo $'\u2514')
+    local InputModeGap="\[\e[3C\]"
+    local PromptLine3="${OtherColor}${LBCornerCh}${DashCh}${InputModeGap}${DashCh}"
 
-    PS2="${PromptLine2Prefix} > $RS"
+    PS1="$RS
+${PromptLine1}
+${PromptLine2}
+${PromptLine3} ${PromptCharacter} $RS"
+
+    PS2="${PromptLine3} > $RS"
 }
 
 # Use bash-completion, if available
