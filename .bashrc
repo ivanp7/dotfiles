@@ -87,8 +87,8 @@ s/---/ ${RightArrowCh} /g;
     local ProcessSeqArrowColor=$RS$HC$FYEL
     local ProcessSeqParensColor=$RS$HC$FYEL
     local ProcessSeqIndicator=$(if [[ ! -z $ProcessSeqStr ]]
-        then echo "${ProcessSeqParensColor}[${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
-${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor}]"; fi)
+        then echo "${ProcessSeqParensColor}[ ${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
+${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"; fi)
 
     local LMiddleCh=$(echo $'\u251C')
     local PromptLine2="${OtherColor}${LMiddleCh}${DashCh}${BasicPromptInfo} ${ProcessSeqIndicator}"
