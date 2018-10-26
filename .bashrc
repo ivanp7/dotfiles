@@ -90,8 +90,9 @@ s/---/ ${RightArrowCh} /g;
         then echo "${ProcessSeqParensColor}[ ${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
 ${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"; fi)
 
-    local LMiddleCh=$(echo $'\u251C')
-    local PromptLine2="${OtherColor}${LMiddleCh}${DashCh}${BasicPromptInfo} ${ProcessSeqIndicator}"
+    local LMiddleCh=$(echo $'\u255E')
+    local DoubleDashCh=$(echo $'\u2550')
+    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${BasicPromptInfo} ${ProcessSeqIndicator}"
 
     ### Prompt line 3 ###
 
