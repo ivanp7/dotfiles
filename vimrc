@@ -166,24 +166,9 @@ call NERDTreeHighlightFile('lsp', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('sexp', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
 
-" Taglist.vim *************************
-
-" set Tlist_Inc_Winwidth=0
-" map <C-i> :TlistToggle<CR>
-
 " Tagbar ******************************
 
 nmap <F8> :TagbarToggle<CR>
-
-" ####################################################################################
-" Filetypes support
-
-" Vim-orgmode
-
-let g:org_heading_shade_leading_stars = 1
-" let g:org_indent = 1
-
-let g:org_todo_keywords = ['TODO', 'DELAYED', 'INPROGRESS', '|', 'CANCELED', 'DONE']
 
 " ####################################################################################
 " Fixes for things
