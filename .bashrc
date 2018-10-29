@@ -55,8 +55,29 @@ __prompt_command()
     local ExitCodeColor=$RS$(if [[ $EXIT -ne 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local LastCommandStatus="[${ExitCodeColor}$(if [[ $EXIT -ne 0 ]]; then echo "error $EXIT"; else echo "ok"; fi)${OtherColor}]"
 
+    local RightArrowCh=$(echo $'\u2192')
+    local ProcessSeqStr="$(sed "
+s/systemd//;
+s/---login//;
+s/---pstree//;
+s/---sh//g;
+s/---bash//g;
+s/^---//;
+s/sshd---sshd/...---ssh/;
+s/tmux: server/tmux/;
+s/screen---screen/screen/;
+s/---/ ${RightArrowCh} /g; 
+" <<< $(pstree -ls $$))"
+
+    local ProcessSeqNameColor=$RS$HC$FWHT
+    local ProcessSeqArrowColor=$RS$HC$FYEL
+    local ProcessSeqParensColor=$RS$HC$FYEL
+    local ProcessSeqIndicator=$(if [[ ! -z $ProcessSeqStr ]]
+        then echo "${ProcessSeqParensColor}[ ${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
+${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"; fi)
+
     local LTCornerCh=$(echo $'\u250C')
-    local PromptLine1="${OtherColor}${LTCornerCh}${DashCh}${TimeInfo}${DashCh}${LastCommandStatus}"
+    local PromptLine1="${OtherColor}${LTCornerCh}${DashCh}${TimeInfo}${DashCh}${LastCommandStatus} ${ProcessSeqIndicator}"
 
     ### Prompt line 2 ###
 
@@ -69,30 +90,9 @@ __prompt_command()
 
     local BasicPromptInfo="${UserHostInfo}${DashCh}${PWDInfo}"
 
-
-    local RightArrowCh=$(echo $'\u2192')
-    local ProcessSeqStr="$(sed "
-s/systemd//;
-s/---login//;
-s/---pstree//;
-s/---sh//g;
-s/---bash//g;
-s/^---//;
-s/sshd---sshd/... ${RightArrowCh} ssh/;
-s/screen---screen/screen/;
-s/---/ ${RightArrowCh} /g; 
-" <<< $(pstree -ls $$))"
-
-    local ProcessSeqNameColor=$RS$HC$FWHT
-    local ProcessSeqArrowColor=$RS$HC$FYEL
-    local ProcessSeqParensColor=$RS$HC$FYEL
-    local ProcessSeqIndicator=$(if [[ ! -z $ProcessSeqStr ]]
-        then echo "${ProcessSeqParensColor}[ ${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
-${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"; fi)
-
     local LMiddleCh=$(echo $'\u255E')
     local DoubleDashCh=$(echo $'\u2550')
-    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${BasicPromptInfo} ${ProcessSeqIndicator}"
+    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${BasicPromptInfo}"
 
     ### Prompt line 3 ###
 

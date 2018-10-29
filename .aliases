@@ -27,3 +27,5 @@ alias srr=sudo_ranger
 
 alias todo='todo.sh -c'
 
+alias fbpad='TERM=fbpad-256 fbpad'
+

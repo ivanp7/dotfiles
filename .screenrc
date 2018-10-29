@@ -7,7 +7,26 @@ vbell off
 # Set scrollback buffer to 10000
 defscrollback 10000
 
+# Force UTF-8
+defutf8 on
+
 # Customize the status line
 hardstatus alwayslastline
 hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+
+# When splitting windows, set the inactive splits' captions background to grey.
+# (Replace the 'K' with another color or Remove the '%:' if you want to reverse the logic.)
+caption string '%?%F%:%{.K.}%?%3n %t%?%?'
+
+# Enable 256-color mode when screen is started with TERM=xterm-256color
+# Taken from: http://frexx.de/xterm-256-notes/
+#
+# Note that TERM != "xterm-256color" within a screen window. Rather it is
+# "screen" or "screen-bce"
+#
+# terminfo and termcap for nice 256 color terminal
+# allow bold colors - necessary for some reason
+attrcolor b ".I"
+# tell screen how to set colors. AB = background, AF=foreground
+termcapinfo xterm-256color 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
 
