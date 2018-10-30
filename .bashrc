@@ -63,7 +63,7 @@ s/---pstree//;
 s/---sh//g;
 s/---bash//g;
 s/^---//;
-s/sshd---sshd/...---ssh/;
+s/sshd---sshd/ssh/;
 s/tmux: server/tmux/;
 s/screen---screen/screen/;
 s/---/ ${RightArrowCh} /g; 
