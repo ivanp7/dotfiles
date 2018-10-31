@@ -37,6 +37,9 @@ BMAG="\[\033[45m\]" # background magenta
 BCYN="\[\033[46m\]" # background cyan
 BWHT="\[\033[47m\]" # background white
 
+# source git-prompt.sh
+. /usr/share/git/completion/git-prompt.sh
+
 # prompt
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
@@ -45,6 +48,7 @@ __prompt_command()
     local EXIT="$?"             # This needs to be first
 
     local OtherColor=$RS$HC$FWHT
+
     local DashCh=$(echo $'\u2500')
 
     ### Prompt line 1 ###
@@ -72,7 +76,7 @@ s/---/ ${RightArrowCh} /g;
     local ProcessSeqNameColor=$RS$HC$FWHT
     local ProcessSeqArrowColor=$RS$HC$FYEL
     local ProcessSeqParensColor=$RS$HC$FYEL
-    local ProcessSeqIndicator=$(if [[ ! -z $ProcessSeqStr ]]
+    local ProcessSeqIndicator=$(if [[ -n $ProcessSeqStr ]]
         then echo "${ProcessSeqParensColor}[ ${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
 ${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"; fi)
 
@@ -90,9 +94,13 @@ ${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensC
 
     local BasicPromptInfo="${UserHostInfo}${DashCh}${PWDInfo}"
 
+    local GitBranchColor=$RS$HC$FMAG
+    local GitBranch="$(__git_ps1 '%s')"
+    local GitRepoInfo=$(if [[ -n "${GitBranch}" ]]; then echo "${DashCh}[${GitBranchColor}${GitBranch}${OtherColor}]"; fi)
+
     local LMiddleCh=$(echo $'\u255E')
     local DoubleDashCh=$(echo $'\u2550')
-    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${BasicPromptInfo}"
+    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${BasicPromptInfo}${GitRepoInfo}"
 
     ### Prompt line 3 ###
 
@@ -172,9 +180,9 @@ function sudo_ranger ()
 { type xhost >& /dev/null && xhost >& /dev/null &&
     [ -f ${HOME}/.xaliases ] && . ${HOME}/.xaliases; } || true
 
-# run tmux
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
+# run tmux in nonlogin shell
+if ! shopt -q login_shell && command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
 then
-    tmux attach || exec tmux new-session && exit
+    tmux attach || exec tmux new-session -s default -n terminal "echo; neofetch; bash" && exit
 fi
 
