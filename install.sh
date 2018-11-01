@@ -13,7 +13,13 @@ install_links() {
     ln -sf $CONF_DIR/.gitignore_global $HOME/
     ln -sf $CONF_DIR/.screenrc $HOME/
     ln -sf $CONF_DIR/.tmux.conf $HOME/
+
+    ln -sf $CONF_DIR/r.shell $HOME/
+    ln -sf $CONF_DIR/tmux.sh $HOME/
     
+    mkdir -p $HOME/bin/
+    ln -sf $CONF_DIR/scripts/* $HOME/bin/
+
     mkdir -p $HOME/.ssh/
     chmod 700 $HOME/.ssh/
     cp $CONF_DIR/.ssh/config $HOME/.ssh/
@@ -30,10 +36,6 @@ install_links() {
     mkdir -p $HOME/.config/
     ln -sf $CONF_DIR/.config/ranger $HOME/.config/
     ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
-
-    mkdir -p $HOME/bin/
-    # chmod +x $CONF_DIR/scripts/*
-    ln -sf $CONF_DIR/scripts/* $HOME/bin/
 }
 
 # Make links in our home directory

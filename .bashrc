@@ -152,7 +152,7 @@ complete -F _todo todo
 function ranger ()
 {
     tempfile="$(mktemp -t tmp.XXXXXX)"
-    SHELL=$HOME/bin/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
+    SHELL=$HOME/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
     test -f "$tempfile" &&
         if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
             cd -- "$(cat "$tempfile")"
@@ -165,7 +165,7 @@ function ranger ()
 function sudo_ranger ()
 {
     tempfile="$(mktemp -t tmp.XXXXXX)"
-    sudo SHELL=$HOME/bin/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
+    sudo SHELL=$HOME/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
     test -f "$tempfile" &&
         if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
             cd -- "$(cat "$tempfile")"
@@ -181,5 +181,5 @@ function sudo_ranger ()
     [ -f ${HOME}/.xaliases ] && . ${HOME}/.xaliases; } || true
 
 # run tmux
-tmux.sh
+. $HOME/tmux.sh
 
