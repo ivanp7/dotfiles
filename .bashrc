@@ -180,6 +180,6 @@ function sudo_ranger ()
 { type xhost >& /dev/null && xhost >& /dev/null &&
     [ -f ${HOME}/.xaliases ] && . ${HOME}/.xaliases; } || true
 
-# run tmux
-. $HOME/tmux.sh
+# run tmux in nonlogin shell
+shopt -q login_shell || . $HOME/tmux.sh
 
