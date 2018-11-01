@@ -34,6 +34,8 @@ set hlsearch
 
 set mouse       =a
 
+set autoread
+
 "set clipboard^=unnamedplus
 
 set list                   " Show non-printable characters.
@@ -55,16 +57,6 @@ set t_Co=256
 
 " No error sound&visual bells
 set belloff=all
-
-" Save cursor position in files
-" augroup resCur
-"   autocmd!
-"   autocmd BufReadPost * call setpos(".", getpos("'\""))
-" augroup END
-
-" Enable calculator functionality (:Calc)
-" :command! -nargs=+ Calc :py print <args>
-" :py from math import *
 
 " Put all temporary files under the same directory.
 " https://github.com/mhinz/vim-galore#handling-backup-swap-undo-and-viminfo-files
@@ -107,10 +99,9 @@ Plug 'qpkorr/vim-bufkill'
 
 " Fixes for things
 Plug 'godlygeek/csapprox'
-" Plug 'vim-utils/vim-alt-mappings'
-" Plug 'drmikehenry/vim-fixkey'
 Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'tpope/vim-capslock'
+" Plug 'tmux-plugins/vim-tmux-focus-events'
 
 " Color theme and highlighting
 Plug 'guns/xterm-color-table.vim'
@@ -122,6 +113,9 @@ Plug 'raymond-w-ko/vim-niji'
 
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
+
+" Tmux conf
+Plug 'tmux-plugins/vim-tmux'
 
 " S-expressions and Lisp
 Plug 'guns/vim-sexp'
@@ -335,18 +329,6 @@ nnoremap <silent> gB :call SwitchToNextBuffer(-1)<CR>
 
 let mapleader=","
 let maplocalleader="\\"
-
-" Search for selected text, forwards or backwards.
-" vnoremap <silent> * :<C-U>
-"             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-"             \gvy/<C-R><C-R>=substitute(
-"             \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-"             \gV:call setreg('"', old_reg, old_regtype)<CR>
-" vnoremap <silent> # :<C-U>
-"             \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-"             \gvy?<C-R><C-R>=substitute(
-"             \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-"             \gV:call setreg('"', old_reg, old_regtype)<CR>
 
 command CCI let @" = @+
 command CCO let @+ = @" | let @* = @"
