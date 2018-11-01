@@ -28,10 +28,13 @@ install_links() {
 
     mkdir -p $HOME/.when/
     ln -sf $CONF_DIR/.when/preferences $HOME/.when/
+    ln -sf $CONF_DIR/.when/update_calendar.sh $HOME/.when/
     mkdir -p $HOME/.todo/
     ln -sf $CONF_DIR/.todo/config $HOME/.todo/
+    ln -sf $CONF_DIR/.todo/update_todo.sh $HOME/.todo/
     mkdir -p $HOME/Org/
     touch $HOME/Org/calendar
+    (crontab -l 2>/dev/null; echo "00 00 * * * /usr/bin/echo -n '' >> $HOME/Org/calendar") | crontab -
     
     mkdir -p $HOME/.config/
     ln -sf $CONF_DIR/.config/ranger $HOME/.config/
