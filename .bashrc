@@ -181,8 +181,8 @@ function sudo_ranger ()
     [ -f ${HOME}/.xaliases ] && . ${HOME}/.xaliases; } || true
 
 # run tmux in nonlogin shell
-if ! shopt -q login_shell && command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
+if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
 then
-    tmux attach || exec tmux new-session -s default -n terminal "echo; neofetch; bash" && exit
+    tmux attach || exec tmux new-session -s default -n terminal "echo; neofetch; bash" && shopt -q login_shell || exit
 fi
 
