@@ -106,9 +106,10 @@ Plug 'tpope/vim-capslock'
 " Color theme and highlighting
 Plug 'guns/xterm-color-table.vim'
 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
 Plug 'smancill/darkglass'
+Plug 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 Plug 'raymond-w-ko/vim-niji'
 
 Plug 'inkarkat/vim-ingo-library'
@@ -198,14 +199,14 @@ let g:CSApprox_hook_post = [
 
 " Vim-airline *************************
 
-let g:airline_powerline_fonts = 1
+" let g:airline_powerline_fonts = 1
 
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-let g:airline#extensions#whitespace#enabled = 1
-let g:airline#extensions#keymap#enabled = 0
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+" let g:airline#extensions#whitespace#enabled = 1
+" let g:airline#extensions#keymap#enabled = 0
 
-let g:airline_theme='term'
+" let g:airline_theme='term'
 
 " Vim color scheme ********************
 
