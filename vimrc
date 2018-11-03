@@ -89,6 +89,7 @@ Plug 'tpope/vim-repeat'
 Plug 'farmergreg/vim-lastplace'
 
 Plug 'tpope/vim-surround'
+Plug 'kana/vim-fakeclip'
 Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-commentary'
 
