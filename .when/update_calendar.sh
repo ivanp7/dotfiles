@@ -1,13 +1,17 @@
 #!/bin/bash
 
-echo
-when ci
+display()
+{
+    echo
+    when ci
+}
+
+display
 while true
 do
     inotifywait -qq -e delete_self -e close_write $HOME/Org/calendar
-    sleep 0.1
+    sleep 0.3
     clear
-    echo
-    when ci
+    display
 done
 

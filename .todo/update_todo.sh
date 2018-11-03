@@ -1,13 +1,17 @@
 #!/bin/bash
 
-echo
-todo.sh list
+display()
+{
+    echo
+    todo.sh list
+}
+
+display
 while true
 do
     inotifywait -qq -e move_self -e close_write $HOME/Org/todo/todo.txt
-    sleep 0.1
+    sleep 0.3
     clear
-    echo
-    todo.sh list
+    display
 done
 
