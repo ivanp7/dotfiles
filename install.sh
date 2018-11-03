@@ -12,6 +12,7 @@ install_links() {
     ln -sf $CONF_DIR/.gitconfig $HOME/
     ln -sf $CONF_DIR/.gitignore_global $HOME/
     ln -sf $CONF_DIR/.screenrc $HOME/
+    ln -sf $CONF_DIR/.screenrc_nointerface $HOME/
     ln -sf $CONF_DIR/.tmux.conf $HOME/
 
     ln -sf $CONF_DIR/r.shell $HOME/
