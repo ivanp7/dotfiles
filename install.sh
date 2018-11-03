@@ -15,6 +15,9 @@ install_links() {
     ln -sf $CONF_DIR/.screenrc_nointerface $HOME/
     ln -sf $CONF_DIR/.tmux.conf $HOME/
 
+    mkdir -p $HOME/wallpapers/
+    ln -sf $CONF_DIR/wallpapers/yaft.wallpaper $HOME/wallpapers/
+
     ln -sf $CONF_DIR/r.shell $HOME/
     ln -sf $CONF_DIR/tmux.sh $HOME/
     
