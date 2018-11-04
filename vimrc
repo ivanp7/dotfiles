@@ -87,6 +87,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-repeat'
 Plug 'farmergreg/vim-lastplace'
+Plug 'tpope/vim-obsession'
 
 Plug 'tpope/vim-surround'
 Plug 'kana/vim-fakeclip'
