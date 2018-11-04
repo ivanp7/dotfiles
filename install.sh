@@ -15,6 +15,12 @@ install_links() {
     ln -sf $CONF_DIR/.screenrc_nointerface $HOME/
     ln -sf $CONF_DIR/.tmux.conf $HOME/
 
+    if [ ! -d $CONF_DIR/.tmux/plugins/tpm ]
+    then git clone https://github.com/tmux-plugins/tpm $CONF_DIR/.tmux/plugins/tpm
+    fi
+    mkdir -p $HOME/.tmux/
+    ln -sf $CONF_DIR/.tmux/plugins/ $HOME/.tmux/
+
     mkdir -p $HOME/wallpapers/
     ln -sf $CONF_DIR/wallpapers/yaft.wallpaper $HOME/wallpapers/
 
