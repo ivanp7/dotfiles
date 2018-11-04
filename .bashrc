@@ -181,5 +181,5 @@ function sudo_ranger ()
     [ -f ${HOME}/.xaliases ] && . ${HOME}/.xaliases; } || true
 
 # run tmux in nonlogin shell
-shopt -q login_shell || . $HOME/tmux.sh
+# shopt -q login_shell || . $HOME/tmux.sh
 
