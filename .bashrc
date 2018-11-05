@@ -131,7 +131,7 @@ stty -ixon
 # variables
 if [[ ! -v PATH_SET ]]
 then
-    export PATH="${PATH}:${HOME}/scripts:${HOME}/bin"
+    export PATH="${PATH}:${HOME}/bin/scripts:${HOME}/bin"
     export PATH_SET=true
 fi
 
@@ -150,30 +150,27 @@ export EDITOR='/usr/bin/vim'
 complete -F _todo todo
 
 # functions
+function __rngr_test ()
+{
+    test -f "$1" &&
+        if [ "$(cat -- "$1")" != "$(echo -n `pwd`)" ]; then
+            cd -- "$(cat "$1")"
+        fi
+        rm -f -- "$1"
+}
+
 function ranger ()
 {
     tempfile="$(mktemp -t tmp.XXXXXX)"
     SHELL=$HOME/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
-    test -f "$tempfile" &&
-        if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
-            cd -- "$(cat "$tempfile")"
-        fi
-        rm -f -- "$tempfile"
-
-    # if [ -z "$RANGER_LEVEL" ]; then ranger.sh "$@"; else exit; fi
+    __rngr_test "$tempfile"
 }
 
 function sudo_ranger ()
 {
     tempfile="$(mktemp -t tmp.XXXXXX)"
     sudo SHELL=$HOME/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
-    test -f "$tempfile" &&
-        if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
-            cd -- "$(cat "$tempfile")"
-        fi
-        rm -f -- "$tempfile"
-
-    # if [ -z "$RANGER_LEVEL" ] || [ $EUID -ne 0 ]; then sudo ranger.sh "$@"; else exit; fi
+    __rngr_test "$tempfile"
 }
 
 # aliases

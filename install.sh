@@ -28,7 +28,7 @@ install_links() {
     ln -sf $CONF_DIR/tmux.sh $HOME/
     
     mkdir -p $HOME/bin/
-    ln -sf $CONF_DIR/scripts/* $HOME/bin/
+    ln -sf $CONF_DIR/bin/* $HOME/bin/
 
     mkdir -p $HOME/.ssh/
     chmod 700 $HOME/.ssh/
@@ -44,16 +44,28 @@ install_links() {
     ln -sf $CONF_DIR/.todo/update_todo.sh $HOME/.todo/
     mkdir -p $HOME/Org/
     touch $HOME/Org/calendar
-    (crontab -l 2>/dev/null; echo "00 00 * * * /usr/bin/echo -n '' >> $HOME/Org/calendar") | crontab -
+    (crontab -l 2> /dev/null; echo "00 00 * * * /usr/bin/echo -n '' >> $HOME/Org/calendar") | crontab -
     
     mkdir -p $HOME/.config/
     ln -sf $CONF_DIR/.config/ranger $HOME/.config/
     ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
 
-    mkdir -p $HOME/.config/systemd/user/
-    ln -sf $CONF_DIR/.config/systemd/user/* $HOME/.config/systemd/user/
-    systemctl --user enable tmux-refresh-yaft-clients.service
-    systemctl --user start tmux-refresh-yaft-clients.service
+    mkdir -p $HOME/scripts/services/
+    ln -sf $CONF_DIR/scripts/services/* $HOME/scripts/services/
+
+    if [[ $EUID -ne 0 ]]
+    then
+        mkdir -p $HOME/.config/systemd/user/
+        ln -sf $CONF_DIR/.config/systemd/user/* $HOME/.config/systemd/user/
+
+        systemctl --user enable tmux-refresh-yaft-clients.service
+        systemctl --user start tmux-refresh-yaft-clients.service
+    else
+        ln -sf $CONF_DIR/.config/systemd/user/* /etc/systemd/system/
+        
+        systemctl enable tmux-refresh-yaft-clients.service
+        systemctl start tmux-refresh-yaft-clients.service
+    fi
 }
 
 # Make links in our home directory
