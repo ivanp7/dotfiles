@@ -49,6 +49,10 @@ install_links() {
     mkdir -p $HOME/.config/
     ln -sf $CONF_DIR/.config/ranger $HOME/.config/
     ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
+
+    ln -sf $CONF_DIR/.config/systemd $HOME/.config/
+    systemctl --user enable tmux-refresh-yaft-clients.service
+    systemctl --user start tmux-refresh-yaft-clients.service
 }
 
 # Make links in our home directory

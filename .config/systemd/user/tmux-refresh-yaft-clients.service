@@ -1,0 +1,10 @@
+[Unit]
+Description=Tmux yaft clients auto-refresh daemon
+
+[Service]
+ExecStart=/usr/bin/bash ~/.config/systemd/user/tmux-refresh-yaft-clients.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
