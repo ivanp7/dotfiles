@@ -2,7 +2,7 @@
 Description=Tmux yaft clients auto-refresh daemon
 
 [Service]
-ExecStart=/usr/bin/bash ~/.config/systemd/user/tmux-refresh-yaft-clients.sh
+ExecStart=/usr/bin/bash %h/.config/systemd/user/tmux-refresh-yaft-clients.sh
 Restart=on-failure
 
 [Install]
