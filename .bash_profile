@@ -13,5 +13,6 @@ neofetch
 echo
 echo
 
+powerline-daemon -q
 eval $(ssh-agent) > /dev/null
 
