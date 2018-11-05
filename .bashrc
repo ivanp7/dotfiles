@@ -70,6 +70,7 @@ s/^---//;
 s/sshd---sshd/ssh/;
 s/tmux: server/tmux/;
 s/screen---screen/screen/;
+s/y-desktop.sh---screen---yaft/yaft/;
 s/---/ ${RightArrowCh} /g; 
 " <<< $(pstree -ls $$))"
 

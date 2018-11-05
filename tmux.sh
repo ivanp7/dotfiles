@@ -7,6 +7,7 @@ then
         tmux split-window -v -t default "sh $HOME/.todo/update_todo.sh";
         tmux select-pane -L
         shopt -q login_shell && tmux attach -t default || exec tmux attach -t default;
-    } && shopt -q login_shell || exit
+    }
+    # } && shopt -q login_shell || exit
 fi
 
