@@ -1,0 +1,12 @@
+[Unit]
+Description=Tmux clients auto-refresh daemon
+
+[Service]
+ExecStart=/usr/bin/bash %h/scripts/services/tmux-refresh-clients.sh
+Restart=on-failure
+Wants=init-tmux-refresh-clients.service
+After=init-tmux-refresh-clients.service
+
+[Install]
+WantedBy=default.target
+

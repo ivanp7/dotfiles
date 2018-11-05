@@ -1,80 +1,84 @@
 #!/bin/bash
 
 cd `dirname $0`
-CONF_DIR=$(pwd)
+CONF_DIR=$PWD
 
-install_links() {
-    ln -sf $CONF_DIR/.aliases $HOME/
-    ln -sf $CONF_DIR/.bash_logout $HOME/
-    ln -sf $CONF_DIR/.bash_profile $HOME/
-    ln -sf $CONF_DIR/.bashrc $HOME/
-    ln -sf $CONF_DIR/.inputrc $HOME/
-    ln -sf $CONF_DIR/.gitconfig $HOME/
-    ln -sf $CONF_DIR/.gitignore_global $HOME/
-    ln -sf $CONF_DIR/.screenrc $HOME/
-    ln -sf $CONF_DIR/.screenrc_nointerface $HOME/
-    ln -sf $CONF_DIR/.tmux.conf $HOME/
+install_tree()
+{
+    cd $CONF_DIR/tree
 
-    if [ ! -d $CONF_DIR/.tmux/plugins/tpm ]
-    then git clone https://github.com/tmux-plugins/tpm $CONF_DIR/.tmux/plugins/tpm
-    fi
-    mkdir -p $HOME/.tmux/
-    ln -sf $CONF_DIR/.tmux/plugins/ $HOME/.tmux/
+    for f in $(find . -type f)
+    do
+        mkdir -p $HOME/$(dirname $f)
+        ln -sf $(realpath $f) $HOME/$f
+    done
 
-    mkdir -p $HOME/wallpapers/
-    ln -sf $CONF_DIR/wallpapers/yaft.wallpaper $HOME/wallpapers/
-
-    ln -sf $CONF_DIR/r.shell $HOME/
-    ln -sf $CONF_DIR/tmux.sh $HOME/
-    
-    mkdir -p $HOME/bin/
-    ln -sf $CONF_DIR/bin/* $HOME/bin/
-
-    mkdir -p $HOME/.ssh/
-    chmod 700 $HOME/.ssh/
-    cp $CONF_DIR/.ssh/config $HOME/.ssh/
-    chmod 644 $HOME/.ssh/config
-    # ln -sf $CONF_DIR/.ssh/config $HOME/.ssh/
-
-    mkdir -p $HOME/.when/
-    ln -sf $CONF_DIR/.when/preferences $HOME/.when/
-    ln -sf $CONF_DIR/.when/update_calendar.sh $HOME/.when/
-    mkdir -p $HOME/.todo/
-    ln -sf $CONF_DIR/.todo/config $HOME/.todo/
-    ln -sf $CONF_DIR/.todo/update_todo.sh $HOME/.todo/
-    mkdir -p $HOME/Org/
-    touch $HOME/Org/calendar
-    (crontab -l 2> /dev/null; echo "00 00 * * * /usr/bin/echo -n '' >> $HOME/Org/calendar") | crontab -
-    
-    mkdir -p $HOME/.config/
-    ln -sf $CONF_DIR/.config/ranger $HOME/.config/
-    ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
-
-    mkdir -p $HOME/scripts/services/
-    # ln -sf $CONF_DIR/scripts/services/* $HOME/scripts/services/
-
-    # if [[ $EUID -ne 0 ]]
-    # then
-    #     mkdir -p $HOME/.config/systemd/user/
-    #     ln -sf $CONF_DIR/.config/systemd/user/* $HOME/.config/systemd/user/
-
-    #     systemctl --user enable tmux-refresh-yaft-clients.service
-    #     systemctl --user start tmux-refresh-yaft-clients.service
-    # else
-    #     ln -sf $CONF_DIR/.config/systemd/user/* /etc/systemd/system/
-        
-    #     systemctl enable tmux-refresh-yaft-clients.service
-    #     systemctl start tmux-refresh-yaft-clients.service
-    # fi
+    cd $CONF_DIR
 }
 
-# Make links in our home directory
-echo Creating symbolic links in the home directory
-install_links
+install_special_org()
+{
+    mkdir -p $HOME/Org/todo
+    touch $HOME/Org/calendar
+    touch $HOME/Org/todo/todo.txt
 
-# Make links in root home directory
-# echo Now creating symbolic links in the /root directory
-# read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n'
-# INSTALL_LINKS_FUNC=$(declare -f install_links)
-# sudo bash -c "CONF_DIR=$CONF_DIR;$INSTALL_LINKS_FUNC; install_links"
+    local DOTFILES_CALENDAR_JOB="00 00 * * * /usr/bin/echo -n '' >> $HOME/Org/calendar"
+    if ! crontab -l | fgrep "$DOTFILES_CALENDAR_JOB" &> /dev/null
+    then (crontab -l 2> /dev/null; echo "$DOTFILES_CALENDAR_JOB") | crontab -; fi
+}
+
+install_special_git()
+{
+    cp -f $CONF_DIR/special/git/.gitconfig $HOME/
+    chmod 644 $HOME/.gitconfig
+    sed -i "s/USERNAME/$(whoami)/g" $HOME/.gitconfig
+}
+
+install_special_ssh()
+{
+    mkdir -p $HOME/.ssh/
+    chmod 700 $HOME/.ssh/
+    cp -f $CONF_DIR/special/ssh/config $HOME/.ssh/
+    chmod 644 $HOME/.ssh/config
+}
+
+install_special_tmux()
+{
+    if [ ! -d $CONF_DIR/special/tmux/plugins/tpm ]
+    then git clone https://github.com/tmux-plugins/tpm $CONF_DIR/special/tmux/plugins/tpm
+    fi
+
+    mkdir -p $HOME/.tmux/
+    ln -sf $CONF_DIR/special/tmux/plugins $HOME/.tmux/
+}
+
+install_special_systemd()
+{
+    if [[ $EUID -ne 0 ]]
+    then
+        mkdir -p $HOME/.config/systemd/user/
+        ln -sf $CONF_DIR/special/systemd/* $HOME/.config/systemd/user/
+
+        for serv in $(find $CONF_DIR/special/systemd/ -type f)
+        do
+            systemctl --user enable $(basename $serv)
+        done
+    else
+        ln -sf $CONF_DIR/special/systemd/* /etc/systemd/system/
+
+        for serv in $(find $CONF_DIR/special/systemd/ -type f)
+        do
+            systemctl enable $(basename $serv)
+        done
+    fi
+}
+
+echo Installing configuration...
+install_tree
+install_special_org
+install_special_git
+install_special_ssh
+install_special_tmux
+install_special_systemd
+echo Done!
 
