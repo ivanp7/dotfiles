@@ -51,21 +51,21 @@ install_links() {
     ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
 
     mkdir -p $HOME/scripts/services/
-    ln -sf $CONF_DIR/scripts/services/* $HOME/scripts/services/
+    # ln -sf $CONF_DIR/scripts/services/* $HOME/scripts/services/
 
-    if [[ $EUID -ne 0 ]]
-    then
-        mkdir -p $HOME/.config/systemd/user/
-        ln -sf $CONF_DIR/.config/systemd/user/* $HOME/.config/systemd/user/
+    # if [[ $EUID -ne 0 ]]
+    # then
+    #     mkdir -p $HOME/.config/systemd/user/
+    #     ln -sf $CONF_DIR/.config/systemd/user/* $HOME/.config/systemd/user/
 
-        systemctl --user enable tmux-refresh-yaft-clients.service
-        systemctl --user start tmux-refresh-yaft-clients.service
-    else
-        ln -sf $CONF_DIR/.config/systemd/user/* /etc/systemd/system/
+    #     systemctl --user enable tmux-refresh-yaft-clients.service
+    #     systemctl --user start tmux-refresh-yaft-clients.service
+    # else
+    #     ln -sf $CONF_DIR/.config/systemd/user/* /etc/systemd/system/
         
-        systemctl enable tmux-refresh-yaft-clients.service
-        systemctl start tmux-refresh-yaft-clients.service
-    fi
+    #     systemctl enable tmux-refresh-yaft-clients.service
+    #     systemctl start tmux-refresh-yaft-clients.service
+    # fi
 }
 
 # Make links in our home directory
