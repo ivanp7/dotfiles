@@ -50,7 +50,8 @@ install_links() {
     ln -sf $CONF_DIR/.config/ranger $HOME/.config/
     ln -sf $CONF_DIR/.config/neofetch $HOME/.config/
 
-    ln -sf $CONF_DIR/.config/systemd $HOME/.config/
+    mkdir -p $HOME/.config/systemd/user/
+    ln -sf $CONF_DIR/.config/systemd/user/* $HOME/.config/systemd/user/
     systemctl --user enable tmux-refresh-yaft-clients.service
     systemctl --user start tmux-refresh-yaft-clients.service
 }
