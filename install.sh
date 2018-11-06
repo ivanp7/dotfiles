@@ -5,15 +5,7 @@ CONF_DIR=$PWD
 
 install_tree()
 {
-    cd $CONF_DIR/tree
-
-    for f in $(find . -type f)
-    do
-        mkdir -p $HOME/$(dirname $f)
-        ln -sf $(realpath $f) $HOME/$f
-    done
-
-    cd $CONF_DIR
+    cp -asfT $CONF_DIR/tree $HOME
 }
 
 install_special_org()
