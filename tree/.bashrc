@@ -93,15 +93,13 @@ ${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensC
     local PWDColor=$RS$FCYN
     local PWDInfo="[${PWDColor}\w${OtherColor}]"
 
-    local BasicPromptInfo="${UserHostInfo}${DashCh}${PWDInfo}"
-
     local GitBranchColor=$RS$HC$FMAG
     local GitBranch="$(__git_ps1 '%s')"
-    local GitRepoInfo=$(if [[ -n "${GitBranch}" ]]; then echo "${DashCh}[${GitBranchColor}${GitBranch}${OtherColor}]"; fi)
+    local GitRepoInfo="${DashCh}[$(if [[ -n "${GitBranch}" ]]; then echo "${GitBranchColor}${GitBranch}"; fi)${OtherColor}]"
 
     local LMiddleCh=$(echo $'\u255E')
     local DoubleDashCh=$(echo $'\u2550')
-    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${BasicPromptInfo}${GitRepoInfo}"
+    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${UserHostInfo}${GitRepoInfo}${DashCh}${PWDInfo}"
 
     ### Prompt line 3 ###
 
