@@ -30,7 +30,7 @@ do
     then
         tmux set -g status-interval 0
         sudo chvt 13
-        sleep 0.1
+        sleep 0.3
         sudo chvt ${TTY:3}
     fi
 
