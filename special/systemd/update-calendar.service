@@ -1,0 +1,7 @@
+[Unit]
+Description=Calendar update job
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/touch %h/Org/calendar
+
