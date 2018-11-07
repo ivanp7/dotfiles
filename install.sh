@@ -24,6 +24,7 @@ install_special_git()
     cp -f $CONF_DIR/special/git/.gitconfig $HOME/
     chmod 644 $HOME/.gitconfig
     sed -i "s/USERNAME/$(whoami)/g" $HOME/.gitconfig
+    sed -i "s@HOME@$HOME@g" $HOME/.gitconfig
 }
 
 install_special_ssh()

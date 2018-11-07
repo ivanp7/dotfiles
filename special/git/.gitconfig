@@ -4,7 +4,7 @@
     email = USERNAME.git@gmail.com
 [core]
     editor = vim
-    excludesfile = /home/USERNAME/.gitignore_global
+    excludesfile = HOME/.gitignore_global
     fileMode = false
 
 [diff]
