@@ -44,7 +44,8 @@ do
         tmux set -t $(client_session $CLIENT) status-interval $TMUX_STATUS_INTERVAL
         sleep 0.2
         tmux refresh-client -t $(client_pts $CLIENT)
-    else
+    elif [[ ! -f "$HOME/.tmux_tmp/$TTY" ]]
+    then
         sudo chvt $UNUSED_VT
         sleep 0.3
         sudo chvt ${TTY:3}
