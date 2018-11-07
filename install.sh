@@ -13,10 +13,6 @@ install_special_org()
     mkdir -p $HOME/Org/todo
     touch $HOME/Org/calendar
     touch $HOME/Org/todo/todo.txt
-
-    local DOTFILES_CALENDAR_JOB="00 00 * * * /usr/bin/echo -n '' >> $HOME/Org/calendar"
-    if ! crontab -l | fgrep "$DOTFILES_CALENDAR_JOB" &> /dev/null
-    then (crontab -l 2> /dev/null; echo "$DOTFILES_CALENDAR_JOB") | crontab -; fi
 }
 
 install_special_git()
@@ -47,23 +43,30 @@ install_special_tmux()
 
 install_special_systemd()
 {
-    if [[ $EUID -ne 0 ]]
+    if [ $EUID -ne 0 ]
     then
         mkdir -p $HOME/.config/systemd/user/
-        ln -sf $CONF_DIR/special/systemd/* $HOME/.config/systemd/user/
-
-        for serv in $(find $CONF_DIR/special/systemd/ -type f)
-        do
-            systemctl --user enable $(basename $serv)
-        done
+        local TARGET_DIR=$HOME/.config/systemd/user/
+        local USER_FLAG=--user
     else
-        ln -sf $CONF_DIR/special/systemd/* /etc/systemd/system/
-
-        for serv in $(find $CONF_DIR/special/systemd/ -type f)
-        do
-            systemctl enable $(basename $serv)
-        done
+        local TARGET_DIR=/etc/systemd/system/
     fi
+
+    ln -sf $CONF_DIR/special/systemd/* $TARGET_DIR
+
+    for service in $(find $CONF_DIR/special/systemd/ -type f -name "*.service")
+    do
+        local timer=$(echo $service | sed "s/service$/timer/")
+
+        if [ -f $timer ]
+        then
+            systemctl $USER_FLAG enable $(basename $timer)
+            systemctl $USER_FLAG start $(basename $timer)
+        else
+            systemctl $USER_FLAG enable $(basename $service)
+            systemctl $USER_FLAG start $(basename $service)
+        fi
+    done
 }
 
 echo Installing configuration...
