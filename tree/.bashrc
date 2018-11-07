@@ -93,7 +93,7 @@ ${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensC
     local PWDColor=$RS$FCYN
     local PWDInfo="[${PWDColor}\w${OtherColor}]"
 
-    local GitBranchColor=$RS$HC$FMAG
+    local GitBranchColor=$RS$(if [[ -n "$(git status --short 2> /dev/null)" ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local GitBranch="$(__git_ps1 '%s')"
     local GitRepoInfo="${DashCh}[$(if [[ -n "${GitBranch}" ]]; then echo "${GitBranchColor}${GitBranch}"; fi)${OtherColor}]"
 
