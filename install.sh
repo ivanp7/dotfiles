@@ -52,20 +52,39 @@ install_special_systemd()
         local TARGET_DIR=/etc/systemd/system/
     fi
 
-    ln -sf $CONF_DIR/special/systemd/* $TARGET_DIR
-
+    # Disable&stop services
     for service in $(find $CONF_DIR/special/systemd/ -type f -name "*.service")
     do
         local timer=$(echo $service | sed "s/service$/timer/")
 
         if [ -f $timer ]
         then
-            systemctl $USER_FLAG enable $(basename $timer)
-            systemctl $USER_FLAG start $(basename $timer)
+            local target=$timer
         else
-            systemctl $USER_FLAG enable $(basename $service)
-            systemctl $USER_FLAG start $(basename $service)
+            local target=$service
         fi
+
+        systemctl $USER_FLAG stop $(basename $target)
+        systemctl $USER_FLAG disable $(basename $target)
+    done
+
+    # Update services
+    ln -sf $CONF_DIR/special/systemd/* $TARGET_DIR
+
+    # Enable&start services
+    for service in $(find $CONF_DIR/special/systemd/ -type f -name "*.service")
+    do
+        local timer=$(echo $service | sed "s/service$/timer/")
+
+        if [ -f $timer ]
+        then
+            local target=$timer
+        else
+            local target=$service
+        fi
+
+        systemctl $USER_FLAG enable $(basename $target)
+        # systemctl $USER_FLAG start $(basename $target)
     done
 }
 

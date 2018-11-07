@@ -11,11 +11,14 @@ list_clients()
 
 find_client()
 {
-    if [[ -f "$HOME/.tmux_tmp/$TTY" ]]
+    if [[ -f "$HOME/.tmux_tmp/$1" ]]
     then
         local PTS=$(cat $HOME/.tmux_tmp/$1)
-        local CLIENT=$(list_clients | grep $PTS)
-        echo $CLIENT
+        if [[ -n "$PTS" ]]
+        then
+            local CLIENT=$(list_clients | grep $PTS)
+            echo $CLIENT
+        fi
     fi
 }
 
