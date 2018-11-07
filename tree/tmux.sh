@@ -1,9 +1,6 @@
-TMUX_STATUS_INTERVAL=1
-
 # run tmux and construct environment
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
 then
-    tmux set -g status-interval $TMUX_STATUS_INTERVAL
     tmux attach || {
         tmux new-session -d -x $(tput cols) -y $(tput lines) -s default -n org "echo; neofetch; bash";
         tmux split-window -h -l 67 -t default "sh $HOME/.when/update_calendar.sh";
