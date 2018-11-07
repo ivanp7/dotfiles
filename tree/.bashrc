@@ -177,10 +177,15 @@ function sudo_ranger ()
     [ -f ${HOME}/.xaliases ] && . ${HOME}/.xaliases; } || true
 
 # element of yaft drawing bug workaround
-if [[ "$TERM" == "yaft-256color" ]] && [ -f $HOME/.tmux_tmp/tmp ]
+if [[ "$TERM" == "yaft-256color" ]]
 then
-    echo $(tty) > $HOME/.tmux_tmp/$(cat $HOME/.tmux_tmp/tmp)
-    rm $HOME/.tmux_tmp/tmp
+    if [ -f $HOME/.tmux_tmp/tmp ]
+    then
+        echo $(tty) > $HOME/.tmux_tmp/$(cat $HOME/.tmux_tmp/tmp)
+        rm $HOME/.tmux_tmp/tmp
+    fi
+
+    . $HOME/tmux.sh
 fi
 
 # run tmux in nonlogin shell

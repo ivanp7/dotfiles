@@ -11,3 +11,8 @@ then
     # } && shopt -q login_shell || exit
 fi
 
+if [[ "$TERM" == "yaft-256color" ]]
+then
+    exit
+fi
+
