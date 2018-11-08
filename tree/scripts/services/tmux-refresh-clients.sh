@@ -10,11 +10,6 @@ list_yaft_clients()
     tmux list-clients 2> /dev/null | grep yaft-256color
 }
 
-list_non_yaft_clients()
-{
-    tmux list-clients 2> /dev/null | grep -v yaft-256color
-}
-
 find_client()
 {
     if [[ -f "$HOME/.tmux_tmp/$1" ]]
@@ -105,10 +100,10 @@ do
         for client in $(list_yaft_clients); do hide_client "$client"; done
         refresh_tty $TTY
         
-    # we're in X, restore all non-yaft tmux clients
+    # we're in X, restore all yaft tmux clients
     else
         IFS=$'\n'
-        for client in $(list_non_yaft_clients); do restore_client "$client"; done
+        for client in $(list_yaft_clients); do restore_client "$client"; done
     fi
 
     PREV_TTY=$TTY
