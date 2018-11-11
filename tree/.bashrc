@@ -51,15 +51,20 @@ __prompt_command()
 
     local DashCh=$(echo $'\u2500')
 
+    local TerminalWidth=$(tput cols)
+
     ### Prompt line 1 ###
 
     local TimeColor=$RS$HC$FWHT
     local TimeInfo="[${TimeColor}\D{%T}${OtherColor}]"
+    local TimeInfoLength=10
 
     local ExitCodeColor=$RS$(if [[ $EXIT -ne 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local LastCommandStatus="[${ExitCodeColor}$(if [[ $EXIT -ne 0 ]]; then echo "error $EXIT"; else echo "ok"; fi)${OtherColor}]"
+    local LastCommandStatusLength=$((2+$(if [[ $EXIT -ne 0 ]]; then echo $((6+${#EXIT})); else echo 2; fi)))
 
     local RightArrowCh=$(echo $'\u2192')
+    local ProcessSeqStrMaxLength=$((${TerminalWidth}-8-${TimeInfoLength}-${LastCommandStatusLength}))
     local ProcessSeqStr="$(sed "
 s/systemd//;
 s/---login//;
@@ -77,29 +82,58 @@ s/---/ ${RightArrowCh} /g;
     local ProcessSeqNameColor=$RS$HC$FWHT
     local ProcessSeqArrowColor=$RS$HC$FYEL
     local ProcessSeqParensColor=$RS$HC$FYEL
-    local ProcessSeqIndicator=$(if [[ -n $ProcessSeqStr ]]
-        then echo "${ProcessSeqParensColor}[ ${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
-${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"; fi)
+    local ProcessSeqGapColor=$RS$HC$FRED
+
+    if [[ -n ${ProcessSeqStr} ]]
+    then
+        if [[ ${#ProcessSeqStr} -le ${ProcessSeqStrMaxLength} ]]
+        then
+            local ProcessSeqIndicator="${ProcessSeqParensColor}[ ${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
+${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"
+        else
+            local ProcessSeqStrExcessLength=$((${#ProcessSeqStr}-${ProcessSeqStrMaxLength}+3))
+            local ProcessSeqStr2=${ProcessSeqStr:${ProcessSeqStrExcessLength}}
+            local ProcessSeqIndicator="${ProcessSeqParensColor}[ ${ProcessSeqGapColor}...${ProcessSeqNameColor}${ProcessSeqStr2//${RightArrowCh}/\
+${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"
+        fi
+    fi
+
 
     local LTCornerCh=$(echo $'\u250C')
     local PromptLine1="${OtherColor}${LTCornerCh}${DashCh}${TimeInfo}${DashCh}${LastCommandStatus} ${ProcessSeqIndicator}"
 
     ### Prompt line 2 ###
 
+    local Username=$(whoami)
     local UsernameColor=$RS$(if [[ $EUID == 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
+    local Hostname=$(cat /etc/hostname)
     local HostnameColor=$RS$HC$FBLE
-    local UserHostInfo="[${UsernameColor}\u${OtherColor}@${HostnameColor}\h${OtherColor}]"
-
-    local PWDColor=$RS$FCYN
-    local PWDInfo="[${PWDColor}\w${OtherColor}]"
+    local UserHostInfo="[${UsernameColor}$Username${OtherColor}@${HostnameColor}$Hostname${OtherColor}]"
+    local UserHostInfoLength=$((3+${#Username}+${#Hostname}))
 
     local GitBranchColor=$RS$(if [[ -n "$(git status --short 2> /dev/null)" ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local GitBranch="$(__git_ps1 '%s')"
-    local GitRepoInfo="${DashCh}[$(if [[ -n "${GitBranch}" ]]; then echo "${GitBranchColor}${GitBranch}"; fi)${OtherColor}]"
+    local GitRepoInfo="[$(if [[ -n "${GitBranch}" ]]; then echo "${GitBranchColor}${GitBranch}"; fi)${OtherColor}]"
+    local GitRepoInfoLength=$((2+${#GitBranch}))
+
+    local PWDInfoMaxLength=$((${TerminalWidth}-6-${UserHostInfoLength}-${GitRepoInfoLength}))
+    local PWDColor=$RS$FCYN
+    local PWDSlashColor=${OtherColor}
+    local PWDGapColor=$RS$HC$FRED
+    if [[ ${#PWD} -le ${PWDInfoMaxLength} ]]
+    then
+        local PWDInfo="[${PWDColor}${PWD//\//${PWDSlashColor}\/${PWDColor}}${OtherColor}]";
+    else
+        local PWDExcessLength=$((${#PWD}-${PWDInfoMaxLength}+3))
+        local PWD1=${PWD:0:${#PWD}/2-(${PWDExcessLength}+1)/2}
+        local PWD2=${PWD:${#PWD}/2+${PWDExcessLength}/2}
+
+        local PWDInfo="[${PWDColor}${PWD1//\//${PWDSlashColor}\/${PWDColor}}${PWDGapColor}...${PWDColor}${PWD2//\//${PWDSlashColor}\/${PWDColor}}${OtherColor}]";
+    fi
 
     local LMiddleCh=$(echo $'\u255E')
     local DoubleDashCh=$(echo $'\u2550')
-    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${UserHostInfo}${GitRepoInfo}${DashCh}${PWDInfo}"
+    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${UserHostInfo}${DoubleDashCh}${GitRepoInfo}${DoubleDashCh}${PWDInfo}"
 
     ### Prompt line 3 ###
 
