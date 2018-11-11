@@ -104,12 +104,10 @@ ${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensC
 
     ### Prompt line 2 ###
 
-    local Username=$(whoami)
     local UsernameColor=$RS$(if [[ $EUID == 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
-    local Hostname=$(cat /etc/hostname)
     local HostnameColor=$RS$HC$FBLE
-    local UserHostInfo="[${UsernameColor}$Username${OtherColor}@${HostnameColor}$Hostname${OtherColor}]"
-    local UserHostInfoLength=$((3+${#Username}+${#Hostname}))
+    local UserHostInfo="[${UsernameColor}${USER}${OtherColor}@${HostnameColor}${HOSTNAME}${OtherColor}]"
+    local UserHostInfoLength=$((3+${#USER}+${#HOSTNAME}))
 
     local GitBranchColor=$RS$(if [[ -n "$(git status --short 2> /dev/null)" ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local GitBranch="$(__git_ps1 '%s')"
