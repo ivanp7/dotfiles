@@ -62,7 +62,7 @@ __prompt_command()
 
     __prompt_timer_stop
 
-    local OtherColor="\[$(tput setaf 244)\]"
+    local OtherColor="$RS\[$(tput setaf 244)\]"
 
     local DashCh=$(echo $'\u2500')
 
