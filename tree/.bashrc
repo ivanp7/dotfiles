@@ -52,7 +52,7 @@ function __prompt_timer_stop()
     unset __prompt_timer
 }
 
-trap '__prompt_timer_start' DEBUG
+trap 'tput sgr0; __prompt_timer_start' DEBUG
 
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
@@ -62,7 +62,7 @@ __prompt_command()
 
     __prompt_timer_stop
 
-    local OtherColor=$RS$HC$FWHT
+    local OtherColor="\[$(tput setaf 244)\]"
 
     local DashCh=$(echo $'\u2500')
 
@@ -83,7 +83,7 @@ __prompt_command()
     local LastCommandStatusLength=$((2+$(if [[ $EXIT -ne 0 ]]; then echo $((6+${#EXIT})); else echo 2; fi)))
 
     local RightArrowCh=$(echo $'\u2192')
-    local ProcessSeqStrMaxLength=$((${TerminalWidth}-9-${TimeInfoLength}-${CommandTimeInfoLength}-${LastCommandStatusLength}))
+    local ProcessSeqStrMaxLength=$((${TerminalWidth}-7-${TimeInfoLength}-${CommandTimeInfoLength}-${LastCommandStatusLength}))
     local ProcessSeqStr="$(sed "
 s/systemd//;
 s/---login//;
@@ -95,25 +95,25 @@ s/sshd---sshd/ssh/;
 s/tmux: server/tmux/;
 s/screen---screen/screen/;
 s/y-desktop.sh---screen---yaft/yaft/;
-s/---/ ${RightArrowCh} /g; 
+s/---/]${RightArrowCh}[/g; 
 " <<< $(pstree -ls $$))"
 
     local ProcessSeqNameColor=$RS$HC$FWHT
-    local ProcessSeqArrowColor=$RS$HC$FYEL
-    local ProcessSeqParensColor=$RS$HC$FYEL
+    local ProcessSeqArrowColor=${OtherColor}
+    local ProcessSeqParensColor=${OtherColor}
     local ProcessSeqGapColor=$RS$HC$FRED
 
     if [[ -n ${ProcessSeqStr} ]]
     then
         if [[ ${#ProcessSeqStr} -le ${ProcessSeqStrMaxLength} ]]
         then
-            local ProcessSeqIndicator="${ProcessSeqParensColor}[ ${ProcessSeqNameColor}${ProcessSeqStr//${RightArrowCh}/\
-${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"
+            local ProcessSeqIndicator="${ProcessSeqParensColor}[${ProcessSeqNameColor}${ProcessSeqStr//\]${RightArrowCh}\[/\
+${ProcessSeqArrowColor}\]${RightArrowCh}\[${ProcessSeqNameColor}}${ProcessSeqParensColor}]"
         else
             local ProcessSeqStrExcessLength=$((${#ProcessSeqStr}-${ProcessSeqStrMaxLength}+3))
             local ProcessSeqStr2=${ProcessSeqStr:${ProcessSeqStrExcessLength}}
-            local ProcessSeqIndicator="${ProcessSeqParensColor}[ ${ProcessSeqGapColor}...${ProcessSeqNameColor}${ProcessSeqStr2//${RightArrowCh}/\
-${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor} ]"
+            local ProcessSeqIndicator="${ProcessSeqParensColor}[${ProcessSeqGapColor}...${ProcessSeqNameColor}${ProcessSeqStr2//${RightArrowCh}/\
+${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensColor}]"
         fi
     fi
 
@@ -160,12 +160,16 @@ ${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensC
     local InputModeGap="\[\e[3C\]"
     local PromptLine3="${OtherColor}${LBCornerCh}${DashCh}${InputModeGap}${DashCh}"
 
+    ### Prompt ###
+    
+    local CommandColor=$RS$HC$FWHT$UL
+
     PS1="$RS
 ${PromptLine1}
 ${PromptLine2}
-${PromptLine3} ${PromptCharacter} $RS"
+${PromptLine3} ${PromptCharacter} ${CommandColor}"
 
-    PS2="${PromptLine3} > $RS"
+    PS2="${PromptLine3} > ${CommandColor}"
 }
 
 # Use bash-completion, if available
