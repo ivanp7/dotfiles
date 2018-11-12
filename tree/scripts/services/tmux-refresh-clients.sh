@@ -74,7 +74,7 @@ refresh_tty()
     sleep 0.3
     sudo chvt $UNUSED_VT
     sleep 0.3
-    sudo chvt ${1:3}
+    sudo chvt ${1:3} || sudo chvt 1
 }
 
 while true
