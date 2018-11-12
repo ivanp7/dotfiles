@@ -41,11 +41,26 @@ BWHT="\[\033[47m\]" # background white
 . /usr/share/git/completion/git-prompt.sh
 
 # prompt
+function __prompt_timer_start()
+{
+    __prompt_timer=${__prompt_timer:-$SECONDS}
+}
+
+function __prompt_timer_stop()
+{
+    __prompt_timer_delta=$(($SECONDS - $__prompt_timer))
+    unset __prompt_timer
+}
+
+trap '__prompt_timer_start' DEBUG
+
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
 __prompt_command()
 {
     local EXIT="$?"             # This needs to be first
+
+    __prompt_timer_stop
 
     local OtherColor=$RS$HC$FWHT
 
@@ -59,12 +74,16 @@ __prompt_command()
     local TimeInfo="[${TimeColor}\D{%T}${OtherColor}]"
     local TimeInfoLength=10
 
+    local CommandTimeColor=$RS$HC$FWHT
+    local CommandTimeInfo="[${CommandTimeColor}${__prompt_timer_delta}s${OtherColor}]"
+    local CommandTimeInfoLength=$((3+${#__prompt_timer_delta}))
+
     local ExitCodeColor=$RS$(if [[ $EXIT -ne 0 ]]; then echo $HC$FRED; else echo $FGRN; fi)
     local LastCommandStatus="[${ExitCodeColor}$(if [[ $EXIT -ne 0 ]]; then echo "error $EXIT"; else echo "ok"; fi)${OtherColor}]"
     local LastCommandStatusLength=$((2+$(if [[ $EXIT -ne 0 ]]; then echo $((6+${#EXIT})); else echo 2; fi)))
 
     local RightArrowCh=$(echo $'\u2192')
-    local ProcessSeqStrMaxLength=$((${TerminalWidth}-8-${TimeInfoLength}-${LastCommandStatusLength}))
+    local ProcessSeqStrMaxLength=$((${TerminalWidth}-9-${TimeInfoLength}-${CommandTimeInfoLength}-${LastCommandStatusLength}))
     local ProcessSeqStr="$(sed "
 s/systemd//;
 s/---login//;
@@ -100,7 +119,7 @@ ${ProcessSeqArrowColor}${RightArrowCh}${ProcessSeqNameColor}}${ProcessSeqParensC
 
 
     local LTCornerCh=$(echo $'\u250C')
-    local PromptLine1="${OtherColor}${LTCornerCh}${DashCh}${TimeInfo}${DashCh}${LastCommandStatus} ${ProcessSeqIndicator}"
+    local PromptLine1="${OtherColor}${LTCornerCh}${DashCh}${TimeInfo}${DashCh}${CommandTimeInfo}${DashCh}${LastCommandStatus} ${ProcessSeqIndicator}"
 
     ### Prompt line 2 ###
 
