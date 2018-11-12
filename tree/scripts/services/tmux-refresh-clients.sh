@@ -17,7 +17,7 @@ find_client()
         local PTS=$(cat $HOME/.tmux_tmp/$1)
         if [[ -n "$PTS" ]]
         then
-            local CLIENT=$(list_yaft_clients | grep $PTS)
+            local CLIENT=$(list_yaft_clients | grep ^$PTS:)
             echo -n "$CLIENT"
         fi
     fi
@@ -36,14 +36,13 @@ client_session()
 restore_client()
 {
     # destroy the empty temporary window if it's there
-    if [[ "$(tmux display-message -c $(client_pts "$1") -p '#W')" == $TMUX_TMP_WINDOW ]]
+    if [[ "$(tmux display-message -t $(client_session "$1"): -p '#W')" == $TMUX_TMP_WINDOW ]]
     then
         local session=$(client_session "$1")
-        echo "restore: $session"
 
         # enable status bar updating
-        tmux set -t $session status-interval $TMUX_STATUS_INTERVAL
-        tmux set visual-activity on
+        tmux set -t $session: status-interval $TMUX_STATUS_INTERVAL
+        tmux set -t $session: visual-activity on
 
         tmux kill-window -t $session:$TMUX_TMP_WINDOW
 
@@ -57,15 +56,15 @@ restore_client()
 hide_client()
 {
     # switch to the empty temporary window to suppress framebuffer redraws
-    if [[ "$(tmux display-message -c $(client_pts "$1") -p '#W')" != $TMUX_TMP_WINDOW ]]
+    if [[ "$(tmux display-message -t $(client_session "$1"): -p '#W')" != $TMUX_TMP_WINDOW ]]
     then
         local session=$(client_session "$1")
 
         # disable screen updating
-        tmux set -t $session status-interval 0
-        tmux set visual-activity off
+        tmux set -t $session: status-interval 0
+        tmux set -t $session: visual-activity off
 
-        tmux new-window -t $session -n $TMUX_TMP_WINDOW 'bash --norc'
+        tmux new-window -t $session: -n $TMUX_TMP_WINDOW 'bash --norc'
     fi
 }
 
@@ -88,9 +87,15 @@ do
     # get tmux client under yaft belonging to current tty
     CLIENT=$(find_client $TTY)
 
-    # we're in yaft, restore the tmux client
+    # we're in yaft, restore the active tmux client, hide the other
     if [[ -n $CLIENT ]]
     then
+        IFS=$'\n'
+        for client in $(list_yaft_clients); do 
+            if [[ "$(client_session "$client")" != "$(client_session "$CLIENT")" ]]
+            then hide_client "$client"; fi
+        done
+        sleep 0.1
         restore_client "$CLIENT"
 
     # we're on bare tty, hide all yaft tmux clients
