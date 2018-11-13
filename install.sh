@@ -88,12 +88,54 @@ install_special_systemd()
     done
 }
 
-echo Installing configuration...
-install_tree
-install_special_org
-install_special_git
-install_special_ssh
-install_special_tmux
-install_special_systemd
-echo Done!
+case $1 in
+    tree)
+        echo "Installing tree only..."
+        install_tree
+        ;;
+
+    org)
+        echo "Installing org files only..."
+        install_special_org
+        echo "Done!"
+        ;;
+
+    git)
+        echo "Installing git config only..."
+        install_special_git
+        echo "Done!"
+        ;;
+
+    ssh)
+        echo "Installing ssh config only..."
+        install_special_ssh
+        echo "Done!"
+        ;;
+
+    tmux)
+        echo "Installing tmux config only..."
+        install_special_tmux
+        echo "Done!"
+        ;;
+
+    systemd)
+        echo "Installing systemd units only..."
+        install_special_systemd
+        echo "Done!"
+        ;;
+
+    "")
+        echo "Installing everything..."
+        install_tree
+        install_special_org
+        install_special_git
+        install_special_ssh
+        install_special_tmux
+        install_special_systemd
+        echo "Done!"
+        ;;
+
+    *)
+        echo "Error: invalid argument."
+esac
 
