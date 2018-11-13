@@ -1,7 +1,7 @@
 # run tmux and construct environment
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
 then
-    tmux attach || {
+    tmux attach \; run-shell ". $HOME/scripts/services/tmux-refresh-clients-functions.sh; refresh" || {
         tmux new-session -d -x $(tput cols) -y $(tput lines) -s default-$(whoami) -n org "echo; neofetch; bash";
         tmux split-window -h -l 67 -t default-$(whoami) "sh $HOME/.when/update_calendar.sh";
         tmux split-window -v -t default-$(whoami) "sh $HOME/.todo/update_todo.sh";
