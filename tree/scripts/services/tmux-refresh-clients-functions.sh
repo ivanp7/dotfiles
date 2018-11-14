@@ -1,5 +1,6 @@
 UNUSED_VT=13
 TMUX_TMP_WINDOW=yaft-tmp-window
+TMUX_TMP_WINDOW_CMD='echo "Switch tty or tmux session."; while true; do sleep 1; done'
 
 TMUX_STATUS_INTERVAL=$(tmux show-options -g status-interval | cut -d' ' -f2)
 
@@ -62,7 +63,7 @@ hide_client()
         tmux set -t $session: status-interval 0
         tmux set -t $session: visual-activity off
 
-        tmux new-window -t $session: -n $TMUX_TMP_WINDOW 'bash --norc'
+        tmux new-window -t $session: -n $TMUX_TMP_WINDOW $TMUX_TMP_WINDOW_CMD
     fi
 }
 
