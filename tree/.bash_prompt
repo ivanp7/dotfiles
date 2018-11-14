@@ -1,0 +1,172 @@
+# bash prompt code
+
+# ANSI color codes
+RS="\[\033[0m\]"    # reset
+HC="\[\033[1m\]"    # hicolor
+UL="\[\033[4m\]"    # underline
+INV="\[\033[7m\]"   # inverse background and foreground
+FBLK="\[\033[30m\]" # foreground black
+FRED="\[\033[31m\]" # foreground red
+FGRN="\[\033[32m\]" # foreground green
+FYEL="\[\033[33m\]" # foreground yellow
+FBLE="\[\033[34m\]" # foreground blue
+FMAG="\[\033[35m\]" # foreground magenta
+FCYN="\[\033[36m\]" # foreground cyan
+FWHT="\[\033[37m\]" # foreground white
+BBLK="\[\033[40m\]" # background black
+BRED="\[\033[41m\]" # background red
+BGRN="\[\033[42m\]" # background green
+BYEL="\[\033[43m\]" # background yellow
+BBLE="\[\033[44m\]" # background blue
+BMAG="\[\033[45m\]" # background magenta
+BCYN="\[\033[46m\]" # background cyan
+BWHT="\[\033[47m\]" # background white
+
+# source git-prompt.sh
+. /usr/share/git/completion/git-prompt.sh
+
+# prompt
+function __prompt_timer_start()
+{
+    __prompt_timer=${__prompt_timer:-$SECONDS}
+}
+
+function __prompt_timer_stop()
+{
+    __prompt_timer_delta=$(($SECONDS - $__prompt_timer))
+    unset __prompt_timer
+}
+
+trap 'tput sgr0; __prompt_timer_start' DEBUG
+
+PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
+
+__prompt_command()
+{
+    local EXIT="$?"             # This needs to be first
+
+    __prompt_timer_stop
+
+    local OtherColor="$RS\[$(tput setaf 244)\]"
+
+    local DashCh=$'\u2500'
+
+    local TerminalWidth=$(tput cols)
+
+    ### Prompt line 1 ###
+
+    local TimeColor=$RS$HC$FWHT
+    local TimeInfo="[${TimeColor}\D{%T}${OtherColor}]"
+    local TimeInfoLength=10
+
+    local CommandTimeColor=$RS$HC$FWHT
+    local CommandTimeInfo="[${CommandTimeColor}${__prompt_timer_delta}s${OtherColor}]"
+    local CommandTimeInfoLength=$(( 3 + ${#__prompt_timer_delta} ))
+
+    local ExitCodeColor=$RS$(if [[ $EXIT -ne 0 ]]
+        then echo $HC$FRED; else echo $FGRN; fi)
+    local LastCommandStatus="[${ExitCodeColor}$(if [[ $EXIT -ne 0 ]]
+        then echo "error $EXIT"; else echo "ok"; fi)${OtherColor}]"
+    local LastCommandStatusLength=$(( 2 + $(if [[ $EXIT -ne 0 ]]
+        then echo $(( 6 + ${#EXIT} )); else echo 2; fi) ))
+
+    local RightArrowCh=$'\u2192'
+    local ProcessSeqStrMaxLength=$(( ${TerminalWidth} - 7 - ${TimeInfoLength} - \
+        ${CommandTimeInfoLength} - ${LastCommandStatusLength} ))
+    local ProcessSeqStr="$(sed "
+        s/systemd//;
+        s/---login//;
+        s/---pstree//;
+        s/---sh//g;
+        s/---bash//g;
+        s/^---//;
+        s/sshd---sshd/ssh/;
+        s/tmux: server/tmux/;
+        s/screen---screen/screen/;
+        s/y-desktop.sh---screen---yaft/yaft/;
+        s/---/]${RightArrowCh}[/g; 
+        " <<< $(pstree -ls $$))"
+
+    local ProcessSeqNameColor=$RS$HC$FWHT
+    local ProcessSeqGapColor=$RS$HC$FRED
+
+    if [[ -n ${ProcessSeqStr} ]]
+    then
+	if [[ ${#ProcessSeqStr} -le ${ProcessSeqStrMaxLength} ]]
+	then
+	    local ProcessSeqIndicator="\
+${OtherColor}[${ProcessSeqNameColor}${ProcessSeqStr//\]${RightArrowCh}\[/\
+${OtherColor}\]${RightArrowCh}\[${ProcessSeqNameColor}}${OtherColor}]"
+        else
+            local ProcessSeqStrExcessLength=$(( \
+                ${#ProcessSeqStr} - ${ProcessSeqStrMaxLength} + 3 ))
+            local ProcessSeqStr2=${ProcessSeqStr:${ProcessSeqStrExcessLength}}
+            local ProcessSeqIndicator="\
+${ProcessSeqGapColor}...${OtherColor}${ProcessSeqStr2//\]${RightArrowCh}\[/\
+${OtherColor}\]${RightArrowCh}\[${ProcessSeqNameColor}}${OtherColor}]"
+        fi
+    fi
+
+    local LTCornerCh=$'\u250C'
+    local PromptLine1="${OtherColor}${LTCornerCh}${DashCh}${TimeInfo}\
+${DashCh}${CommandTimeInfo}${DashCh}${LastCommandStatus} ${ProcessSeqIndicator}"
+
+    ### Prompt line 2 ###
+
+    local UsernameColor=$RS$(if [[ $EUID == 0 ]]
+        then echo $HC$FRED; else echo $FGRN; fi)
+    local HostnameColor=$RS$HC$FBLE
+    local UserHostInfo="[${UsernameColor}${USER}${OtherColor}@\
+${HostnameColor}${HOSTNAME}${OtherColor}]"
+    local UserHostInfoLength=$(( 3 + ${#USER} + ${#HOSTNAME} ))
+
+    local GitBranchColor=$RS$(if [[ -n "$(git status --short 2> /dev/null)" ]]
+        then echo $HC$FRED; else echo $FGRN; fi)
+    local GitBranch="$(__git_ps1 '%s')"
+    local GitRepoInfo="[$(if [[ -n "${GitBranch}" ]]
+        then echo "${GitBranchColor}${GitBranch}"; fi)${OtherColor}]"
+    local GitRepoInfoLength=$(( 2 + ${#GitBranch} ))
+
+    local PWDInfoMaxLength=$(( \
+        ${TerminalWidth} - 6 - ${UserHostInfoLength} - ${GitRepoInfoLength} ))
+    local PWDColor=$RS$FCYN
+    local PWDSlashColor=${OtherColor}
+    local PWDGapColor=$RS$HC$FRED
+    if [[ ${#PWD} -le ${PWDInfoMaxLength} ]]
+    then
+	local PWDInfo="[${PWDColor}${PWD//\//${PWDSlashColor}\/\
+${PWDColor}}${OtherColor}]"
+    else
+	local PWDExcessLength=$(( ${#PWD} - ${PWDInfoMaxLength} + 3 ))
+	local PWD1=${PWD:0:${#PWD}/ 2 - (${PWDExcessLength} + 1) / 2}
+	local PWD2=${PWD:${#PWD} / 2 + ${PWDExcessLength} / 2}
+
+	local PWDInfo="[${PWDColor}${PWD1//\//${PWDSlashColor}\/${PWDColor}}\
+${PWDGapColor}...${PWDColor}${PWD2//\//${PWDSlashColor}\/${PWDColor}}${OtherColor}]";
+    fi
+
+    local LMiddleCh=$'\u255E'
+    local DoubleDashCh=$'\u2550'
+    local PromptLine2="${OtherColor}${LMiddleCh}${DoubleDashCh}${UserHostInfo}\
+${DoubleDashCh}${GitRepoInfo}${DoubleDashCh}${PWDInfo}"
+
+    ### Prompt line 3 ###
+
+    local PromptCharacter=$(if [[ $EUID == 0 ]]; then echo '#'; else echo '$'; fi)
+
+    local LBCornerCh=$'\u2514'
+    local InputModeGap="\[\e[3C\]"
+    local PromptLine3="${OtherColor}${LBCornerCh}${DashCh}${InputModeGap}${DashCh}"
+
+    ### Prompt ###
+
+    local CommandColor=$RS$HC$FWHT$UL
+
+    PS1="$RS
+${PromptLine1}
+${PromptLine2}
+${PromptLine3} ${PromptCharacter} ${CommandColor}"
+
+    PS2="${PromptLine3} > ${CommandColor}"
+}
+

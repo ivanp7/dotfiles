@@ -92,6 +92,7 @@ case $1 in
     tree)
         echo "Installing tree only..."
         install_tree
+        echo "Done!"
         ;;
 
     org)
