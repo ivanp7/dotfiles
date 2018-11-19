@@ -7,7 +7,7 @@ then
     echo $OLD_LIST
 else
     rm $HOME/Org/todo
-    ln -sf $HOME/Org/todo-lists/$1 $HOME/Org/todo
+    ln -sf todo-lists/$1 $HOME/Org/todo
     touch $HOME/Org/todo-lists/$OLD_LIST/todo.txt
 fi
 
