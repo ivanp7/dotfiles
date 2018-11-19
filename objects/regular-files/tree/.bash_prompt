@@ -250,9 +250,9 @@ __prompt_command()
 
     ### Prompt ###
 
-    local PromptLine1="${__prompt_topcorner}$(__prompt_timeinfo)$(__prompt_cmdtimeinfo)$(__prompt_cmdstatusinfo) $(__prompt_processinfo)"
-    local PromptLine2="${__prompt_midcorner}$(__prompt_userhostinfo)$(__prompt_gitinfo)$(__prompt_pwdinfo)"
-    local PromptLine3="${__prompt_botcorner}${__prompt_dash}${__prompt_inputmodegap}${__prompt_dash}"
+    local PromptLine1="$__prompt_stdcolor${__prompt_topcorner}$(__prompt_timeinfo)$(__prompt_cmdtimeinfo)$(__prompt_cmdstatusinfo) $(__prompt_processinfo)"
+    local PromptLine2="$__prompt_stdcolor${__prompt_midcorner}$(__prompt_userhostinfo)$(__prompt_gitinfo)$(__prompt_pwdinfo)"
+    local PromptLine3="$__prompt_stdcolor${__prompt_botcorner}${__prompt_dash}${__prompt_inputmodegap}${__prompt_dash}"
 
     PS1="$__prompt_stdcolor
 $PromptLine1
