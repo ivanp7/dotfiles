@@ -5,6 +5,7 @@ OLD_LIST=$(basename $(readlink $HOME/Org/todo))
 if [[ -z "$1" ]]
 then
     echo $OLD_LIST
+    ls $HOME/Org/todo-lists/
 elif [[ -d "$HOME/Org/todo-lists/$1" ]]
 then
     rm $HOME/Org/todo
