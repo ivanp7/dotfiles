@@ -36,6 +36,9 @@ set mouse       =a
 
 set autoread
 
+let g:matchparen_timeout = 50
+let g:matchparen_insert_timeout = 50
+
 "set clipboard^=unnamedplus
 
 set list                   " Show non-printable characters.
@@ -110,8 +113,9 @@ Plug 'guns/xterm-color-table.vim'
 
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
+" Plug 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plug 'itchyny/lightline.vim'
 Plug 'smancill/darkglass'
-Plug 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 Plug 'raymond-w-ko/vim-niji'
 
 Plug 'inkarkat/vim-ingo-library'
@@ -210,6 +214,21 @@ let g:CSApprox_hook_post = [
 
 " let g:airline_theme='term'
 
+" Vim-lightline
+
+set noshowmode
+
+let g:lightline = {
+      \ 'colorscheme': 'powerline',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'filename', 'readonly', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
+      \ },
+      \ }
+
 " Vim color scheme ********************
 
 " termguicolors should not be set under any circumstances, it conflicts with CSApprox:
@@ -238,14 +257,14 @@ nmap <Leader>!  <Plug>MarkSearchGroup1Prev
 let g:sexp_insert_after_wrap = 0
 
 let g:sexp_mappings = {
-            \ 'sexp_flow_to_prev_close':        'g<)',
-            \ 'sexp_flow_to_next_open':         'g>(',
-            \ 'sexp_flow_to_prev_open':         'g<(',
-            \ 'sexp_flow_to_next_close':        'g>)',
-            \ 'sexp_flow_to_prev_leaf_head':    'g<h',
-            \ 'sexp_flow_to_next_leaf_head':    'g>h',
-            \ 'sexp_flow_to_prev_leaf_tail':    'g<t',
-            \ 'sexp_flow_to_next_leaf_tail':    'g>t',
+            \ 'sexp_flow_to_prev_open':         'g[',
+            \ 'sexp_flow_to_next_close':        'g]',
+            \ 'sexp_flow_to_prev_close':        'g}',
+            \ 'sexp_flow_to_next_open':         'g{',
+            \ 'sexp_flow_to_prev_leaf_head':    'gH',
+            \ 'sexp_flow_to_next_leaf_head':    'gh',
+            \ 'sexp_flow_to_prev_leaf_tail':    'gL',
+            \ 'sexp_flow_to_next_leaf_tail':    'gl',
             \ 'sexp_round_head_wrap_list':      '<Leader>si',
             \ 'sexp_round_tail_wrap_list':      '<Leader>sI',
             \ 'sexp_square_head_wrap_list':     '<Leader>s[',
