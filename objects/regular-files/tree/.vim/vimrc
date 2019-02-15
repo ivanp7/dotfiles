@@ -238,36 +238,40 @@ nmap <Leader>!  <Plug>MarkSearchGroup1Prev
 let g:sexp_insert_after_wrap = 0
 
 let g:sexp_mappings = {
-            \ 'sexp_flow_to_prev_open':         'g[',
-            \ 'sexp_flow_to_next_close':        'g]',
-            \ 'sexp_flow_to_prev_close':        'g}',
-            \ 'sexp_flow_to_next_open':         'g{',
+            \ 'sexp_flow_to_prev_open':         'g?(',
+            \ 'sexp_flow_to_next_close':        'g/)',
+            \ 'sexp_flow_to_prev_close':        'g?)',
+            \ 'sexp_flow_to_next_open':         'g/(',
             \ 'sexp_flow_to_prev_leaf_head':    'gH',
             \ 'sexp_flow_to_next_leaf_head':    'gh',
             \ 'sexp_flow_to_prev_leaf_tail':    'gL',
             \ 'sexp_flow_to_next_leaf_tail':    'gl',
+            \
             \ 'sexp_round_head_wrap_list':      '<Leader>si',
             \ 'sexp_round_tail_wrap_list':      '<Leader>sI',
-            \ 'sexp_square_head_wrap_list':     '<Leader>s[',
-            \ 'sexp_square_tail_wrap_list':     '<Leader>s]',
-            \ 'sexp_curly_head_wrap_list':      '<Leader>s{',
-            \ 'sexp_curly_tail_wrap_list':      '<Leader>s}',
             \ 'sexp_round_head_wrap_element':   '<Leader>sw',
             \ 'sexp_round_tail_wrap_element':   '<Leader>sW',
-            \ 'sexp_square_head_wrap_element':  '<Leader>se[',
-            \ 'sexp_square_tail_wrap_element':  '<Leader>se]',
-            \ 'sexp_curly_head_wrap_element':   '<Leader>se{',
-            \ 'sexp_curly_tail_wrap_element':   '<Leader>se}',
-            \ 'sexp_insert_at_list_head':       '<Leader>sh',
-            \ 'sexp_insert_at_list_tail':       '<Leader>sl',
             \ 'sexp_splice_list':               '<Leader>s@',
             \ 'sexp_convolute':                 '<Leader>s?',
             \ 'sexp_raise_list':                '<Leader>so',
             \ 'sexp_raise_element':             '<Leader>sO',
+            \
+            \ 'sexp_insert_at_list_head':       '<Leader>sh',
+            \ 'sexp_insert_at_list_tail':       '<Leader>sl',
+            \
+            \ 'sexp_square_head_wrap_list':     '<Leader>s[',
+            \ 'sexp_square_tail_wrap_list':     '<Leader>s]',
+            \ 'sexp_curly_head_wrap_list':      '<Leader>s{',
+            \ 'sexp_curly_tail_wrap_list':      '<Leader>s}',
+            \ 'sexp_square_head_wrap_element':  '<Leader>se[',
+            \ 'sexp_square_tail_wrap_element':  '<Leader>se]',
+            \ 'sexp_curly_head_wrap_element':   '<Leader>se{',
+            \ 'sexp_curly_tail_wrap_element':   '<Leader>se}',
             \ }
 
 " Vlime *******************************
 
+let g:vlime_leader = ',v'
 let g:vlime_enable_autodoc = v:true
 let g:vlime_window_settings = {'sldb': {'pos': 'belowright', 'vertical': v:true}, 
             \ 'inspector': {'pos': 'belowright', 'vertical': v:true}, 
