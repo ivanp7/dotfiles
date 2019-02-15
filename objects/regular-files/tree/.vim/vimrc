@@ -174,26 +174,13 @@ nmap <F8> :TagbarToggle<CR>
 
 " CSApprox ****************************
 
-" after CSApprox work we re-enable the transparent background
+" tweak color scheme
 let g:CSApprox_hook_post = [
-            \ 'highlight Normal            ctermbg=NONE',
-            \ 'highlight Visual            ctermbg=244',
-            \ 'highlight LineNr            ctermbg=NONE ctermfg=gray',
-            \ 'highlight SignifyLineAdd    cterm=bold ctermbg=NONE ctermfg=green',
-            \ 'highlight SignifyLineDelete cterm=bold ctermbg=NONE ctermfg=red',
-            \ 'highlight SignifyLineChange cterm=bold ctermbg=NONE ctermfg=yellow',
-            \ 'highlight SignifySignAdd    cterm=bold ctermbg=NONE ctermfg=green',
-            \ 'highlight SignifySignDelete cterm=bold ctermbg=NONE ctermfg=red',
-            \ 'highlight SignifySignChange cterm=bold ctermbg=NONE ctermfg=yellow',
-            \ 'highlight SignColumn        ctermbg=NONE',
-            \ 'highlight CursorLine        term=underline cterm=NONE ctermbg=234',
+            \ 'highlight LineNr            ctermfg=gray',
             \ 'highlight CursorLineNR      cterm=bold ctermfg=red',
-            \ 'highlight Folded            ctermbg=NONE cterm=bold',
-            \ 'highlight FoldColumn        ctermbg=NONE cterm=bold',
-            \ 'highlight NonText           ctermbg=NONE'
+            \ 'highlight CursorLine        cterm=NONE ctermbg=234',
+            \ 'highlight MatchParen        ctermbg=1',
             \]
-" \ 'highlight clear LineNr'
-" \ 'highlight CursorLine        ctermbg=NONE cterm=underline',
 
 " ####################################################################################
 " Color theme and highlighting
@@ -202,8 +189,12 @@ let g:CSApprox_hook_post = [
 
 set noshowmode
 
-function! LanguageStatusline(...) abort
-    return &iminsert == 1 ? (a:0 == 1 ? a:1 : 'Ru') : ''
+function! LanguageStatus(...) abort
+    return &iminsert == 1 ? (a:0 == 1 ? a:1 : 'RU') : ''
+endfunction
+
+function! CapsLockStatus(...) abort
+    return CapsLockStatusline('CAPS')
 endfunction
 
 let g:lightline = {
@@ -213,8 +204,8 @@ let g:lightline = {
       \             [ 'gitbranch', 'filename', 'readonly', 'modified' ] ]
       \ },
       \ 'component_function': {
-      \   'lang': 'LanguageStatusline',
-      \   'caps': 'CapsLockStatusline',
+      \   'lang': 'LanguageStatus',
+      \   'caps': 'CapsLockStatus',
       \   'gitbranch': 'fugitive#head'
       \ },
       \ }
