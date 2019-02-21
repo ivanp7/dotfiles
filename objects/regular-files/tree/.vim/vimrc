@@ -99,8 +99,9 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-capslock'
 
 Plug 'tpope/vim-fugitive'
-Plug 'scrooloose/nerdtree'
 Plug 'majutsushi/tagbar'
+Plug 'francoiscabrol/ranger.vim'
+Plug 'rbgrouleff/bclose.vim'
 Plug 'qpkorr/vim-bufkill'
 
 " Fixes for things
@@ -150,20 +151,9 @@ let g:EasyClipShareYanksDirectory='$HOME/.vim'
 
 autocmd FileType lisp setlocal commentstring=;\ %s
 
-" NERDTree ****************************
+" ranger.vim **************************
 
-map <C-t> :NERDTreeToggle<CR>
-
-" NERDTress File highlighting
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
-    exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
-    exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
-endfunction
-
-call NERDTreeHighlightFile('lisp', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('lsp', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('sexp', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('asd', 'yellow', 'none', 'yellow', '#151515')
+let g:ranger_replace_netrw = 1 " open ranger when vim open a directory
 
 " Tagbar ******************************
 
