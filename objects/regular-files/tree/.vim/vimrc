@@ -279,6 +279,9 @@ vmap < <gv
 " Ident the whole buffer
 map <F7> gmzgg=G`z
 
+" Paste mode toggle
+autocmd VimEnter * set pastetoggle=<F2>
+
 " Record into register 'q', playback with 'Q'
 nnoremap Q @q
 
