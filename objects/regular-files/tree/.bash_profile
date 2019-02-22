@@ -4,15 +4,10 @@
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
-# echo
-# echo
-clear
-
-echo
-neofetch
-echo
-echo
-
 powerline-daemon -q
 eval $(ssh-agent) > /dev/null
+
+clear
+
+$HOME/bin/print_motd.sh
 
