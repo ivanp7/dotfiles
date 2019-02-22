@@ -9,5 +9,5 @@ eval $(ssh-agent) > /dev/null
 
 clear
 
-$HOME/bin/print_motd.sh
+$HOME/bin/print-motd.sh
 

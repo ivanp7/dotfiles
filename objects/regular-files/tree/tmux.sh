@@ -6,7 +6,7 @@ then
         tmux new-session -d -x $(tput cols) -y $(tput lines) -s default-$(whoami) -n org "sh $HOME/.when/update_calendar.sh";
         # tmux split-window -h -l 67 -t default-$(whoami) ;
         tmux split-window -v -t default-$(whoami) "sh $HOME/.todo/update_todo.sh";
-        tmux split-window -h -b -f -l $(( $(tput cols) - 68 )) -t default-$(whoami) "$HOME/bin/print_motd.sh; bash";
+        tmux split-window -h -b -f -l $(( $(tput cols) - 68 )) -t default-$(whoami) "$HOME/bin/print-motd.sh; bash";
         # tmux select-pane -L
         shopt -q login_shell && tmux attach -t default-$(whoami) || exec tmux attach -t default-$(whoami);
     }
