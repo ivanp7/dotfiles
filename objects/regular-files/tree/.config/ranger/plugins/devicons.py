@@ -99,6 +99,7 @@ file_node_extensions = {
 
 dir_node_exact_matches = {
     '.git'                             : '',
+    '.gnupg'                           : '',
     '.ssh'                             : '',
     'Dropbox'                          : '',
 }
