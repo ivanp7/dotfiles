@@ -5,7 +5,8 @@
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
 powerline-daemon -q
-eval $(ssh-agent) > /dev/null
+eval "$(ssh-agent)" > /dev/null
+eval "$(gpg-agent --daemon)" > /dev/null
 
 clear
 
