@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[[ $(tput colors) -ge 256 ]] && im2a -T -p -W $(tput cols) -H $(($(tput lines))) $HOME/.motd_pic
+[[ $(tput colors) -ge 256 ]] && pixterm -tc $(tput cols) -tr $(($(tput lines) / 2)) $HOME/.motd_pic
 echo
 echo
 echo
