@@ -12,5 +12,10 @@
 [difftool]
     prompt = false
 [alias]
-    d = difftool
+    dif = difftool
+
+[merge]
+    tool = vimdiff
+[mergetool]
+    prompt = false
 
