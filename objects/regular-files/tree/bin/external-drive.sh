@@ -7,7 +7,7 @@ case $1 in
         sudo mkdir -p /mnt/mount-$2
         OPTIONS=$(if [[ -z "$3" ]]; then echo "$DEFAULT_OPTIONS"; else echo "$3"; fi)
         sudo mount -o $OPTIONS /dev/$2 /mnt/mount-$2
-        [ $? -ne 0 ] && sudo rm -d /mnt/mount-$2
+        [ $? -ne 0 ] && sudo rm -d /mnt/mount-$2 || true
         ;;
 
     unmount)
