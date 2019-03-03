@@ -148,7 +148,7 @@ __prompt_processinfo()
 
 __prompt_username()
 {
-    if [[ $USER == "ivanp7" ]]
+    if [[ $USER == "ivanp7" ]] && [[ $(tput colors) -ge 256 ]]
     then
         local colorI=$(__prompt_color 196)
         local colorV=$(__prompt_color 166)
