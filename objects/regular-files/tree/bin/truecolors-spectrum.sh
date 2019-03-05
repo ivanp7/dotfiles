@@ -1,6 +1,7 @@
 #!/bin/bash
 # Based on: https://gist.github.com/XVilka/8346728
 
+echo COLORTERM=$COLORTERM
 awk -v term_cols="$(tput cols)" 'BEGIN{
     s="/\\";
     for (colnum = 0; colnum<term_cols; colnum++) {
