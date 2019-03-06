@@ -237,31 +237,31 @@ let g:sexp_mappings = {
             \ 'sexp_flow_to_prev_leaf_tail':    'gL',
             \ 'sexp_flow_to_next_leaf_tail':    'gl',
             \
-            \ 'sexp_round_head_wrap_list':      '<LocalLeader>si',
-            \ 'sexp_round_tail_wrap_list':      '<LocalLeader>sI',
-            \ 'sexp_round_head_wrap_element':   '<LocalLeader>sw',
-            \ 'sexp_round_tail_wrap_element':   '<LocalLeader>sW',
-            \ 'sexp_splice_list':               '<LocalLeader>s@',
-            \ 'sexp_convolute':                 '<LocalLeader>s?',
-            \ 'sexp_raise_list':                '<LocalLeader>so',
-            \ 'sexp_raise_element':             '<LocalLeader>sO',
+            \ 'sexp_round_head_wrap_list':      '<LocalLeader> i',
+            \ 'sexp_round_tail_wrap_list':      '<LocalLeader> I',
+            \ 'sexp_round_head_wrap_element':   '<LocalLeader> w',
+            \ 'sexp_round_tail_wrap_element':   '<LocalLeader> W',
+            \ 'sexp_splice_list':               '<LocalLeader> @',
+            \ 'sexp_convolute':                 '<LocalLeader> ?',
+            \ 'sexp_raise_list':                '<LocalLeader> o',
+            \ 'sexp_raise_element':             '<LocalLeader> O',
             \
-            \ 'sexp_insert_at_list_head':       '<LocalLeader>sh',
-            \ 'sexp_insert_at_list_tail':       '<LocalLeader>sl',
+            \ 'sexp_insert_at_list_head':       '<LocalLeader> h',
+            \ 'sexp_insert_at_list_tail':       '<LocalLeader> l',
             \
-            \ 'sexp_square_head_wrap_list':     '<LocalLeader>s[',
-            \ 'sexp_square_tail_wrap_list':     '<LocalLeader>s]',
-            \ 'sexp_curly_head_wrap_list':      '<LocalLeader>s{',
-            \ 'sexp_curly_tail_wrap_list':      '<LocalLeader>s}',
-            \ 'sexp_square_head_wrap_element':  '<LocalLeader>se[',
-            \ 'sexp_square_tail_wrap_element':  '<LocalLeader>se]',
-            \ 'sexp_curly_head_wrap_element':   '<LocalLeader>se{',
-            \ 'sexp_curly_tail_wrap_element':   '<LocalLeader>se}',
+            \ 'sexp_square_head_wrap_list':     '<LocalLeader> [',
+            \ 'sexp_square_tail_wrap_list':     '<LocalLeader> ]',
+            \ 'sexp_curly_head_wrap_list':      '<LocalLeader> {',
+            \ 'sexp_curly_tail_wrap_list':      '<LocalLeader> }',
+            \ 'sexp_square_head_wrap_element':  '<LocalLeader> e[',
+            \ 'sexp_square_tail_wrap_element':  '<LocalLeader> e]',
+            \ 'sexp_curly_head_wrap_element':   '<LocalLeader> e{',
+            \ 'sexp_curly_tail_wrap_element':   '<LocalLeader> e}',
             \ }
 
 " Vlime *******************************
 
-let g:vlime_leader = '<LocalLeader>v'
+let g:vlime_leader = '<LocalLeader>'
 let g:vlime_enable_autodoc = v:true
 let g:vlime_window_settings = {'sldb': {'pos': 'belowright', 'vertical': v:true}, 
             \ 'inspector': {'pos': 'belowright', 'vertical': v:true}, 
@@ -330,8 +330,8 @@ nnoremap <silent> gB :call SwitchToNextBuffer(-1)<CR>
 let mapleader=","
 let maplocalleader=" "
 
-command CCI let @" = @+
-command CCO let @+ = @" | let @* = @"
+command! CCI let @" = @+
+command! CCO let @+ = @" | let @* = @"
 
 " Escape special characters in a string for exact matching.
 " This is useful to copying strings from the file to the search tool
