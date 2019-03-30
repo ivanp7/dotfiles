@@ -11,9 +11,9 @@ list_yaft_clients()
 
 find_client()
 {
-    if [[ -f "$HOME/.tmux_tmp/$1" ]]
+    if [[ -f "/tmp/tmux-refresh-service-$(whoami)/$1" ]]
     then
-        local PTS=$(cat $HOME/.tmux_tmp/$1)
+        local PTS=$(cat /tmp/tmux-refresh-service-$(whoami)/$1)
         if [[ -n "$PTS" ]]
         then
             local CLIENT=$(list_yaft_clients | grep ^$PTS:)
@@ -95,7 +95,7 @@ refresh()
         restore_client "$CLIENT"
 
     # we're on bare tty, hide all yaft tmux clients
-    elif [[ ! -f "$HOME/.tmux_tmp/$TTY" ]]
+    elif [[ ! -f "/tmp/tmux-refresh-service-$(whoami)/$TTY" ]]
     then
         IFS=$'\n'
         for client in $(list_yaft_clients); do hide_client "$client"; done

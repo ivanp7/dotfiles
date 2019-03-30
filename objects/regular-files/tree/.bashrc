@@ -114,10 +114,10 @@ function colorgrid ()
 # element of yaft drawing bug workaround
 if [[ "$TERM" == "yaft-256color" ]]
 then
-    if [ -f $HOME/.tmux_tmp/tmp ]
+    if [ -f /tmp/tmux-refresh-service-$(whoami)/tmp ]
     then
-        echo $(tty) > $HOME/.tmux_tmp/$(cat $HOME/.tmux_tmp/tmp)
-        rm $HOME/.tmux_tmp/tmp
+        echo $(tty) > /tmp/tmux-refresh-service-$(whoami)/$(cat /tmp/tmux-refresh-service-$(whoami)/tmp)
+        rm /tmp/tmux-refresh-service-$(whoami)/tmp
     fi
 
     . $HOME/tmux.sh
