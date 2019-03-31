@@ -3,5 +3,5 @@ Description=Calendar update job
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/touch %h/Org/calendar
+ExecStart=/usr/bin/touch %h/org/calendar
 
