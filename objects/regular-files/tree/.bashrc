@@ -107,6 +107,7 @@ function colorgrid ()
 }
 
 # aliases
+alias sudo='sudo '
 . ${HOME}/.aliases
 { type xhost >& /dev/null && xhost >& /dev/null &&
     [ -f ${HOME}/.xaliases ] && . ${HOME}/.xaliases; } || true
