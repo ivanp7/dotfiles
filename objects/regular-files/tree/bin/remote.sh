@@ -7,11 +7,18 @@ if [[ ! -d "$HOME/.password-store/computers/$HOST" ]]; then
     exit 2
 fi
 
+LOCAL_SUBNET=$(pass /computers/$HOSTNAME/net/subnet 2> /dev/null)
+REMOTE_SUBNET=$(pass /computers/$HOST/net/subnet 2> /dev/null)
+
+if [[ -z $REMOTE_SUBNET ]] || [[ $LOCAL_SUBNET != $REMOTE_SUBNET ]]
+then SCOPE=global
+else SCOPE=local; fi
+
 if [[ $HOST != $HOSTNAME ]]
-then ADDRESS=$(pass /computers/$HOST/net/global/ip-address 2> /dev/null)
+then ADDRESS=$(pass /computers/$HOST/net/$SCOPE/ip-address 2> /dev/null)
 else ADDRESS=127.0.0.1; fi
-PORT=$(pass /computers/$HOST/net/global/port-ssh 2> /dev/null)
-WAKEUP_PORT=$(pass /computers/$HOST/net/global/port-wakeup 2> /dev/null)
+PORT=$(pass /computers/$HOST/net/$SCOPE/port-ssh 2> /dev/null)
+WAKEUP_PORT=$(pass /computers/$HOST/net/$SCOPE/port-wakeup 2> /dev/null)
 MAC_ADDRESS=$(pass /computers/$HOST/net/mac-address 2> /dev/null)
 
 if [[ -z $PORT ]]; then PORT=22; fi
