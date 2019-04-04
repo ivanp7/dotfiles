@@ -2,29 +2,43 @@
 
 HOST="$1"
 
-DESCRIPTION="$(grep "^$HOST " $HOME/.ssh_known_hosts)"
-read -r COMPUTER USERNAME HOSTNAME PORT WAKEUP_PORT MAC_ADDRESS <<< "$DESCRIPTION"
-
-if [[ -z "$COMPUTER" ]]; then
+if [[ ! -d "$HOME/.password-store/computers/$HOST" ]]; then
     echo Error: unknown host "$HOST"
     exit 2
 fi
 
+if [[ $HOST != $HOSTNAME ]]
+then ADDRESS=$(pass /computers/$HOST/net/global/ip-address 2> /dev/null)
+else ADDRESS=127.0.0.1; fi
+PORT=$(pass /computers/$HOST/net/global/port-ssh 2> /dev/null)
+WAKEUP_PORT=$(pass /computers/$HOST/net/global/port-wakeup 2> /dev/null)
+MAC_ADDRESS=$(pass /computers/$HOST/net/mac-address 2> /dev/null)
+
+if [[ -z $PORT ]]; then PORT=22; fi
+if [[ -z $WAKEUP_PORT ]]; then WAKEUP_PORT=40000; fi
+
 MODE="$2"
 
 case $MODE in
-    status) COMMAND="nc -z $HOSTNAME $PORT" ;;
-    wakeup) COMMAND="wol -p $WAKEUP_PORT -i $HOSTNAME $MAC_ADDRESS" ;;
+    status) COMMAND="nc -z $ADDRESS $PORT" ;;
+    wakeup) 
+        if [[ -n $MAC_ADDRESS ]]
+        then COMMAND="wol -p $WAKEUP_PORT -i $ADDRESS $MAC_ADDRESS"
+        else
+            echo Error: MAC address of the remote host is unknown.
+            exit 1
+        fi 
+        ;;
 
-    upload) COMMAND="rsync -vP ${@:5} -e 'ssh -p $PORT' $3 '$USERNAME@$HOSTNAME:$4'" ;;
-    download) COMMAND="rsync -vP ${@:5} -e 'ssh -p $PORT' '$USERNAME@$HOSTNAME:$3' $4" ;;
+    upload) COMMAND="rsync -vP ${@:5} -e 'ssh -p $PORT' $3 '$USER@$ADDRESS:$4'" ;;
+    download) COMMAND="rsync -vP ${@:5} -e 'ssh -p $PORT' '$USER@$ADDRESS:$3' $4" ;;
 
-    mount) COMMAND="sshfs $USERNAME@$HOSTNAME:$3 $4 -p $PORT -o reconnect ${@:5}" ;;
+    mount) COMMAND="sshfs $USER@$ADDRESS:$3 $4 -p $PORT -o reconnect ${@:5}" ;;
     unmount) COMMAND="fusermount3 -u $3" ;;
 
     command)
         SSH_FLAGS="-p $PORT"
-        COMMAND="TERM=xterm-256color ssh $SSH_FLAGS $USERNAME@$HOSTNAME ${@:3}"
+        COMMAND="TERM=xterm-256color ssh $SSH_FLAGS $USER@$ADDRESS ${@:3}"
         ;;
 
     tunnel)
@@ -32,7 +46,7 @@ case $MODE in
         if [[ -z "$LOCAL_PORT" ]]; then LOCAL_PORT=65535; fi
 
         SSH_FLAGS="-D $LOCAL_PORT -N -p $PORT"
-        COMMAND="TERM=xterm-256color ssh $SSH_FLAGS $USERNAME@$HOSTNAME"
+        COMMAND="TERM=xterm-256color ssh $SSH_FLAGS $USER@$ADDRESS"
         ;;
 
     *)
