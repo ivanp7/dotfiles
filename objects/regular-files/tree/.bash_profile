@@ -20,5 +20,5 @@ powerline-daemon -q
 sleep 1
 clear
 
-$HOME/bin/print-motd.sh
+$HOME/bin/df/print-motd.sh
 

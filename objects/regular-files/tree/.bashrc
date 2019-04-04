@@ -30,7 +30,7 @@ stty -ixon
 # variables
 if [[ ! -v PATH_SET ]]
 then
-    export PATH="${PATH}:${HOME}/bin/scripts:${HOME}/bin"
+    export PATH="${PATH}:${HOME}/bin/df:${HOME}/bin"
     export PATH_SET=true
 fi
 
