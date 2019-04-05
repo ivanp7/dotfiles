@@ -1,16 +1,16 @@
 #!/bin/bash
 
-OLD_LIST=$(basename $(readlink $HOME/Org/todo))
+OLD_LIST=$(basename $(readlink $HOME/org/todo))
 
 if [[ -z "$1" ]]
 then
     echo $OLD_LIST
-    ls $HOME/Org/todo-lists/
-elif [[ -d "$HOME/Org/todo-lists/$1" ]]
+    ls $HOME/org/todo-lists/
+elif [[ -d "$HOME/org/todo-lists/$1" ]]
 then
-    rm $HOME/Org/todo
-    ln -sf todo-lists/$1 $HOME/Org/todo
-    touch $HOME/Org/todo-lists/$OLD_LIST/todo.txt
+    rm $HOME/org/todo
+    ln -sf todo-lists/$1 $HOME/org/todo
+    touch $HOME/org/todo-lists/$OLD_LIST/todo.txt
 else
     echo "No such TO-DO list '$1'."
 fi
