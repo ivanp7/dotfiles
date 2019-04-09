@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Based on: https://gist.github.com/XVilka/8346728
 
 echo COLORTERM=$COLORTERM

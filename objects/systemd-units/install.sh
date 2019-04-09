@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 CONF_DIR=$(realpath `dirname $0`)
 
-if [ $EUID -ne 0 ]
+if [ "$(id -u)" -ne 0 ]
 then
     mkdir -p $HOME/.config/systemd/user/
     TARGET_DIR=$HOME/.config/systemd/user/

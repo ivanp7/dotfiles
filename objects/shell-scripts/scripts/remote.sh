@@ -1,35 +1,35 @@
-#!/bin/bash
+#!/bin/sh
 
-HOST="$1"
+REMOTE_HOST="$1"
 
-if [[ ! -d "$HOME/.password-store/computers/$HOST" ]]; then
-    echo Error: unknown host "$HOST"
+if [ ! -d "$HOME/.password-store/computers/$REMOTE_HOST" ]; then
+    echo Error: unknown host "$REMOTE_HOST"
     exit 2
 fi
 
-LOCAL_SUBNET=$(pass /computers/$HOSTNAME/net/subnet 2> /dev/null)
-REMOTE_SUBNET=$(pass /computers/$HOST/net/subnet 2> /dev/null)
+LOCAL_SUBNET=$(pass /computers/$HOST/net/subnet 2> /dev/null)
+REMOTE_SUBNET=$(pass /computers/$REMOTE_HOST/net/subnet 2> /dev/null)
 
-if [[ -z $REMOTE_SUBNET ]] || [[ $LOCAL_SUBNET != $REMOTE_SUBNET ]]
+if [ -z "$REMOTE_SUBNET" ] || [ "$LOCAL_SUBNET" != "$REMOTE_SUBNET" ]
 then SCOPE=global
 else SCOPE=local; fi
 
-if [[ $HOST != $HOSTNAME ]]
-then ADDRESS=$(pass /computers/$HOST/net/$SCOPE/ip-address 2> /dev/null)
+if [ "$REMOTE_HOST" != "$HOST" ]
+then ADDRESS=$(pass /computers/$REMOTE_HOST/net/$SCOPE/ip-address 2> /dev/null)
 else ADDRESS=127.0.0.1; fi
-PORT=$(pass /computers/$HOST/net/$SCOPE/port-ssh 2> /dev/null)
-WAKEUP_PORT=$(pass /computers/$HOST/net/$SCOPE/port-wakeup 2> /dev/null)
-MAC_ADDRESS=$(pass /computers/$HOST/net/mac-address 2> /dev/null)
+PORT=$(pass /computers/$REMOTE_HOST/net/$SCOPE/port-ssh 2> /dev/null)
+WAKEUP_PORT=$(pass /computers/$REMOTE_HOST/net/$SCOPE/port-wakeup 2> /dev/null)
+MAC_ADDRESS=$(pass /computers/$REMOTE_HOST/net/mac-address 2> /dev/null)
 
-if [[ -z $PORT ]]; then PORT=22; fi
-if [[ -z $WAKEUP_PORT ]]; then WAKEUP_PORT=40000; fi
+if [ -z "$PORT" ]; then PORT=22; fi
+if [ -z "$WAKEUP_PORT" ]; then WAKEUP_PORT=40000; fi
 
 MODE="$2"
 
 case $MODE in
     status) COMMAND="nc -z $ADDRESS $PORT" ;;
     wakeup) 
-        if [[ -n $MAC_ADDRESS ]]
+        if [ -n $MAC_ADDRESS ]
         then COMMAND="wol -p $WAKEUP_PORT -i $ADDRESS $MAC_ADDRESS"
         else
             echo Error: MAC address of the remote host is unknown.
@@ -50,7 +50,7 @@ case $MODE in
 
     tunnel)
         LOCAL_PORT=$3
-        if [[ -z "$LOCAL_PORT" ]]; then LOCAL_PORT=65535; fi
+        if [ -z $LOCAL_PORT ]; then LOCAL_PORT=65535; fi
 
         SSH_FLAGS="-D $LOCAL_PORT -N -p $PORT"
         COMMAND="TERM=xterm-256color ssh $SSH_FLAGS $USER@$ADDRESS"

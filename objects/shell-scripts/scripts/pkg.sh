@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 AUR_HELPER=yay
 
-if type $AUR_HELPER > /dev/null
+if command -v $AUR_HELPER > /dev/null
 then
     PKGMANAGER="$AUR_HELPER"
     PKGMANAGER_SUDO="$AUR_HELPER"

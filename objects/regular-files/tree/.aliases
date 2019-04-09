@@ -13,8 +13,6 @@ alias egrep='egrep --color=auto'
 alias diff='diff --color=auto'
 
 alias less='/usr/share/vim/vim81/macros/less.sh'
-# alias less='less -Q'
-alias man='man -P "less -Q"'
 
 alias pwd_='printf "%q\n" "$(pwd)"'
 

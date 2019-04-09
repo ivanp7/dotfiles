@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 CONF_DIR=$(realpath `dirname $0`)
 
