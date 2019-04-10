@@ -4,6 +4,9 @@ SAVEHIST=10000
 setopt appendhistory extendedglob nomatch
 unsetopt autocd beep notify
 
+setopt COMPLETE_ALIASES
+setopt HIST_IGNORE_DUPS HIST_FIND_NO_DUPS
+
 autoload -Uz add-zsh-hook
 
 # help
@@ -18,9 +21,22 @@ zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit
 compinit
 
-setopt COMPLETE_ALIASES
-setopt HIST_IGNORE_DUPS HIST_FIND_NO_DUPS
+# auto prehash
+zshcache_time="$(date +%s%N)"
+rehash_precmd () 
+{
+  if [[ -a /var/cache/zsh/pacman ]]; then
+    local paccache_time="$(date -r /var/cache/zsh/pacman +%s%N)"
+    if (( zshcache_time < paccache_time )); then
+      rehash
+      zshcache_time="$paccache_time"
+    fi
+  fi
+}
 
+add-zsh-hook -Uz precmd rehash_precmd
+
+# keys
 autoload edit-command-line
 zle -N edit-command-line
 
@@ -28,7 +44,6 @@ autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
-# keys
 bindkey -v
 typeset -g -A key
 bindkey '^?' backward-delete-char
@@ -56,7 +71,7 @@ bindkey -M vicmd '^v' edit-command-line
 stty -ixon -ixoff
 
 # man
-man() {
+man () {
   env \
     LESS_TERMCAP_mb=$(printf "\e[1;31m") \
     LESS_TERMCAP_md=$(printf "\e[1;33m") \
