@@ -48,8 +48,8 @@ _p_cmdtimeinfo()
 
 _p_cmdstatusinfo()
 {
-    SuccessColor=${_p_bold}$(_p_color 2)
-    FailureColor=${_p_bold}$(_p_color 1)
+    local SuccessColor=${_p_bold}$(_p_color 2)
+    local FailureColor=${_p_bold}$(_p_color 1)
     if [ $_p_exitcode -eq 0 ]
     then
         echo "${_p_dash}[${SuccessColor}ok${_p_stdcolor}]"
@@ -116,42 +116,33 @@ _p_processinfo()
 
 _p_username()
 {
-    local username="$USER"
-    [ "$(id -u)" -eq 0 ] && username="root"
-
-    if [ "${username}" = "ivanp7" ] && [ $(tput colors) -ge 256 ]
+    if [ "$(id -u)" -eq 0 ]
     then
-        local colorI=$(_p_color 196)
-        local colorV=$(_p_color 166)
-        local colorA=$(_p_color 136)
-        local colorN=$(_p_color 106)
-        local colorP=$(_p_color  76)
-        local color7=$(_p_color  46)
-        echo "${colorI}i${colorV}v${colorA}a${colorN}n${colorP}p${color7}7${_p_stdcolor}"
-        exit
-    fi
-
-    UserColor=$(_p_color 2)
-    RootColor=${_p_bold}$(_p_color 7 1)
-    if [ "$(id -u)" -ne 0 ]
-    then
-        echo "${UserColor}${username}${_p_stdcolor}"
-
+        local RootColor=${_p_bold}$(_p_color 7 1)
+        echo "${RootColor}root${_p_stdcolor}"
     else
-        echo "${RootColor}${username}${_p_stdcolor}"
+        local username_line="$(grep "^$USER " $HOME/.prompt.zsh.usernames 2> /dev/null)"
+        if [ -n "$username_line" ]
+        then
+            echo "$username_line" | read _ username
+            echo "${username}${_p_stdcolor}"
+        else
+            local UserColor=$(_p_color 2)
+            echo "${UserColor}${USER}${_p_stdcolor}"
+        fi
     fi
 }
 
 _p_userhostinfo()
 {
-    HostColor=$(_p_safe_color "$(_p_color 39)" "${_p_bold}$(_p_color 4)")
+    local HostColor=$(_p_safe_color "$(_p_color 39)" "${_p_bold}$(_p_color 4)")
     echo "${_p_2dash}[$(_p_username)@${HostColor}$HOST${_p_stdcolor}]"
 }
 
 _p_gitinfo()
 {
-    BranchColor=$(_p_safe_color "$(_p_color 165)" "${_p_bold}$(_p_color 5)")
-    ChangedBranchColor=$(_p_safe_color "$(_p_color 16 165)" "${_p_bold}$(_p_color 7 5)")
+    local BranchColor=$(_p_safe_color "$(_p_color 165)" "${_p_bold}$(_p_color 5)")
+    local ChangedBranchColor=$(_p_safe_color "$(_p_color 16 165)" "${_p_bold}$(_p_color 7 5)")
     if [ -z ${_p_gitbranch} ]
     then
         echo "${_p_2dash}[${BranchColor}-${_p_stdcolor}]"
