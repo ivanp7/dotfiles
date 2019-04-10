@@ -87,7 +87,7 @@ man () {
 ranger ()
 {
     tempfile="$(mktemp -t tmp.XXXXXX)"
-    SHELL=$HOME/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
+    SHELL=$HOME/.r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
 
     test -f "$tempfile" &&
         if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
@@ -98,7 +98,7 @@ ranger ()
 
 sudo_ranger ()
 {
-    sudo SHELL=$HOME/r.shell /usr/bin/ranger "${@:-$(pwd)}"
+    sudo SHELL=$HOME/.r.shell /usr/bin/ranger "${@:-$(pwd)}"
 }
 
 # color grid
@@ -149,12 +149,12 @@ then
         rm /tmp/tmux-refresh-service-$(whoami)/tmp
     fi
 
-    . $HOME/tmux.sh
+    . $HOME/.tmux.sh
 fi
 
 # unfreeze terminal if left frozen
 ttyctl -f
 
 # shell prompt
-. $HOME/prompt.zsh
+. $HOME/.prompt.zsh
 
