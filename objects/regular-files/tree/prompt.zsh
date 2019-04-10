@@ -116,7 +116,10 @@ _p_processinfo()
 
 _p_username()
 {
-    if [ "$USER" = "ivanp7" ] && [ $(tput colors) -ge 256 ]
+    local username="$USER"
+    [ "$(id -u)" -eq 0 ] && username="root"
+
+    if [ "${username}" = "ivanp7" ] && [ $(tput colors) -ge 256 ]
     then
         local colorI=$(_p_color 196)
         local colorV=$(_p_color 166)
@@ -132,10 +135,10 @@ _p_username()
     RootColor=${_p_bold}$(_p_color 7 1)
     if [ "$(id -u)" -ne 0 ]
     then
-        echo "${UserColor}$USER${_p_stdcolor}"
+        echo "${UserColor}${username}${_p_stdcolor}"
 
     else
-        echo "${RootColor}$USER${_p_stdcolor}"
+        echo "${RootColor}${username}${_p_stdcolor}"
     fi
 }
 
@@ -175,9 +178,9 @@ _p_pwdinfo()
     local PromptLength=$((1 + $UserHostInfoLength + $GitInfoLength + 3))
     local MaxOutputLength=$(($_p_termwidth - $PromptLength))
 
-    local DirColor=${_p_color_white}${_p_underline}
-    local SlashColor=${_p_stdcolor}${_p_stopunderline}
-    local GapColor=$(_p_color 1)${_p_stopunderline}
+    local DirColor=${_p_color_white} #${_p_underline}
+    local SlashColor=${_p_stdcolor} #${_p_stopunderline}
+    local GapColor=$(_p_color 1) #${_p_stopunderline}
 
     if [ ${#PWD} -le $MaxOutputLength ]
     then
