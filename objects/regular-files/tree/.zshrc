@@ -157,5 +157,5 @@ fi
 ttyctl -f
 
 # shell prompt
-. $HOME/.prompt.zsh
+. $HOME/.zshrc.prompt
 
