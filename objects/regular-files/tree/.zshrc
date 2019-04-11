@@ -96,9 +96,10 @@ ranger ()
     rm -f -- "$tempfile"
 }
 
-sudo_ranger ()
+tx ()
 {
-    sudo SHELL=$HOME/.r.shell /usr/bin/ranger "${@:-$(pwd)}"
+    if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
+    then tmux attach || . $HOME/.tmux-env; fi
 }
 
 # color grid
@@ -150,7 +151,8 @@ then
         rm /tmp/tmux-refresh-service-$(whoami)/tmp
     fi
 
-    . $HOME/.tmux.sh
+    tx
+    exit
 fi
 
 # unfreeze terminal if left frozen
