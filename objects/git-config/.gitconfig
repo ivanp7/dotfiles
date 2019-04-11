@@ -1,11 +1,7 @@
 # This is Git's per-user configuration file.
-[user]
-    name = USERNAME
-    email = USERNAME.git@gmail.com
 [core]
     editor = vim
-    excludesfile = HOME/.gitignore_global
-    fileMode = false
+    excludesfile = ~/.gitignore_global
 
 [diff]
     tool = vimdiff
