@@ -136,6 +136,7 @@ colorgrid ()
 }
 
 # aliases
+alias sudo='sudo '
 . $HOME/.aliases
 { command -v xhost > /dev/null && xhost > /dev/null 2>&1 &&
     [ -f $HOME/.xaliases ] && . $HOME/.xaliases; } || true
