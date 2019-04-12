@@ -15,13 +15,11 @@ alias diff='diff --color=auto '
 alias less='/usr/share/vim/vim81/macros/less.sh '
 
 alias rr='ranger '
-alias srr='sudo ranger '
+alias srr='sudo_ranger '
 
 alias pwd_='printf "%q\n" "$(pwd)"'
 
 alias ssh='TERM=xterm-256color ssh '
-
-alias todo='todo.sh -c '
 
 alias yaft=''
 alias yaft_wall=''

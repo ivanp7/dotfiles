@@ -96,6 +96,11 @@ ranger ()
     rm -f -- "$tempfile"
 }
 
+sudo_ranger ()
+{
+    sudo SHELL=$HOME/.r.shell /usr/bin/ranger "${@:-$(pwd)}"
+}
+
 tx ()
 {
     if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]

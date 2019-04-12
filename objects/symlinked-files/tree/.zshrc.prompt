@@ -250,15 +250,15 @@ _p_command ()
     local PromptLine2="${_p_stdcolor}${_p_mid}$(_p_userhostinfo)$(_p_gitinfo)$(_p_pwdinfo)"
     local PromptLine3="${_p_stdcolor}${_p_bot}${_p_dash}"
 
-    RPROMPT=""
-    RPROMPT2=""
-
-    PS1="${_p_stdcolor}
-$PromptLine1
-$PromptLine2
-$PromptLine3 $(_p_character) ${_p_cmdcolor}"
+    print -P "${_p_stdcolor}"
+    print -P "$PromptLine1"
+    print -P "$PromptLine2"
+    PROMPT="$PromptLine3 $(_p_character) ${_p_cmdcolor}"
 
     PS2="$PromptLine3 > ${_p_cmdcolor}"
+
+    RPROMPT=""
+    RPROMPT2=""
 }
 
 add-zsh-hook preexec _p_timer_start
