@@ -1,7 +1,0 @@
-#!/bin/sh
-
-CONF_DIR=$(realpath `dirname $0`)
-
-install -Dm 644 $CONF_DIR/.gitconfig $HOME/
-install -Dm 644 $CONF_DIR/.gitignore_global $HOME/
-
