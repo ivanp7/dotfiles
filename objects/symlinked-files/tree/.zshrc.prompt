@@ -31,8 +31,8 @@ _p_arrow="→"
 _p_top="┌"
 _p_mid="╞"
 _p_bot="└"
-_p_mid_r="╗"
-_p_bot_r="╝"
+_p_mid_r="┐"
+_p_bot_r="┘"
 
 ############################################################################
 
@@ -172,7 +172,7 @@ _p_pwdinfo()
     local MaxOutputLength=$(($_p_termwidth - $PromptLength))
     local SeparatorLineLength=$(($MaxOutputLength - ${#PWD}))
     if [ $SeparatorLineLength -gt 2 ]
-    then SeparatorLine="$(printf "%0.s${_p_2dash}" $(seq 1 $(($SeparatorLineLength - 2))))${_p_mid_r} "
+    then SeparatorLine="$(printf "%0.s${_p_dash}" $(seq 1 $(($SeparatorLineLength - 2))))${_p_mid_r} "
     else SeparatorLine="${_p_mid_r} "
     fi
 
@@ -209,7 +209,7 @@ function zle-keymap-select {
 zle -N zle-keymap-select
 
 function zle-line-finish {
-    RPROMPT="${_p_stdcolor}[${_p_color_white}%D{%T}${_p_stdcolor}]${_p_2dash}${_p_bot_r}"
+    RPROMPT="${_p_stdcolor}[${_p_color_white}%D{%T}${_p_stdcolor}]${_p_dash}${_p_bot_r}"
     RPROMPT2=$RPROMPT
     zle reset-prompt
 }
