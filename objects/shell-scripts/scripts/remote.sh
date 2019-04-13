@@ -56,7 +56,8 @@ if [ -z "$WAKEUP_DELAY" ]; then WAKEUP_DELAY="1"; fi
 
 # ------------------------------------------------------------------------------
 
-status_of() { run "nc -z $ADDRESS $PORT"; }
+STATUS_TIMEOUT=5
+status_of() { run "nc -w $STATUS_TIMEOUT -z $ADDRESS $PORT"; }
 
 wakeup()
 {
@@ -66,7 +67,11 @@ wakeup()
     fi 
 }
 
-wakeup_run() { wakeup; sleep $WAKEUP_DELAY; $1; }
+wakeup_run() 
+{
+    if ! status_of; then wakeup; sleep $WAKEUP_DELAY; fi
+    $1
+}
 
 upload() { run "rsync -vP $REST_P -e 'ssh -p $PORT' $FIRST_P '$USER@$ADDRESS:$SECOND_P'"; }
 download() { run "rsync -vP $REST_P -e 'ssh -p $PORT' '$USER@$ADDRESS:$FIRST_P' $SECOND_P"; }

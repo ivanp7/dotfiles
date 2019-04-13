@@ -219,7 +219,7 @@ function TRAPINT() {
     SIGINTColor=$(_p_color 1)
     RPROMPT="${_p_stdcolor}[${SIGINTColor}SIGINT${_p_stdcolor}]${_p_dash}${_p_bot_r}"
     RPROMPT2=$RPROMPT
-    zle reset-prompt
+    zle && { zle reset-prompt; zle -R; }
     return $(( 128 + $1 ))
 } 
 
