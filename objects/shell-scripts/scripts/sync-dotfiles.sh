@@ -1,17 +1,20 @@
 #!/bin/sh
 
+SYNC_COMMAND='"cd /home/shared/dotfiles; git pull"'
 HOST="$(hostname)"
 
 sync()
 {
-    SYNC_COMMAND='"cd /home/shared/dotfiles; git pull"'
-    REMOTE_HOST=$(echo "$1" | cut -d'/' -f2)
+    REMOTE_HOST=$1
     if [ "$REMOTE_HOST" != "$HOST" ]
-    then remote.sh $REMOTE_HOST wakeup_command "$SYNC_COMMAND"
+    then 
+        echo "Synchronizing '$REMOTE_HOST'..."
+        remote.sh $REMOTE_HOST wakeup_command "$SYNC_COMMAND"
     fi
 }
 
 cd $HOME/.password-store/computers
-find . -mindepth 2 -maxdepth 2 -type d -name "net" |
-    while read path; do sync $path; done
+for remote_path in $(find . -mindepth 2 -maxdepth 2 -type d -name "net")
+do sync $(echo "$remote_path" | cut -d'/' -f2)
+done
 
