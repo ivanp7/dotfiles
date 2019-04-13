@@ -31,6 +31,8 @@ _p_arrow="→"
 _p_top="┌"
 _p_mid="╞"
 _p_bot="└"
+_p_mid_r="╕"
+_p_bot_r="┘"
 
 ############################################################################
 
@@ -76,7 +78,7 @@ _p_processinfo()
         s/---/]${_p_arrow}[/g; 
     " <<< $(pstree -ls $$))"
 
-    [ -z $OutputStr ] && exit
+    [ -z "$OutputStr" ] && exit
 
     local TimeInfoLength=11
     local CmdTimeInfoLength=$((4 + ${#_p_timer_delta}))
@@ -143,11 +145,11 @@ _p_gitinfo()
 {
     local BranchColor=$(_p_safe_color "$(_p_color 165)" "${_p_bold}$(_p_color 5)")
     local ChangedBranchColor=$(_p_safe_color "$(_p_color 16 165)" "${_p_bold}$(_p_color 7 5)")
-    if [ -z ${_p_gitbranch} ]
+    if [ -z "${_p_gitbranch}" ]
     then
         echo "${_p_2dash}[${BranchColor}-${_p_stdcolor}]"
 
-    elif [ -z $_p_gitstatus ]
+    elif [ -z "$_p_gitstatus" ]
     then
         echo "${_p_2dash}[${BranchColor}${_p_gitbranch}${_p_stdcolor}]"
 
@@ -160,31 +162,37 @@ _p_pwdinfo()
 {
     local UserHostInfoLength=$((4 + ${#USER} + ${#HOST}))
     local GitInfoLength=$((3 + $(
-        if [ -n ${_p_gitbranch} ]
-        then echo ${#_p_gitbranch}
-        else echo 1
+        if [ -n "${_p_gitbranch}" ]
+        then echo "${#_p_gitbranch}"
+        else echo "1"
         fi)
     ))
 
     local PromptLength=$((1 + $UserHostInfoLength + $GitInfoLength + 3))
     local MaxOutputLength=$(($_p_termwidth - $PromptLength))
+    local SeparatorLineLength=$(($MaxOutputLength - ${#PWD}))
+    if [ $SeparatorLineLength -gt 2 ]
+    then SeparatorLine="$(printf "%0.s${_p_2dash}" $(seq 1 $(($SeparatorLineLength - 2))))${_p_mid_r} "
+    else SeparatorLine="${_p_mid_r} "
+    fi
 
     local DirColor=${_p_color_white} #${_p_underline}
     local SlashColor=${_p_stdcolor} #${_p_stopunderline}
     local GapColor=$(_p_color 1) #${_p_stopunderline}
 
-    if [ ${#PWD} -le $MaxOutputLength ]
+    if [ $SeparatorLineLength -ge 2 ]
     then
+
         local ColPWD=$DirColor${PWD//\//$SlashColor\/$DirColor}
-        echo "${_p_2dash}[$ColPWD${_p_stdcolor}${_p_stopunderline}]"
+        echo "${_p_2dash}[$ColPWD${_p_stdcolor}${_p_stopunderline}]${SeparatorLine}"
     else
-        local PWDExcessLength=$((3 + ${#PWD} - $MaxOutputLength))
-        local PWD1=${PWD:0:(${#PWD} - ($PWDExcessLength + 1)) / 2}
+        local PWDExcessLength=$((3 + ${#PWD} - $MaxOutputLength + 2))
+        local PWD1=${PWD:0:(${#PWD} / 2 - ($PWDExcessLength + 1) / 2)}
         local ColPWD1=$DirColor${PWD1//\//$SlashColor\/$DirColor}
-        local PWD2=${PWD:(${#PWD} + $PWDExcessLength) / 2}
+        local PWD2=${PWD:(${#PWD} / 2 + $PWDExcessLength / 2)}
         local ColPWD2=$DirColor${PWD2//\//$SlashColor\/$DirColor}
 
-        echo "${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}${_p_stopunderline}]"
+        echo "${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}${_p_stopunderline}]${SeparatorLine}"
     fi
 }
 
@@ -193,25 +201,27 @@ _p_pwdinfo()
 _p_vim_mode=
 
 function zle-keymap-select {
-    RPS1=
-    [ "$KEYMAP" = "vicmd" ] && RPS1="%F{7}%K{1}-- COMMAND --%k%f"
-    RPS2=$RPS1
+    RPROMPT=
+    [ "$KEYMAP" = "vicmd" ] && RPROMPT="%F{7}%K{1}-- COMMAND --%k%f"
+    RPROMPT2=$RPROMPT
     zle reset-prompt
 }
 zle -N zle-keymap-select
 
 function zle-line-finish {
-    RPS1=
-    RPS2=
+    RPROMPT="${_p_stdcolor}[${_p_color_white}%D{%T}${_p_stdcolor}]${_p_bot_r}"
+    RPROMPT2=$RPROMPT
+    zle reset-prompt
 }
 zle -N zle-line-finish
 
 # Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
 function TRAPINT() {
-  RPS1=
-  RPS2=
-  return $(( 128 + $1 ))
+    RPROMPT=""
+    RPROMPT2=""
+    zle reset-prompt
+    return $(( 128 + $1 ))
 } 
 
 _p_character()
@@ -255,7 +265,7 @@ _p_command ()
     print -P "$PromptLine2"
     PROMPT="$PromptLine3 $(_p_character) ${_p_cmdcolor}"
 
-    PS2="$PromptLine3 > ${_p_cmdcolor}"
+    PROMPT2="$PromptLine3 > ${_p_cmdcolor}"
 
     RPROMPT=""
     RPROMPT2=""
