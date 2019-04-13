@@ -7,8 +7,6 @@
 
 _p_bold="%B"
 _p_stopbold="%b"
-_p_underline="%U"
-_p_stopunderline="%u"
 
 _p_color()
 {
@@ -160,7 +158,8 @@ _p_gitinfo()
 
 _p_pwdinfo()
 {
-    local UserHostInfoLength=$((4 + ${#USER} + ${#HOST}))
+    local UsernameLength=$(if [ "$(id -u)" -eq 0 ]; then echo "4"; else echo "${#USER}"; fi)
+    local UserHostInfoLength=$((4 + $UsernameLength + ${#HOST}))
     local GitInfoLength=$((3 + $(
         if [ -n "${_p_gitbranch}" ]
         then echo "${#_p_gitbranch}"
@@ -176,15 +175,15 @@ _p_pwdinfo()
     else SeparatorLine="${_p_mid_r} "
     fi
 
-    local DirColor=${_p_color_white} #${_p_underline}
-    local SlashColor=${_p_stdcolor} #${_p_stopunderline}
-    local GapColor=$(_p_color 1) #${_p_stopunderline}
+    local DirColor=${_p_color_white}
+    local SlashColor=${_p_stdcolor}
+    local GapColor=$(_p_color 1)
 
     if [ $SeparatorLineLength -ge 2 ]
     then
 
         local ColPWD=$DirColor${PWD//\//$SlashColor\/$DirColor}
-        echo "${_p_2dash}[$ColPWD${_p_stdcolor}${_p_stopunderline}]${SeparatorLine}"
+        echo "${_p_2dash}[$ColPWD${_p_stdcolor}]${SeparatorLine}"
     else
         local PWDExcessLength=$((3 + ${#PWD} - $MaxOutputLength + 2))
         local PWD1=${PWD:0:(${#PWD} / 2 - ($PWDExcessLength + 1) / 2)}
@@ -192,17 +191,17 @@ _p_pwdinfo()
         local PWD2=${PWD:(${#PWD} / 2 + $PWDExcessLength / 2)}
         local ColPWD2=$DirColor${PWD2//\//$SlashColor\/$DirColor}
 
-        echo "${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}${_p_stopunderline}]${SeparatorLine}"
+        echo "${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}]${SeparatorLine}"
     fi
 }
 
 ############################################################################
 
-_p_vim_mode=
-
 function zle-keymap-select {
+    CommandModeIndicatorColor=$(_p_color 7 1)
     RPROMPT=
-    [ "$KEYMAP" = "vicmd" ] && RPROMPT="%F{7}%K{1}-- COMMAND --%k%f"
+    [ "$KEYMAP" = "vicmd" ] && 
+        RPROMPT="${_p_stdcolor}[${CommandModeIndicatorColor} <<< COMMAND >>> ${_p_stdcolor}]${_p_dash}${_p_bot_r}"
     RPROMPT2=$RPROMPT
     zle reset-prompt
 }
