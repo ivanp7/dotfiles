@@ -29,7 +29,7 @@ esac
 
 # ------------------------------------------------------------------------------
 
-if [ ! -d "$HOME/.password-store/computers/$REMOTE_HOST" ]
+if [ ! -d "$HOME/.password-store/computers/$REMOTE_HOST/net" ]
 then error "unknown host '$REMOTE_HOST'" 2; fi
 
 get() { pass computers/$1/net/$2 2> /dev/null; }
