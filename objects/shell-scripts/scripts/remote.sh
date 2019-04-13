@@ -1,66 +1,104 @@
 #!/bin/sh
 
+run() { echo "$1"; sh -c "$1"; }
+
+error()
+{
+    echo "Error: $1"
+    if [ -n "$2" ]; then exit $2
+    else exit 1; fi
+}
+
+# ------------------------------------------------------------------------------
+
 REMOTE_HOST="$1"
-
-if [ ! -d "$HOME/.password-store/computers/$REMOTE_HOST" ]; then
-    echo Error: unknown host "$REMOTE_HOST"
-    exit 2
-fi
-
-LOCAL_SUBNET=$(pass /computers/$HOST/net/subnet 2> /dev/null)
-REMOTE_SUBNET=$(pass /computers/$REMOTE_HOST/net/subnet 2> /dev/null)
-
-if [ -z "$REMOTE_SUBNET" ] || [ "$LOCAL_SUBNET" != "$REMOTE_SUBNET" ]
-then SCOPE=global
-else SCOPE=local; fi
-
-if [ "$REMOTE_HOST" != "$HOST" ]
-then ADDRESS=$(pass /computers/$REMOTE_HOST/net/$SCOPE/ip-address 2> /dev/null)
-else ADDRESS=127.0.0.1; fi
-PORT=$(pass /computers/$REMOTE_HOST/net/$SCOPE/port-ssh 2> /dev/null)
-WAKEUP_PORT=$(pass /computers/$REMOTE_HOST/net/$SCOPE/port-wakeup 2> /dev/null)
-MAC_ADDRESS=$(pass /computers/$REMOTE_HOST/net/mac-address 2> /dev/null)
-
-if [ -z "$PORT" ]; then PORT=22; fi
-if [ -z "$WAKEUP_PORT" ]; then WAKEUP_PORT=40000; fi
-
 MODE="$2"
+FIRST_P="$3"
+SECOND_P="$4"
+REST_P="${@:5}"
+
+# ------------------------------------------------------------------------------
+
+unmount() { run "fusermount3 -u $FIRST_P"; }
+
+# ------------------------------------------------------------------------------
 
 case $MODE in
-    status) COMMAND="nc -z $ADDRESS $PORT" ;;
-    wakeup) 
-        if [ -n $MAC_ADDRESS ]
-        then COMMAND="wol -p $WAKEUP_PORT -i $ADDRESS $MAC_ADDRESS"
-        else
-            echo Error: MAC address of the remote host is unknown.
-            exit 1
-        fi 
-        ;;
-
-    upload) COMMAND="rsync -vP ${@:5} -e 'ssh -p $PORT' $3 '$USER@$ADDRESS:$4'" ;;
-    download) COMMAND="rsync -vP ${@:5} -e 'ssh -p $PORT' '$USER@$ADDRESS:$3' $4" ;;
-
-    mount) COMMAND="sshfs $USER@$ADDRESS:$3 $4 -p $PORT -o reconnect ${@:5}" ;;
-    unmount) COMMAND="fusermount3 -u $3" ;;
-
-    command)
-        SSH_FLAGS="-p $PORT"
-        COMMAND="TERM=xterm-256color ssh $SSH_FLAGS $USER@$ADDRESS ${@:3}"
-        ;;
-
-    tunnel)
-        LOCAL_PORT=$3
-        if [ -z $LOCAL_PORT ]; then LOCAL_PORT=65535; fi
-
-        SSH_FLAGS="-D $LOCAL_PORT -N -p $PORT"
-        COMMAND="TERM=xterm-256color ssh $SSH_FLAGS $USER@$ADDRESS"
-        ;;
-
-    *)
-        echo Error: unknown command "$MODE"
-        exit 1
+    unmount) unmount; exit
 esac
 
-echo $COMMAND
-bash -c "$COMMAND"
+# ------------------------------------------------------------------------------
+
+if [ ! -d "$HOME/.password-store/computers/$REMOTE_HOST" ]
+then error "unknown host '$REMOTE_HOST'" 2; fi
+
+get() { pass computers/$1/net/$2 2> /dev/null; }
+
+LOCAL_SUBNET="$(get $HOST subnet)"
+REMOTE_SUBNET="$(get $REMOTE_HOST subnet)"
+
+if [ -z "$REMOTE_SUBNET" ] || [ "$LOCAL_SUBNET" != "$REMOTE_SUBNET" ]
+then SCOPE="global"
+else SCOPE="local"; fi
+
+if [ "$REMOTE_HOST" != "$HOST" ]
+then ADDRESS="$(get $REMOTE_HOST $SCOPE/ip-address)"
+else ADDRESS="127.0.0.1"; fi
+
+PORT="$(get $REMOTE_HOST $SCOPE/port-ssh)"
+WAKEUP_PORT="$(get $REMOTE_HOST $SCOPE/port-wakeup)"
+WAKEUP_DELAY="$(get $REMOTE_HOST wakeup-delay)"
+MAC_ADDRESS="$(get $REMOTE_HOST mac-address)"
+
+if [ -z "$PORT" ]; then PORT="22"; fi
+if [ -z "$WAKEUP_PORT" ]; then WAKEUP_PORT="40000"; fi
+if [ -z "$WAKEUP_DELAY" ]; then WAKEUP_DELAY="1"; fi
+
+# ------------------------------------------------------------------------------
+
+status_of() { run "nc -z $ADDRESS $PORT"; }
+
+wakeup()
+{
+    if [ -n "$MAC_ADDRESS" ]
+    then run "wol -p $WAKEUP_PORT -i $ADDRESS $MAC_ADDRESS"
+    else error "MAC address of the remote host is unknown."
+    fi 
+}
+
+wakeup_run() { wakeup; sleep $WAKEUP_DELAY; $1; }
+
+upload() { run "rsync -vP $REST_P -e 'ssh -p $PORT' $FIRST_P '$USER@$ADDRESS:$SECOND_P'"; }
+download() { run "rsync -vP $REST_P -e 'ssh -p $PORT' '$USER@$ADDRESS:$FIRST_P' $SECOND_P"; }
+
+mount() { run "sshfs $USER@$ADDRESS:$FIRST_P $SECOND_P -p $PORT -o reconnect $REST_P"; }
+
+command_to() { run "TERM=xterm-256color ssh -p $PORT $USER@$ADDRESS $FIRST_P $SECOND_P $REST_P"; }
+
+tunnel()
+{
+    if [ -n "$FIRST_P" ]
+    then LOCAL_PORT="$FIRST_P"
+    else LOCAL_PORT="65535"
+    fi
+    run "TERM=xterm-256color ssh -D $LOCAL_PORT -N -p $PORT $USER@$ADDRESS"
+}
+
+# ------------------------------------------------------------------------------
+
+case $MODE in
+    status) status_of ;;
+    wakeup) wakeup ;;
+
+    upload) upload ;;      wakeup_upload) wakeup_run upload ;;
+    download) download ;;  wakeup_download) wakeup_run download ;;
+
+    mount) mount ;;        wakeup_mount) wakeup_run mount ;;
+
+    command) command_to ;; wakeup_command) wakeup_run command_to ;;
+
+    tunnel) tunnel ;;      wakeup_tunnel) wakeup_run tunnel ;;
+
+    *) error "unknown command '$MODE'"
+esac
 
