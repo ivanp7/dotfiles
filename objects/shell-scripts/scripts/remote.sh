@@ -34,6 +34,8 @@ then error "unknown host '$REMOTE_HOST'" 2; fi
 
 get() { pass computers/$1/net/$2 2> /dev/null; }
 
+HOST="$(hostname)"
+
 LOCAL_SUBNET="$(get $HOST subnet)"
 REMOTE_SUBNET="$(get $REMOTE_HOST subnet)"
 
