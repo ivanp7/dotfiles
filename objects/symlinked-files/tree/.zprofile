@@ -4,7 +4,7 @@ then
     
     _PASSPHRASE=computers/$HOST/os/archlinux/$USER/ssh/passphrase
     if [ -f "$HOME/.password-store/$_PASSPHRASE.gpg" ]
-    then $HOME/.ssh-add.expect "$USER" "$(pass $_PASSPHRASE)"
+    then $HOME/scripts/ssh-add.expect "$USER" "$(pass $_PASSPHRASE)"
     else ssh-add; fi
     unset _PASSPHRASE
 fi
