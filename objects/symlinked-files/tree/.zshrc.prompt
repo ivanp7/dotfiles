@@ -200,7 +200,8 @@ _p_pwdinfo()
 function zle-keymap-select {
     CommandModeIndicatorColor=$(_p_color 7 1)
     RPROMPT="${_p_stdcolor}[$([ "$KEYMAP" = "vicmd" ] && 
-        echo "${CommandModeIndicatorColor} <<< COMMAND >>> ")${_p_stdcolor}]${_p_dash}${_p_bot_r}"
+        echo "${CommandModeIndicatorColor} NORMAL ${_p_stdcolor}" ||
+        echo "        ")]${_p_dash}${_p_bot_r}"
     RPROMPT2=$RPROMPT
     zle reset-prompt
 }
@@ -217,7 +218,7 @@ zle -N zle-line-finish
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
 function TRAPINT() {
     SIGINTColor=$(_p_color 1)
-    RPROMPT="${_p_stdcolor}[${SIGINTColor}SIGINT${_p_stdcolor}]${_p_dash}${_p_bot_r}"
+    RPROMPT="${_p_stdcolor}[${SIGINTColor} SIGINT ${_p_stdcolor}]${_p_dash}${_p_bot_r}"
     RPROMPT2=$RPROMPT
     zle && { zle reset-prompt; zle -R; }
     return $(( 128 + $1 ))
@@ -266,7 +267,7 @@ _p_command ()
 
     PROMPT2="$PromptLine3 > ${_p_cmdcolor}"
 
-    RPROMPT="${_p_stdcolor}[]${_p_dash}${_p_bot_r}"
+    RPROMPT="${_p_stdcolor}[        ]${_p_dash}${_p_bot_r}"
     RPROMPT2=$RPROMPT
 }
 
