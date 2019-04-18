@@ -64,7 +64,7 @@ status_of() { run "nc -w $STATUS_TIMEOUT -z $ADDRESS $PORT"; }
 wakeup()
 {
     if [ -n "$MAC_ADDRESS" ]
-    then run "wol -p $WAKEUP_PORT -i $ADDRESS $MAC_ADDRESS"
+    then run "wol -p $WAKEUP_PORT $([ "$SCOPE" = "global" ] && echo "-i $ADDRESS") $MAC_ADDRESS"
     else error "MAC address of the remote host is unknown."
     fi 
 }
