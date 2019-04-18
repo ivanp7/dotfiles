@@ -36,10 +36,10 @@ get() { pass computers/$1/net/$2 2> /dev/null; }
 
 HOST="$(hostname)"
 
-LOCAL_SUBNET="$(get $HOST subnet)"
-REMOTE_SUBNET="$(get $REMOTE_HOST subnet)"
+LOCAL_IP="$(curl https://ipinfo.io/ip 2> /dev/null)"
+REMOTE_IP="$(get $REMOTE_HOST global/ip-address)"
 
-if [ -z "$REMOTE_SUBNET" ] || [ "$LOCAL_SUBNET" != "$REMOTE_SUBNET" ]
+if [ "$LOCAL_IP" != "$REMOTE_IP" ]
 then SCOPE="global"
 else SCOPE="local"; fi
 
