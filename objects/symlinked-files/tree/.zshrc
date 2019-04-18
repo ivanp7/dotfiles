@@ -21,6 +21,8 @@ zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit
 compinit
 
+zstyle ':completion:*' menu select
+
 # auto prehash
 zshcache_time="$(date +%s%N)"
 rehash_precmd () 
