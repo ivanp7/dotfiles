@@ -198,17 +198,26 @@ _p_pwdinfo()
 
 function zle-keymap-select {
     CommandModeIndicatorColor=$(_p_color 7 1)
-    RPROMPT="${_p_stdcolor}[$([ "$KEYMAP" = "vicmd" ] && 
-        echo "${CommandModeIndicatorColor} NORMAL ${_p_stdcolor}" ||
-        echo "        ")]"
+    RPROMPT="${_p_stdcolor}[        ]"
+    if [ "$KEYMAP" = "vicmd" ]
+    then RPROMPT="${_p_stdcolor}[${CommandModeIndicatorColor} NORMAL ${_p_stdcolor}]"
+    fi
     RPROMPT2=$RPROMPT
     zle reset-prompt
 }
 zle -N zle-keymap-select
 
+function zle-line-init {
+    RPROMPT="${_p_stdcolor}[        ]"
+    RPROMPT2=$RPROMPT
+    zle reset-prompt
+}
+zle -N zle-line-init
+
 function zle-line-finish {
     RPROMPT="${_p_stdcolor}[${_p_color_white}%D{%T}${_p_stdcolor}]"
-    RPROMPT2=$RPROMPT
+    CSI=$'\e['
+    RPROMPT2="$RPROMPT%{${CSI}A${CSI}10D          ${CSI}B%}" # remove previous RPROMPT's
     zle reset-prompt
 }
 zle -N zle-line-finish
@@ -261,8 +270,8 @@ _p_command ()
     print -P "${_p_stdcolor}"
     print -P "$PromptLine1"
     print -P "$PromptLine2"
-    PROMPT="$PromptLine3 $(_p_character) ${_p_cmdcolor}"
 
+    PROMPT="$PromptLine3 $(_p_character) ${_p_cmdcolor}"
     PROMPT2="$PromptLine3 > ${_p_cmdcolor}"
 
     RPROMPT="${_p_stdcolor}[        ]"
