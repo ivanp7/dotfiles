@@ -19,6 +19,7 @@ alias help=run-help
 # completion
 fpath=($fpath $HOME/.zsh/completion) 
 
+zmodload zsh/complist
 zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit
 compinit
@@ -41,6 +42,8 @@ rehash_precmd ()
 add-zsh-hook -Uz precmd rehash_precmd
 
 # keys
+bindkey -v
+
 autoload edit-command-line
 zle -N edit-command-line
 
@@ -48,22 +51,55 @@ autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
-bindkey -v
+# create a zkbd compatible hash;
+# to add other keys to this hash, see: man 5 terminfo
 typeset -g -A key
-bindkey '^?' backward-delete-char
-bindkey '^[[3~' delete-char
-bindkey '^[[5~' up-line-or-history
-bindkey '^[[6~' down-line-or-history
+
+key[Home]="${terminfo[khome]}"
+key[End]="${terminfo[kend]}"
+key[Insert]="${terminfo[kich1]}"
+key[Backspace]="${terminfo[kbs]}"
+key[Delete]="${terminfo[kdch1]}"
+key[Up]="${terminfo[kcuu1]}"
+key[Down]="${terminfo[kcud1]}"
+key[Left]="${terminfo[kcub1]}"
+key[Right]="${terminfo[kcuf1]}"
+key[PageUp]="${terminfo[kpp]}"
+key[PageDown]="${terminfo[knp]}"
+key[ShiftTab]="${terminfo[kcbt]}"
+
+# setup key accordingly
+[ -n "${key[Insert]}"    ] && bindkey -- "${key[Insert]}"    overwrite-mode
+[ -n "${key[Backspace]}" ] && bindkey -- "${key[Backspace]}" vi-backward-delete-char
+[ -n "${key[Delete]}"    ] && bindkey -- "${key[Delete]}"    vi-delete-char
+[ -n "${key[PageUp]}"    ] && bindkey -- "${key[PageUp]}"    beginning-of-buffer-or-history
+[ -n "${key[PageDown]}"  ] && bindkey -- "${key[PageDown]}"  end-of-buffer-or-history
+[ -n "${key[ShiftTab]}"  ] && bindkey -- "${key[ShiftTab]}"  reverse-menu-complete
+
 bindkey '^[[A' up-line-or-beginning-search
 bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[[D' vi-backward-char
+bindkey '^[[C' vi-forward-char 
+bindkey '^[[H' vi-beginning-of-line
+bindkey '^[[F' vi-end-of-line
 bindkey -M vicmd 'k' up-line-or-beginning-search
 bindkey -M vicmd 'j' down-line-or-beginning-search
-bindkey '^[[D' backward-char
-bindkey '^[[C' forward-char 
-bindkey '^[[H' beginning-of-line
-bindkey '^[[F' end-of-line
 bindkey '^v' edit-command-line
 bindkey -M vicmd '^v' edit-command-line
+
+# Finally, make sure the terminal is in application mode, when zle is
+# active. Only then are the values from $terminfo valid.
+if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
+    autoload -Uz add-zle-hook-widget
+    function zle_application_mode_start {
+        echoti smkx
+    }
+    function zle_application_mode_stop {
+        echoti rmkx
+    }
+    add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
+    add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
+fi
 
 # syntax highlighting
 . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
