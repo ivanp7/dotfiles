@@ -17,6 +17,8 @@ autoload -Uz run-help-sudo
 alias help=run-help
 
 # completion
+fpath=($fpath $HOME/.zsh/completion) 
+
 zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit
 compinit

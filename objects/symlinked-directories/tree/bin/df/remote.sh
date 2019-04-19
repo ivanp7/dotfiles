@@ -97,14 +97,14 @@ case $MODE in
     status) status_of ;;
     wakeup) wakeup ;;
 
-    upload) upload ;;      wakeup_upload) wakeup_run upload ;;
-    download) download ;;  wakeup_download) wakeup_run download ;;
+    upload) upload ;;      wakeup-upload) wakeup_run upload ;;
+    download) download ;;  wakeup-download) wakeup_run download ;;
 
-    mount) mount ;;        wakeup_mount) wakeup_run mount ;;
+    mount) mount ;;        wakeup-mount) wakeup_run mount ;;
 
-    command) command_to ;; wakeup_command) wakeup_run command_to ;;
+    command) command_to ;; wakeup-command) wakeup_run command_to ;;
 
-    tunnel) tunnel ;;      wakeup_tunnel) wakeup_run tunnel ;;
+    tunnel) tunnel ;;      wakeup-tunnel) wakeup_run tunnel ;;
 
     *) error "unknown command '$MODE'"
 esac

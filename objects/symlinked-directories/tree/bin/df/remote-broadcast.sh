@@ -10,8 +10,8 @@ HOST="$(hostname)"
 
 case $MODE in
     wakeup) COMMAND="wakeup" ;;
-    upload) COMMAND="upload" ;;   wakeup_upload) COMMAND="wakeup_upload" ;;
-    command) COMMAND="command" ;; wakeup_command) COMMAND="wakeup_command" ;;
+    upload) COMMAND="upload" ;;   wakeup-upload) COMMAND="wakeup-upload" ;;
+    command) COMMAND="command" ;; wakeup-command) COMMAND="wakeup-command" ;;
 
     *) echo "Error: unsupported command '$MODE'"; exit 1
 esac
