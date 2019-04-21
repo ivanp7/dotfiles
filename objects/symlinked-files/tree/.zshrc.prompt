@@ -44,18 +44,24 @@ _p_timeinfo()
 _p_cmdtimeinfo()
 {
     local CmdTimeInfoColor=${_p_color_white}
-    echo "${_p_dash}[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
+    if [ -n "$_p_timer_delta" ]
+    then echo "${_p_dash}[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
+    else echo "${_p_dash}[${CmdTimeInfoColor}-${_p_stdcolor}]"
+    fi
 }
 
 _p_cmdstatusinfo()
 {
     local SuccessColor=${_p_bold}$(_p_color 2)
     local FailureColor=${_p_bold}$(_p_color 1)
-    if [ $_p_exitcode -eq 0 ]
+    local NoCommandColor=${_p_color_white}
+    if [ -n "$_p_exitcode" ]
     then
-        echo "${_p_dash}[${SuccessColor}ok${_p_stdcolor}]"
-    else
-        echo "${_p_dash}[${FailureColor}error ${_p_exitcode}${_p_stdcolor}]"
+        if [ "$_p_exitcode" -eq 0 ]
+        then echo "${_p_dash}[${SuccessColor}ok${_p_stdcolor}]"
+        else echo "${_p_dash}[${FailureColor}error ${_p_exitcode}${_p_stdcolor}]"
+        fi
+    else echo "${_p_dash}[${NoCommandColor}-${_p_stdcolor}]"
     fi
 }
 
@@ -80,11 +86,20 @@ _p_processinfo()
     [ -z "$OutputStr" ] && exit
 
     local TimeInfoLength=11
-    local CmdTimeInfoLength=$((4 + ${#_p_timer_delta}))
+    local CmdTimeInfoLength=$((3 + $(
+        if [ -n "$_p_timer_delta" ]
+        then echo "$((1 + ${#_p_timer_delta}))"
+        else echo "1"
+        fi)
+    ))
     local CmdStatusLength=$((3 + $(
-        if [ $_p_exitcode -ne 0 ]
-        then echo $((6 + ${#_p_exitcode}))
-        else echo 2
+        if [ -n "$_p_exitcode" ]
+        then
+            if [ "$_p_exitcode" -ne 0 ]
+            then echo $((6 + ${#_p_exitcode}))
+            else echo "2"
+            fi
+        else echo "1"
         fi)
     ))
 
@@ -238,22 +253,29 @@ _p_character()
 
 ############################################################################
 
-_p_timer_start ()
+_p_preexec ()
 {
     _p_timer=${_p_timer:-$SECONDS}
+    _p_command_executed=true
 }
 
-_p_timer_delta=0
-
-_p_command ()
+_p_precmd ()
 {
     _p_exitcode="$?" # This needs to be first
 
-    if [ -n "$_p_timer" ]
-    then
-        _p_timer_delta=$(($SECONDS - $_p_timer))
-        [ $_p_timer_delta -lt 0 ] && _p_timer_delta=0
-        unset _p_timer
+    if [ -n "$_p_command_executed" ]
+    then 
+        unset _p_command_executed
+
+        if [ -n "$_p_timer" ]
+        then
+            _p_timer_delta=$(($SECONDS - $_p_timer))
+            [ $_p_timer_delta -lt 0 ] && _p_timer_delta=0
+            unset _p_timer
+        fi
+    else 
+        unset _p_timer_delta
+        unset _p_exitcode
     fi
 
     _p_termwidth=$(tput cols)
@@ -277,8 +299,8 @@ _p_command ()
     RPROMPT="${_p_stdcolor}[        ]"
 }
 
-add-zsh-hook preexec _p_timer_start
-add-zsh-hook precmd _p_command
+add-zsh-hook preexec _p_preexec
+add-zsh-hook precmd _p_precmd
 
 # vim: set ft=sh:
 
