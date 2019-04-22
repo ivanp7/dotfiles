@@ -28,7 +28,8 @@ _p_dash="─"
 _p_2dash="═"
 _p_arrow="→"
 _p_top="┌"
-_p_mid="╞"
+_p_mid1="├"
+_p_mid2="╞"
 _p_bot="└"
 _p_mid_r="┐"
 _p_bot_r="┘"
@@ -238,7 +239,7 @@ zle -N zle-line-init
 
 function zle-line-finish {
     RPROMPT="${_p_stdcolor}[${_p_color_white}%D{%T}${_p_stdcolor}]"
-    CSI=$'\e['
+    local CSI=$'\e['
     RPROMPT2="$RPROMPT%{${CSI}A${CSI}10D          ${CSI}B%}" # remove previous RPROMPT's
     zle reset-prompt
 }
@@ -293,15 +294,17 @@ _p_precmd ()
     ### Prompt ###
 
     local PromptLine1="${_p_stdcolor}${_p_top}$(_p_timeinfo)$(_p_cmdtimeinfo)$(_p_cmdstatusinfo) $(_p_ttyinfo) $(_p_processinfo)"
-    local PromptLine2="${_p_stdcolor}${_p_mid}$(_p_userhostinfo)$(_p_gitinfo)$(_p_pwdinfo)"
+    local PromptLine2="${_p_stdcolor}${_p_mid2}$(_p_userhostinfo)$(_p_gitinfo)$(_p_pwdinfo)"
     local PromptLine3="${_p_stdcolor}${_p_bot}${_p_dash}"
 
     print -P "${_p_stdcolor}"
     print -P "$PromptLine1"
     print -P "$PromptLine2"
 
-    PROMPT="$PromptLine3 $(_p_character) ${_p_cmdcolor}"
-    PROMPT2="$PromptLine3 > ${_p_cmdcolor}"
+    local CharacterColor=$(_p_safe_color "$(_p_color 250)" "$(_p_color 7)")
+    PROMPT="$PromptLine3 ${CharacterColor}$(_p_character) ${_p_cmdcolor}"
+    local CSI=$'\e['
+    PROMPT2="${_p_stdcolor}%{${CSI}A${_p_mid1}${CSI}D${CSI}B%}$PromptLine3 ${CharacterColor}> ${_p_cmdcolor}"
 
     RPROMPT="${_p_stdcolor}[        ]"
 }
