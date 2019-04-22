@@ -65,6 +65,12 @@ _p_cmdstatusinfo()
     fi
 }
 
+_p_ttyinfo()
+{
+    local TtyColor=${_p_color_white}
+    echo "[${TtyColor}$(tty | sed "s,/dev/,,")${_p_stdcolor}]"
+}
+
 _p_processinfo()
 {
     local OutputStr="$(sed "
@@ -102,8 +108,9 @@ _p_processinfo()
         else echo "1"
         fi)
     ))
+    local TtyInfoLength=$((3 + $(tty | wc -m) - 5))
 
-    local PromptLength=$((2 + $TimeInfoLength + $CmdTimeInfoLength + $CmdStatusLength + 2))
+    local PromptLength=$((1 + $TimeInfoLength + $CmdTimeInfoLength + $CmdStatusLength + $TtyInfoLength + 2))
     local MaxOutputLength=$(($_p_termwidth - $PromptLength))
 
     local PNameColor=${_p_color_white}
@@ -120,7 +127,7 @@ _p_processinfo()
         local ColoredOutputStr=${HalfColoredOutputStr//$SeparatorR/$ColSeparatorR}
         echo "[$PNameColor$ColoredOutputStr${_p_stdcolor}]"
     else
-        local OutputStrExcessLength=$((3 + ${#OutputStr} - $MaxOutputLength - 1))
+        local OutputStrExcessLength=$((3 + ${#OutputStr} - $MaxOutputLength))
         local OutputStrShort=${OutputStr:$OutputStrExcessLength}
         local HalfColoredOutputStrShort=${OutputStrShort//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStrShort=${HalfColoredOutputStrShort//$SeparatorR/$ColSeparatorR}
@@ -285,7 +292,7 @@ _p_precmd ()
 
     ### Prompt ###
 
-    local PromptLine1="${_p_stdcolor}${_p_top}$(_p_timeinfo)$(_p_cmdtimeinfo)$(_p_cmdstatusinfo) $(_p_processinfo)"
+    local PromptLine1="${_p_stdcolor}${_p_top}$(_p_timeinfo)$(_p_cmdtimeinfo)$(_p_cmdstatusinfo) $(_p_ttyinfo) $(_p_processinfo)"
     local PromptLine2="${_p_stdcolor}${_p_mid}$(_p_userhostinfo)$(_p_gitinfo)$(_p_pwdinfo)"
     local PromptLine3="${_p_stdcolor}${_p_bot}${_p_dash}"
 
