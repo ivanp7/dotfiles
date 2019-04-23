@@ -56,6 +56,7 @@ _p_prompt_init_f()
     fi
 
     _p_termwidth=$(tput cols)
+    _p_separator="$(printf "%0.s${_p_dot}" $(seq 1 $(($_p_termwidth))))"
 }
 add-zsh-hook precmd _p_prompt_init_f
 
@@ -152,13 +153,13 @@ _p_processinfo_f()
     then
         local HalfColoredOutputStr=${OutputStr//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStr=${HalfColoredOutputStr//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=" [$PNameColor$ColoredOutputStr${_p_stdcolor}]"
+        _p_processinfo=":[$PNameColor$ColoredOutputStr${_p_stdcolor}]"
     else
         local OutputStrExcessLength=$((3 + ${#OutputStr} - $MaxOutputLength))
         local OutputStrShort=${OutputStr:$OutputStrExcessLength}
         local HalfColoredOutputStrShort=${OutputStrShort//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStrShort=${HalfColoredOutputStrShort//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=" $GapColor...${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
+        _p_processinfo=":$GapColor...${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
     fi
 }
 add-zsh-hook precmd _p_processinfo_f
@@ -287,19 +288,16 @@ _p_pwdinfo_f()
 {
     local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
     local MaxOutputLength=$(($_p_termwidth - $PromptLength))
-    local SeparatorLineLength=$(($MaxOutputLength - ${#PWD}))
-    if [ "$SeparatorLineLength" -gt 1 ]
-    then local SeparatorLine="$(printf "%0.s${_p_dot}" $(seq 1 $(($SeparatorLineLength))))"
-    fi
+    local FreeSpaceLength=$(($MaxOutputLength - ${#PWD}))
 
     local DirColor=${_p_color_white}
     local SlashColor=${_p_stdcolor}
     local GapColor=$(_p_color 1)
 
-    if [ "$SeparatorLineLength" -ge 0 ]
+    if [ "$FreeSpaceLength" -ge 0 ]
     then
         local ColPWD=$DirColor${PWD//\//$SlashColor\/$DirColor}
-        _p_pwdinfo="${_p_2dash}[$ColPWD${_p_stdcolor}]${SeparatorLine}"
+        _p_pwdinfo="${_p_2dash}[$ColPWD${_p_stdcolor}]"
     else
         local PWDExcessLength=$((3 + ${#PWD} - $MaxOutputLength))
         local PWD1=${PWD:0:(${#PWD} / 2 - ($PWDExcessLength + 1) / 2)}
@@ -307,7 +305,7 @@ _p_pwdinfo_f()
         local PWD2=${PWD:(${#PWD} / 2 + $PWDExcessLength / 2)}
         local ColPWD2=$DirColor${PWD2//\//$SlashColor\/$DirColor}
 
-        _p_pwdinfo="${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}]${SeparatorLine}"
+        _p_pwdinfo="${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}]"
     fi
 }
 add-zsh-hook precmd _p_pwdinfo_f
@@ -354,6 +352,7 @@ function TRAPINT() {
 _p_prompt ()
 {
     print -P "${_p_stdcolor}"
+    print -P "${_p_stdcolor}${_p_separator}"
     print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_ttyinfo}${_p_processinfo}"
     print -P "${_p_stdcolor}${_p_mid2}${_p_userhostinfo}${_p_gitinfo}${_p_pwdinfo}"
 
