@@ -71,7 +71,12 @@ wakeup()
 
 wakeup_run() 
 {
-    if ! status_of; then wakeup; sleep $WAKEUP_DELAY; fi
+    if ! status_of
+    then 
+        wakeup
+        echo "Waiting $WAKEUP_DELAY seconds for host to wake up..."
+        sleep $WAKEUP_DELAY
+    fi
     $1
 }
 
