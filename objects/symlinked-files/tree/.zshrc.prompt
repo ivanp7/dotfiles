@@ -1,10 +1,3 @@
-# prompt
-
-# source git-prompt.sh
-. /usr/share/git/completion/git-prompt.sh
-
-############################################################################
-
 _p_bold="%B"
 _p_stopbold="%b"
 
@@ -36,22 +29,61 @@ _p_bot_r="┘"
 
 ############################################################################
 
-_p_timeinfo()
+_p_preexec ()
 {
-    local TimeInfoColor=${_p_color_white}
-    echo "${_p_dash}[${TimeInfoColor}%D{%T}${_p_stdcolor}]"
+    _p_timer=${_p_timer:-$SECONDS}
+    _p_command_executed=true
 }
+add-zsh-hook preexec _p_preexec
 
-_p_cmdtimeinfo()
+_p_prompt_init_f()
+{
+    _p_exitcode="$?" # This needs to be first
+
+    if [ -n "$_p_command_executed" ]
+    then 
+        unset _p_command_executed
+
+        if [ -n "$_p_timer" ]
+        then
+            _p_timer_delta=$(($SECONDS - $_p_timer))
+            [ $_p_timer_delta -lt 0 ] && _p_timer_delta=0
+            unset _p_timer
+        fi
+    else 
+        unset _p_timer_delta
+        unset _p_exitcode
+    fi
+
+    _p_termwidth=$(tput cols)
+}
+add-zsh-hook precmd _p_prompt_init_f
+
+############################################################################
+
+_p_timeinfo_f()
+{
+    _p_timeinfo_length=11
+    local TimeInfoColor=${_p_color_white}
+    _p_timeinfo="${_p_dash}[${TimeInfoColor}%D{%T}${_p_stdcolor}]"
+}
+add-zsh-hook precmd _p_timeinfo_f
+
+_p_cmdtimeinfo_f()
 {
     local CmdTimeInfoColor=${_p_color_white}
     if [ -n "$_p_timer_delta" ]
-    then echo "${_p_dash}[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
-    else echo "${_p_dash}[${CmdTimeInfoColor}-${_p_stdcolor}]"
+    then 
+        _p_cmdtimeinfo_length=$((4 + ${#_p_timer_delta}))
+        _p_cmdtimeinfo="${_p_dash}[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
+    else 
+        _p_cmdtimeinfo_length=4
+        _p_cmdtimeinfo="${_p_dash}[${CmdTimeInfoColor}-${_p_stdcolor}]"
     fi
 }
+add-zsh-hook precmd _p_cmdtimeinfo_f
 
-_p_cmdstatusinfo()
+_p_cmdstatusinfo_f()
 {
     local SuccessColor=${_p_bold}$(_p_color 2)
     local FailureColor=${_p_bold}$(_p_color 1)
@@ -59,20 +91,30 @@ _p_cmdstatusinfo()
     if [ -n "$_p_exitcode" ]
     then
         if [ "$_p_exitcode" -eq 0 ]
-        then echo "${_p_dash}[${SuccessColor}ok${_p_stdcolor}]"
-        else echo "${_p_dash}[${FailureColor}error ${_p_exitcode}${_p_stdcolor}]"
+        then 
+            _p_cmdstatusinfo_length=5
+            _p_cmdstatusinfo="${_p_dash}[${SuccessColor}ok${_p_stdcolor}]"
+        else 
+            _p_cmdstatusinfo_length=$((9 + ${#_p_exitcode}))
+            _p_cmdstatusinfo="${_p_dash}[${FailureColor}error ${_p_exitcode}${_p_stdcolor}]"
         fi
-    else echo "${_p_dash}[${NoCommandColor}-${_p_stdcolor}]"
+    else 
+        _p_cmdstatusinfo_length=4
+        _p_cmdstatusinfo="${_p_dash}[${NoCommandColor}-${_p_stdcolor}]"
     fi
 }
+add-zsh-hook precmd _p_cmdstatusinfo_f
 
-_p_ttyinfo()
+_p_ttyinfo_f()
 {
+    local TTY="$(tty | sed "s,/dev/,,")"
+    _p_ttyinfo_length=$((3 + ${#TTY}))
     local TtyColor=${_p_color_white}
-    echo "[${TtyColor}$(tty | sed "s,/dev/,,")${_p_stdcolor}]"
+    _p_ttyinfo=" [${TtyColor}$TTY${_p_stdcolor}]"
 }
+add-zsh-hook precmd _p_ttyinfo_f
 
-_p_processinfo()
+_p_processinfo_f()
 {
     local OutputStr="$(sed "
         s/systemd//;
@@ -90,28 +132,12 @@ _p_processinfo()
         s/---/]${_p_arrow}[/g; 
     " <<< $(pstree -ls $$))"
 
-    [ -z "$OutputStr" ] && exit
+    if [ -z "$OutputStr" ]
+    then unset _p_processinfo; return
+    fi
 
-    local TimeInfoLength=11
-    local CmdTimeInfoLength=$((3 + $(
-        if [ -n "$_p_timer_delta" ]
-        then echo "$((1 + ${#_p_timer_delta}))"
-        else echo "1"
-        fi)
-    ))
-    local CmdStatusLength=$((3 + $(
-        if [ -n "$_p_exitcode" ]
-        then
-            if [ "$_p_exitcode" -ne 0 ]
-            then echo $((6 + ${#_p_exitcode}))
-            else echo "2"
-            fi
-        else echo "1"
-        fi)
-    ))
-    local TtyInfoLength=$((3 + $(tty | wc -m) - 5))
-
-    local PromptLength=$((1 + $TimeInfoLength + $CmdTimeInfoLength + $CmdStatusLength + $TtyInfoLength + 2))
+    local PromptLength=$((1 + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
+                          $_p_cmdstatusinfo_length + $_p_ttyinfo_length + 3))
     local MaxOutputLength=$(($_p_termwidth - $PromptLength))
 
     local PNameColor=${_p_color_white}
@@ -126,86 +152,154 @@ _p_processinfo()
     then
         local HalfColoredOutputStr=${OutputStr//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStr=${HalfColoredOutputStr//$SeparatorR/$ColSeparatorR}
-        echo "[$PNameColor$ColoredOutputStr${_p_stdcolor}]"
+        _p_processinfo=" [$PNameColor$ColoredOutputStr${_p_stdcolor}]"
     else
         local OutputStrExcessLength=$((3 + ${#OutputStr} - $MaxOutputLength))
         local OutputStrShort=${OutputStr:$OutputStrExcessLength}
         local HalfColoredOutputStrShort=${OutputStrShort//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStrShort=${HalfColoredOutputStrShort//$SeparatorR/$ColSeparatorR}
-        echo "$GapColor...${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
+        _p_processinfo=" $GapColor...${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
     fi
 }
+add-zsh-hook precmd _p_processinfo_f
 
 ############################################################################
 
-_p_username()
+_p_userhostinfo_f()
 {
+    local USER=$(whoami)
+    local HOST=$(hostname)
+    _p_userhostinfo_length="$((4 + ${#USER} + ${#HOST}))"
+
+    local RootColor=${_p_bold}$(_p_color 7 1)
+    local UserColor=$(_p_color 2)
+    local HostColor=$(_p_safe_color "$(_p_color 39)" "${_p_bold}$(_p_color 4)")
+
     if [ "$(id -u)" -eq 0 ]
     then
-        local RootColor=${_p_bold}$(_p_color 7 1)
-        echo "${RootColor}root${_p_stdcolor}"
+        local _p_username="${RootColor}${USER}${_p_stdcolor}"
     else
         local username_line="$(grep "^$USER " $HOME/.zshrc.prompt.usernames 2> /dev/null)"
         if [ "$(tput colors)" -ge 256 ] && [ -n "$username_line" ]
         then
-            echo "$username_line" | read _ username
-            echo "${username}${_p_stdcolor}"
+            local _p_username="$(echo "$username_line" | cut -d' ' -f2)${_p_stdcolor}"
         else
-            local UserColor=$(_p_color 2)
-            echo "${UserColor}${USER}${_p_stdcolor}"
+            local _p_username="${UserColor}${USER}${_p_stdcolor}"
         fi
     fi
+    _p_userhostinfo="${_p_2dash}[${_p_username}@${HostColor}${HOST}${_p_stdcolor}]"
 }
+add-zsh-hook precmd _p_userhostinfo_f
 
-_p_userhostinfo()
+_p_gitinfo_f()
 {
-    local HostColor=$(_p_safe_color "$(_p_color 39)" "${_p_bold}$(_p_color 4)")
-    echo "${_p_2dash}[$(_p_username)@${HostColor}$HOST${_p_stdcolor}]"
-}
+    local LocationColor=$(_p_safe_color "$(_p_color 165)" "${_p_bold}$(_p_color 5)")
 
-_p_gitinfo()
-{
-    local BranchColor=$(_p_safe_color "$(_p_color 165)" "${_p_bold}$(_p_color 5)")
-    local ChangedBranchColor=$(_p_safe_color "$(_p_color 16 165)" "${_p_bold}$(_p_color 7 5)")
-    if [ -z "${_p_gitbranch}" ]
+    # Exit if not inside a Git repository
+    if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1
     then
-        echo "${_p_2dash}[${BranchColor}-${_p_stdcolor}]"
-
-    elif [ -z "$_p_gitstatus" ]
-    then
-        echo "${_p_2dash}[${BranchColor}${_p_gitbranch}${_p_stdcolor}]"
-
-    else
-        echo "${_p_2dash}[${ChangedBranchColor}${_p_gitbranch}${_p_stdcolor}]"
+        _p_gitinfo_length=4
+        _p_gitinfo="${_p_2dash}[${LocationColor}-${_p_stdcolor}]"
+        return
     fi
+
+    # Git branch/tag, or name-rev if on detached head
+    local GIT_LOCATION=${$(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)#(refs/heads/|tags/)}
+    _p_gitinfo_length=$((3 + ${#GIT_LOCATION}))
+
+    local AheadColor=$_p_color_white
+    local BehindColor=$(_p_color 1)
+
+    local MergingColor=$(_p_safe_color "$(_p_color 33)" "${_p_bold}$(_p_color 4)")
+    local UntrackedColor=$(_p_safe_color "$(_p_color 160)" "${_p_bold}$(_p_color 1)")
+    local ModifiedColor=$(_p_safe_color "$(_p_color 220)" "${_p_bold}$(_p_color 3)")
+    local StagedColor=$(_p_safe_color "$(_p_color 34)" "$(_p_color 2)")
+
+    local AHEAD="${AheadColor}↑NUM${_p_stdcolor}"
+    local BEHIND="${BehindColor}↓NUM${_p_stdcolor}"
+
+    local MERGING="${MergingColor}↕${_p_stdcolor}"
+    local UNTRACKED="${UntrackedColor}◆${_p_stdcolor}"
+    local MODIFIED="${ModifiedColor}◆${_p_stdcolor}"
+    local STAGED="${StagedColor}◆${_p_stdcolor}"
+
+    local -a DIVERGENCES
+    local -a FLAGS
+
+    local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+    if [ "$NUM_AHEAD" -gt 0 ]
+    then 
+        local _p_gitinfo_div=true
+        _p_gitinfo_length=$(($_p_gitinfo_length + 1 + ${#NUM_AHEAD}))
+        DIVERGENCES+=( "${AHEAD//NUM/$NUM_AHEAD}" )
+    fi
+
+    local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+    if [ "$NUM_BEHIND" -gt 0 ]
+    then 
+        local _p_gitinfo_div=true
+        _p_gitinfo_length=$(($_p_gitinfo_length + 1 + ${#NUM_BEHIND}))
+        DIVERGENCES+=( "${BEHIND//NUM/$NUM_BEHIND}" )
+    fi
+
+    [ -n "$_p_gitinfo_div" ] && _p_gitinfo_length=$(($_p_gitinfo_length + 1))
+
+    local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+    if [ -n "$GIT_DIR" ] && [ -r "$GIT_DIR/MERGE_HEAD" ]
+    then 
+        local _p_gitinfo_flag=true
+        _p_gitinfo_length=$(($_p_gitinfo_length + 1))
+        FLAGS+=( "$MERGING" )
+    fi
+
+    if [ -n "$(git ls-files --other --exclude-standard 2> /dev/null)" ]
+    then 
+        local _p_gitinfo_flag=true
+        _p_gitinfo_length=$(($_p_gitinfo_length + 1))
+        FLAGS+=( "$UNTRACKED" )
+    fi
+
+    if ! git diff --quiet 2> /dev/null
+    then 
+        local _p_gitinfo_flag=true
+        _p_gitinfo_length=$(($_p_gitinfo_length + 1))
+        FLAGS+=( "$MODIFIED" )
+    fi
+
+    if ! git diff --cached --quiet 2> /dev/null
+    then 
+        local _p_gitinfo_flag=true
+        _p_gitinfo_length=$(($_p_gitinfo_length + 1))
+        FLAGS+=( "$STAGED" )
+    fi
+
+    [ -n "$_p_gitinfo_flag" ] && _p_gitinfo_length=$(($_p_gitinfo_length + 1))
+
+    local -a GIT_INFO
+    GIT_INFO+=( "${LocationColor}$GIT_LOCATION${_p_stdcolor}" )
+    [ "${#DIVERGENCES[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
+    [ "${#FLAGS[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)FLAGS}" )
+    _p_gitinfo="${_p_2dash}[${(j:~:)GIT_INFO}]"
 }
+add-zsh-hook precmd _p_gitinfo_f
 
-_p_pwdinfo()
+_p_pwdinfo_f()
 {
-    local UsernameLength=$(if [ "$(id -u)" -eq 0 ]; then echo "4"; else echo "${#USER}"; fi)
-    local UserHostInfoLength=$((4 + $UsernameLength + ${#HOST}))
-    local GitInfoLength=$((3 + $(
-        if [ -n "${_p_gitbranch}" ]
-        then echo "${#_p_gitbranch}"
-        else echo "1"
-        fi)
-    ))
-
-    local PromptLength=$((1 + $UserHostInfoLength + $GitInfoLength + 3))
+    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
     local MaxOutputLength=$(($_p_termwidth - $PromptLength))
     local SeparatorLineLength=$(($MaxOutputLength - ${#PWD}))
-    if [ $SeparatorLineLength -gt 1 ]
-    then SeparatorLine="$(printf "%0.s${_p_dot}" $(seq 1 $(($SeparatorLineLength))))"
+    if [ "$SeparatorLineLength" -gt 1 ]
+    then local SeparatorLine="$(printf "%0.s${_p_dot}" $(seq 1 $(($SeparatorLineLength))))"
     fi
 
     local DirColor=${_p_color_white}
     local SlashColor=${_p_stdcolor}
     local GapColor=$(_p_color 1)
 
-    if [ $SeparatorLineLength -ge 0 ]
+    if [ "$SeparatorLineLength" -ge 0 ]
     then
         local ColPWD=$DirColor${PWD//\//$SlashColor\/$DirColor}
-        echo "${_p_2dash}[$ColPWD${_p_stdcolor}]${SeparatorLine}"
+        _p_pwdinfo="${_p_2dash}[$ColPWD${_p_stdcolor}]${SeparatorLine}"
     else
         local PWDExcessLength=$((3 + ${#PWD} - $MaxOutputLength))
         local PWD1=${PWD:0:(${#PWD} / 2 - ($PWDExcessLength + 1) / 2)}
@@ -213,9 +307,10 @@ _p_pwdinfo()
         local PWD2=${PWD:(${#PWD} / 2 + $PWDExcessLength / 2)}
         local ColPWD2=$DirColor${PWD2//\//$SlashColor\/$DirColor}
 
-        echo "${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}]${SeparatorLine}"
+        _p_pwdinfo="${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}]${SeparatorLine}"
     fi
 }
+add-zsh-hook precmd _p_pwdinfo_f
 
 ############################################################################
 
@@ -254,63 +349,31 @@ function TRAPINT() {
     return $(( 128 + $1 ))
 } 
 
-_p_character()
-{
-    if [ "$(id -u)" -ne 0 ]; then echo "$"; else echo "#"; fi
-}
-
 ############################################################################
 
-_p_preexec ()
+_p_prompt ()
 {
-    _p_timer=${_p_timer:-$SECONDS}
-    _p_command_executed=true
-}
-
-_p_precmd ()
-{
-    _p_exitcode="$?" # This needs to be first
-
-    if [ -n "$_p_command_executed" ]
-    then 
-        unset _p_command_executed
-
-        if [ -n "$_p_timer" ]
-        then
-            _p_timer_delta=$(($SECONDS - $_p_timer))
-            [ $_p_timer_delta -lt 0 ] && _p_timer_delta=0
-            unset _p_timer
-        fi
-    else 
-        unset _p_timer_delta
-        unset _p_exitcode
-    fi
-
-    _p_termwidth=$(tput cols)
-
-    _p_gitbranch="$(__git_ps1 '%s')"
-    _p_gitstatus=$([ -n "$(git status --short 2> /dev/null)" ] && echo "changed")
-
-    ### Prompt ###
-
-    local PromptLine1="${_p_stdcolor}${_p_top}$(_p_timeinfo)$(_p_cmdtimeinfo)$(_p_cmdstatusinfo) $(_p_ttyinfo) $(_p_processinfo)"
-    local PromptLine2="${_p_stdcolor}${_p_mid2}$(_p_userhostinfo)$(_p_gitinfo)$(_p_pwdinfo)"
-    local PromptLine3="${_p_stdcolor}${_p_bot}${_p_dash}"
-
     print -P "${_p_stdcolor}"
-    print -P "$PromptLine1"
-    print -P "$PromptLine2"
+    print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_ttyinfo}${_p_processinfo}"
+    print -P "${_p_stdcolor}${_p_mid2}${_p_userhostinfo}${_p_gitinfo}${_p_pwdinfo}"
 
-    local CharacterColor=$(_p_safe_color "$(_p_color 250)" "$(_p_color 7)")
-    PROMPT="$PromptLine3 ${CharacterColor}$(_p_character) ${_p_cmdcolor}"
+    local PromptPrefix="${_p_bot}${_p_dash}"
+
+    local PromptCharacterColor=$(_p_safe_color "$(_p_color 250)" "$(_p_color 7)")
+    if [ "$(id -u)" -ne 0 ]
+    then local PromptCharacter="${PromptCharacterColor} $ ${_p_cmdcolor}"
+    else local PromptCharacter="${PromptCharacterColor} # ${_p_cmdcolor}"
+    fi
+    local PromptCharacter2="${PromptCharacterColor} > ${_p_cmdcolor}"
+
+    PROMPT="${_p_stdcolor}${PromptPrefix}${PromptCharacter}"
     local CSI=$'\e['
-    PROMPT2="${_p_stdcolor}%{${CSI}A${_p_mid1}${CSI}D${CSI}B%}$PromptLine3 ${CharacterColor}> ${_p_cmdcolor}"
+    local FixPrevPromptPrefix="%{${CSI}A${_p_mid1}${CSI}D${CSI}B%}"
+    PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${PromptPrefix}${PromptCharacter2}"
 
     RPROMPT="${_p_stdcolor}[        ]"
 }
-
-add-zsh-hook preexec _p_preexec
-add-zsh-hook precmd _p_precmd
+add-zsh-hook precmd _p_prompt
 
 # vim: set ft=sh:
 
