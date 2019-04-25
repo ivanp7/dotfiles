@@ -1,5 +1,4 @@
 .config/ranger
-.config/neofetch
 .tmux/plugins
 .vim/plugged
 .zsh/completion
