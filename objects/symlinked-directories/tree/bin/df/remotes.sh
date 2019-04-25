@@ -26,7 +26,7 @@ operation()
     fi
 }
 
-for remote_path in $(cd $HOME/.password-store/computers; find . -mindepth 2 -maxdepth 2 -type d -name "net")
-do operation $(echo "$remote_path" | cut -d'/' -f2)
+for remote_path in $(cd $HOME/.password-store/computers; find . -mindepth 2 -maxdepth 2 -type d -name "net" | sort)
+do operation $(basename $(dirname "$remote_path"))
 done
 
