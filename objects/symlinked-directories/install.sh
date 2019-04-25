@@ -8,3 +8,5 @@ do
     ln -sf $CONF_DIR/tree/$dir $HOME/$(dirname $dir)/
 done
 
+[ -x $CONF_DIR/special-instructions.sh ] && $CONF_DIR/special-instructions.sh || true
+

@@ -1,2 +1,7 @@
-bin/df
+.config/ranger
+.config/neofetch
+.tmux/plugins
+.vim/plugged
 .zsh/completion
+bin/df
+scripts/df

@@ -127,7 +127,7 @@ man () {
 ranger ()
 {
     tempfile="$(mktemp -t tmp.XXXXXX)"
-    SHELL=$HOME/scripts/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
+    SHELL=$HOME/scripts/df/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
 
     test -f "$tempfile" &&
         if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
@@ -138,13 +138,13 @@ ranger ()
 
 sudo_ranger ()
 {
-    sudo SHELL=$HOME/scripts/r.shell /usr/bin/ranger "${@:-$(pwd)}"
+    sudo SHELL=$HOME/scripts/df/r.shell /usr/bin/ranger "${@:-$(pwd)}"
 }
 
 tx ()
 {
     if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
-    then tmux attach || . $HOME/scripts/tmux-default-session.sh; fi
+    then tmux attach || . $HOME/scripts/df/tmux-default-session.sh; fi
 }
 
 # color grid
