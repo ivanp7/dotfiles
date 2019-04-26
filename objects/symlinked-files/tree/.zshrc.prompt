@@ -313,7 +313,7 @@ add-zsh-hook precmd _p_pwdinfo_f
 ############################################################################
 
 function zle-keymap-select {
-    CommandModeIndicatorColor=$(_p_color 7 1)
+    CommandModeIndicatorColor=$(_p_safe_color "$(_p_color 15 1)" "${_p_bold}$(_p_color 7 1)")
     RPROMPT="${_p_stdcolor}[        ]"
     if [ "$KEYMAP" = "vicmd" ]
     then RPROMPT="${_p_stdcolor}[${CommandModeIndicatorColor} NORMAL ${_p_stdcolor}]"
