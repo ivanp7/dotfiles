@@ -117,21 +117,22 @@ add-zsh-hook precmd _p_ttyinfo_f
 
 _p_processinfo_f()
 {
-    local OutputStr="$(sed "
+    local OutputStr="$(echo "$(pstree -ls $$)" | head -n1 | sed "
         s/systemd//;
-        s/---login//;
-        s/---pstree//;
-        s/---sh//g;
-        s/---dash//g;
-        s/---bash//g;
-        s/---zsh//g;
-        s/^---//;
-        s/sshd---sshd/ssh/;
+        s/-.-login//;
+        s/-.-pstree//;
+        s/-.-head//;
+        s/-.-sh//g;
+        s/-.-dash//g;
+        s/-.-bash//g;
+        s/-.-zsh//g;
+        s/^-.-//;
+        s/sshd-.-sshd/ssh/;
         s/tmux: server/tmux/;
-        s/screen---screen/screen/;
-        s/y-desktop.sh---screen---yaft/yaft/;
-        s/---/]${_p_arrow}[/g; 
-    " <<< $(pstree -ls $$))"
+        s/screen-.-screen/screen/;
+        s/y-desktop.sh-.-screen-.-yaft/yaft/;
+        s/-.-/]${_p_arrow}[/g; 
+    ")"
 
     if [ -z "$OutputStr" ]
     then unset _p_processinfo; return
