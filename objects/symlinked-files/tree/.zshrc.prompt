@@ -280,7 +280,7 @@ _p_gitinfo_f()
     GIT_INFO+=( "${LocationColor}$GIT_LOCATION${_p_stdcolor}" )
     [ "${#DIVERGENCES[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
     [ "${#FLAGS[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)FLAGS}" )
-    _p_gitinfo="${_p_2dash}[${(j:~:)GIT_INFO}]"
+    _p_gitinfo="${_p_2dash}[${(j:][:)GIT_INFO}]"
 }
 add-zsh-hook precmd _p_gitinfo_f
 
@@ -374,5 +374,5 @@ _p_prompt ()
 }
 add-zsh-hook precmd _p_prompt
 
-# vim: set ft=sh:
+# vim: set ft=zsh:
 

@@ -206,3 +206,5 @@ ttyctl -f
 # shell prompt
 . $HOME/.zshrc.prompt
 
+# vim: set ft=zsh:
+
