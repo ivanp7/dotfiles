@@ -55,8 +55,7 @@ _p_prompt_init_f()
         unset _p_exitcode
     fi
 
-    _p_termwidth=$(tput cols)
-    _p_separator="$(printf "%0.s${_p_dot}" $(seq 1 $(($_p_termwidth))))"
+    _p_separator="$(printf "%0.s${_p_dot}" $(seq 1 $(($COLUMNS))))"
 }
 add-zsh-hook precmd _p_prompt_init_f
 
@@ -140,7 +139,7 @@ _p_processinfo_f()
 
     local PromptLength=$((1 + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
                           $_p_cmdstatusinfo_length + $_p_ttyinfo_length + 3))
-    local MaxOutputLength=$(($_p_termwidth - $PromptLength))
+    local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     local PNameColor=${_p_color_white}
     local GapColor=$(_p_color 1)
@@ -288,7 +287,7 @@ add-zsh-hook precmd _p_gitinfo_f
 _p_pwdinfo_f()
 {
     local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
-    local MaxOutputLength=$(($_p_termwidth - $PromptLength))
+    local MaxOutputLength=$(($COLUMNS - $PromptLength))
     local FreeSpaceLength=$(($MaxOutputLength - ${#PWD}))
 
     local DirColor=${_p_color_white}
@@ -313,7 +312,8 @@ add-zsh-hook precmd _p_pwdinfo_f
 
 ############################################################################
 
-function zle-keymap-select {
+zle-keymap-select()
+{
     CommandModeIndicatorColor=$(_p_safe_color "$(_p_color 15 1)" "${_p_bold}$(_p_color 7 1)")
     RPROMPT="${_p_stdcolor}[        ]"
     if [ "$KEYMAP" = "vicmd" ]
@@ -324,14 +324,16 @@ function zle-keymap-select {
 }
 zle -N zle-keymap-select
 
-function zle-line-init {
+zle-line-init()
+{
     RPROMPT="${_p_stdcolor}[        ]"
     RPROMPT2=$RPROMPT
     zle reset-prompt
 }
 zle -N zle-line-init
 
-function zle-line-finish {
+zle-line-finish()
+{
     RPROMPT="${_p_stdcolor}[${_p_color_white}%D{%T}${_p_stdcolor}]"
     local CSI=$'\e['
     RPROMPT2="$RPROMPT%{${CSI}A${CSI}10D          ${CSI}B%}" # remove previous RPROMPT's
@@ -341,7 +343,8 @@ zle -N zle-line-finish
 
 # Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
-function TRAPINT() {
+TRAPINT()
+{
     RPROMPT="${_p_stdcolor}[        ]"
     RPROMPT2=$RPROMPT
     zle && { zle reset-prompt; zle -R; }
