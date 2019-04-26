@@ -85,7 +85,7 @@ download() { run "rsync -vP $REST_P -e 'ssh -p $PORT' '$USER@$ADDRESS:$FIRST_P' 
 
 mount() { run "sshfs $USER@$ADDRESS:$FIRST_P $SECOND_P -p $PORT -o reconnect $REST_P"; }
 
-command_to() { run "TERM=xterm-256color ssh -p $PORT $USER@$ADDRESS $FIRST_P $SECOND_P $REST_P"; }
+command_to() { run "ssh -p $PORT $USER@$ADDRESS $FIRST_P $SECOND_P $REST_P"; }
 
 tunnel()
 {
@@ -93,7 +93,7 @@ tunnel()
     then LOCAL_PORT="$FIRST_P"
     else LOCAL_PORT="65535"
     fi
-    run "TERM=xterm-256color ssh -D $LOCAL_PORT -N -p $PORT $USER@$ADDRESS"
+    run "ssh -D $LOCAL_PORT -N -p $PORT $USER@$ADDRESS"
 }
 
 # ------------------------------------------------------------------------------
