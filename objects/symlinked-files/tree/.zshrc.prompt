@@ -85,8 +85,8 @@ add-zsh-hook precmd _p_cmdtimeinfo_f
 
 _p_cmdstatusinfo_f ()
 {
-    local SuccessColor=${_p_bold}$(_p_color 2)
-    local FailureColor=${_p_bold}$(_p_color 1)
+    local SuccessColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
+    local FailureColor=$(_p_safe_color "$(_p_color 160)" "${_p_bold}$(_p_color 1)")
     local NoCommandColor=${_p_color_white}
     if [ -n "$_p_exitcode" ]
     then
@@ -172,8 +172,8 @@ _p_userhostinfo_f ()
     local HOST=$(hostname)
     _p_userhostinfo_length="$((4 + ${#USER} + ${#HOST}))"
 
-    local RootColor=${_p_bold}$(_p_color 7 1)
-    local UserColor=$(_p_color 2)
+    local RootColor=$(_p_safe_color "$(_p_color 15 196)" "${_p_bold}$(_p_color 7 1)")
+    local UserColor=$(_p_safe_color "$(_p_color 40)" "${_p_bold}$(_p_color 2)")
     local HostColor=$(_p_safe_color "$(_p_color 39)" "${_p_bold}$(_p_color 4)")
 
     if [ "$(id -u)" -eq 0 ]
@@ -209,11 +209,11 @@ _p_gitinfo_f ()
     _p_gitinfo_length=$((3 + ${#GIT_LOCATION}))
 
     local AheadColor=$_p_color_white
-    local BehindColor=$(_p_color 1)
+    local BehindColor=$(_p_safe_color "$(_p_color 166)" "${_p_bold}$(_p_color 1)")
 
     local MergingColor=$(_p_safe_color "$(_p_color 33)" "${_p_bold}$(_p_color 4)")
     local UntrackedColor=$(_p_safe_color "$(_p_color 160)" "${_p_bold}$(_p_color 1)")
-    local ModifiedColor=$(_p_safe_color "$(_p_color 220)" "${_p_bold}$(_p_color 3)")
+    local ModifiedColor=$(_p_safe_color "$(_p_color 214)" "${_p_bold}$(_p_color 3)")
     local StagedColor=$(_p_safe_color "$(_p_color 34)" "$(_p_color 2)")
 
     local AHEAD="${AheadColor}↑NUM${_p_stdcolor}"
