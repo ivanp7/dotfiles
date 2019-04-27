@@ -1,4 +1,5 @@
 .config/ranger
+.config/powerline
 .tmux/plugins
 .vim/plugged
 .zsh/completion
