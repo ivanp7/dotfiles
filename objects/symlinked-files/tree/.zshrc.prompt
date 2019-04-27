@@ -1,12 +1,12 @@
 _p_bold="%B"
 _p_stopbold="%b"
 
-_p_color()
+_p_color ()
 {
     echo "%F{$1}$([ -n "$2" ] && echo "%K{$2}" || true)"
 }
 
-_p_safe_color()
+_p_safe_color ()
 {
     if [ $(tput colors) -gt 8 ]; then echo "$1"; else echo "$2"; fi
 }
@@ -36,7 +36,7 @@ _p_preexec ()
 }
 add-zsh-hook preexec _p_preexec
 
-_p_prompt_init_f()
+_p_prompt_init_f ()
 {
     _p_exitcode="$?" # This needs to be first
 
@@ -61,7 +61,7 @@ add-zsh-hook precmd _p_prompt_init_f
 
 ############################################################################
 
-_p_timeinfo_f()
+_p_timeinfo_f ()
 {
     _p_timeinfo_length=11
     local TimeInfoColor=${_p_color_white}
@@ -69,7 +69,7 @@ _p_timeinfo_f()
 }
 add-zsh-hook precmd _p_timeinfo_f
 
-_p_cmdtimeinfo_f()
+_p_cmdtimeinfo_f ()
 {
     local CmdTimeInfoColor=${_p_color_white}
     if [ -n "$_p_timer_delta" ]
@@ -83,7 +83,7 @@ _p_cmdtimeinfo_f()
 }
 add-zsh-hook precmd _p_cmdtimeinfo_f
 
-_p_cmdstatusinfo_f()
+_p_cmdstatusinfo_f ()
 {
     local SuccessColor=${_p_bold}$(_p_color 2)
     local FailureColor=${_p_bold}$(_p_color 1)
@@ -105,7 +105,7 @@ _p_cmdstatusinfo_f()
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
 
-_p_ttyinfo_f()
+_p_ttyinfo_f ()
 {
     local TTY="$(tty | sed "s,/dev/,,")"
     _p_ttyinfo_length=$((3 + ${#TTY}))
@@ -114,7 +114,7 @@ _p_ttyinfo_f()
 }
 add-zsh-hook precmd _p_ttyinfo_f
 
-_p_processinfo_f()
+_p_processinfo_f ()
 {
     local OutputStr="$(echo "$(pstree -ls $$)" | head -n1 | sed "
         s/systemd//;
@@ -166,7 +166,7 @@ add-zsh-hook precmd _p_processinfo_f
 
 ############################################################################
 
-_p_userhostinfo_f()
+_p_userhostinfo_f ()
 {
     local USER=$(whoami)
     local HOST=$(hostname)
@@ -192,7 +192,7 @@ _p_userhostinfo_f()
 }
 add-zsh-hook precmd _p_userhostinfo_f
 
-_p_gitinfo_f()
+_p_gitinfo_f ()
 {
     local LocationColor=$(_p_safe_color "$(_p_color 165)" "${_p_bold}$(_p_color 5)")
 
@@ -284,7 +284,7 @@ _p_gitinfo_f()
 }
 add-zsh-hook precmd _p_gitinfo_f
 
-_p_pwdinfo_f()
+_p_pwdinfo_f ()
 {
     local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
@@ -312,41 +312,49 @@ add-zsh-hook precmd _p_pwdinfo_f
 
 ############################################################################
 
-zle-keymap-select()
+_p_cmdline_f ()
+{
+    local PromptCharacterColor=$(_p_safe_color "$(_p_color 250)" "$(_p_color 7)")
+    local PromptCharacter="${PromptCharacterColor} $([ "$(id -u)" -ne 0 ] && echo "$" || echo "#") ${_p_cmdcolor}"
+    local PromptCharacter2="${PromptCharacterColor} > ${_p_cmdcolor}"
+
+    PROMPT="${_p_stdcolor}${_p_bot}${_p_dash}[$2$1${_p_stdcolor}]${_p_dash}${PromptCharacter}"
+    local CSI=$'\e['
+    local len=$((${#1} + 3))
+    local FixPrevPromptPrefix="%{${CSI}A${_p_mid1}$(printf "%0.s${_p_dash}" $(seq 1 $len))${CSI}${len}D${CSI}D${CSI}B%}"
+    PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${_p_bot}${_p_dash}[$2$1${_p_stdcolor}]${_p_dash}${PromptCharacter2}"
+}
+
+zle-keymap-select ()
 {
     CommandModeIndicatorColor=$(_p_safe_color "$(_p_color 15 1)" "${_p_bold}$(_p_color 7 1)")
-    RPROMPT="${_p_stdcolor}[        ]"
     if [ "$KEYMAP" = "vicmd" ]
-    then RPROMPT="${_p_stdcolor}[${CommandModeIndicatorColor} NORMAL ${_p_stdcolor}]"
+    then _p_cmdline_f " NORMAL " "${CommandModeIndicatorColor}"
+    else _p_cmdline_f "        "
     fi
-    RPROMPT2=$RPROMPT
     zle reset-prompt
 }
 zle -N zle-keymap-select
 
-zle-line-init()
+zle-line-init ()
 {
-    RPROMPT="${_p_stdcolor}[        ]"
-    RPROMPT2=$RPROMPT
+    _p_cmdline_f "        "
     zle reset-prompt
 }
 zle -N zle-line-init
 
-zle-line-finish()
+zle-line-finish ()
 {
-    RPROMPT="${_p_stdcolor}[${_p_color_white}%D{%T}${_p_stdcolor}]"
-    local CSI=$'\e['
-    RPROMPT2="$RPROMPT%{${CSI}A${CSI}10D          ${CSI}B%}" # remove previous RPROMPT's
+    _p_cmdline_f "%D{%T}" "${_p_color_white}"
     zle reset-prompt
 }
 zle -N zle-line-finish
 
 # Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
-TRAPINT()
+TRAPINT ()
 {
-    RPROMPT="${_p_stdcolor}[        ]"
-    RPROMPT2=$RPROMPT
+    _p_cmdline_f "        "
     zle && { zle reset-prompt; zle -R; }
     return $(( 128 + $1 ))
 } 
@@ -360,21 +368,7 @@ _p_prompt ()
     print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_ttyinfo}${_p_processinfo}"
     print -P "${_p_stdcolor}${_p_mid2}${_p_userhostinfo}${_p_gitinfo}${_p_pwdinfo}"
 
-    local PromptPrefix="${_p_bot}${_p_dash}"
-
-    local PromptCharacterColor=$(_p_safe_color "$(_p_color 250)" "$(_p_color 7)")
-    if [ "$(id -u)" -ne 0 ]
-    then local PromptCharacter="${PromptCharacterColor} $ ${_p_cmdcolor}"
-    else local PromptCharacter="${PromptCharacterColor} # ${_p_cmdcolor}"
-    fi
-    local PromptCharacter2="${PromptCharacterColor} > ${_p_cmdcolor}"
-
-    PROMPT="${_p_stdcolor}${PromptPrefix}${PromptCharacter}"
-    local CSI=$'\e['
-    local FixPrevPromptPrefix="%{${CSI}A${_p_mid1}${CSI}D${CSI}B%}"
-    PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${PromptPrefix}${PromptCharacter2}"
-
-    RPROMPT="${_p_stdcolor}[        ]"
+    _p_cmdline_f "        "
 }
 add-zsh-hook precmd _p_prompt
 
