@@ -338,7 +338,7 @@ zle -N zle-keymap-select
 
 zle-line-init ()
 {
-    echoti smkx
+    [ "$TERM" != "linux" ] && echoti smkx
     _p_cmdline_f "        "
     zle reset-prompt
 }
@@ -346,7 +346,7 @@ zle -N zle-line-init
 
 zle-line-finish ()
 {
-    echoti rmkx
+    [ "$TERM" != "linux" ] && echoti rmkx
     _p_cmdline_f "%D{%T}" "${_p_color_white}"
     zle reset-prompt
 }
