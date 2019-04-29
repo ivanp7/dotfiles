@@ -16,7 +16,7 @@ case $MODE in
     *) echo "Error: unsupported command '$MODE'"; exit 1
 esac
 
-operation()
+operation ()
 {
     REMOTE_HOST="$1"
     if [ "$REMOTE_HOST" != "$HOST" ]

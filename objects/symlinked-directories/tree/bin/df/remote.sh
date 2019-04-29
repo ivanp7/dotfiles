@@ -1,8 +1,8 @@
 #!/bin/sh
 
-run() { echo "$1"; sh -c "$1"; }
+run () { echo "$1"; sh -c "$1"; }
 
-error()
+error ()
 {
     echo "Error: $1"
     if [ -n "$2" ]; then exit $2
@@ -19,7 +19,7 @@ REST_P="${@:5}"
 
 # ------------------------------------------------------------------------------
 
-unmount() { run "fusermount3 -u $FIRST_P"; }
+unmount () { run "fusermount3 -u $FIRST_P"; }
 
 # ------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ esac
 if [ ! -d "$HOME/.password-store/computers/$REMOTE_HOST/net" ]
 then error "unknown host '$REMOTE_HOST'" 2; fi
 
-get() { pass computers/$1/net/$2 2> /dev/null; }
+get () { pass computers/$1/net/$2 2> /dev/null; }
 
 HOST="$(hostname)"
 
@@ -58,10 +58,12 @@ if [ -z "$WAKEUP_DELAY" ]; then WAKEUP_DELAY="1"; fi
 
 # ------------------------------------------------------------------------------
 
-STATUS_TIMEOUT=5
-status_of() { run "nc -w $STATUS_TIMEOUT -z $ADDRESS $PORT"; }
+get_url () { echo "ssh://$USER@$ADDRESS:$PORT/"; }
 
-wakeup()
+STATUS_TIMEOUT=5
+status_of () { run "nc -w $STATUS_TIMEOUT -z $ADDRESS $PORT"; }
+
+wakeup ()
 {
     if [ -n "$MAC_ADDRESS" ]
     then run "wol -p $WAKEUP_PORT $([ "$SCOPE" = "global" ] && echo "-i $ADDRESS") $MAC_ADDRESS"
@@ -69,7 +71,7 @@ wakeup()
     fi 
 }
 
-wakeup_run() 
+wakeup_run () 
 {
     if ! status_of
     then 
@@ -80,14 +82,14 @@ wakeup_run()
     $1
 }
 
-upload() { run "rsync -vP $REST_P -e 'ssh -p $PORT' $FIRST_P '$USER@$ADDRESS:$SECOND_P'"; }
-download() { run "rsync -vP $REST_P -e 'ssh -p $PORT' '$USER@$ADDRESS:$FIRST_P' $SECOND_P"; }
+upload () { run "rsync -vP $REST_P -e 'ssh -p $PORT' $FIRST_P '$USER@$ADDRESS:$SECOND_P'"; }
+download () { run "rsync -vP $REST_P -e 'ssh -p $PORT' '$USER@$ADDRESS:$FIRST_P' $SECOND_P"; }
 
-mount() { run "sshfs $USER@$ADDRESS:$FIRST_P $SECOND_P -p $PORT -o reconnect $REST_P"; }
+mount () { run "sshfs $USER@$ADDRESS:$FIRST_P $SECOND_P -p $PORT -o reconnect $REST_P"; }
 
-command_to() { run "TERM=xterm-256color ssh -p $PORT $USER@$ADDRESS $FIRST_P $SECOND_P $REST_P"; }
+command_to () { run "TERM=xterm-256color ssh -p $PORT $USER@$ADDRESS $FIRST_P $SECOND_P $REST_P"; }
 
-tunnel()
+tunnel ()
 {
     if [ -n "$FIRST_P" ]
     then LOCAL_PORT="$FIRST_P"
@@ -99,6 +101,8 @@ tunnel()
 # ------------------------------------------------------------------------------
 
 case $MODE in
+    get_url) get_url ;;
+
     status) status_of ;;
     wakeup) wakeup ;;
 
