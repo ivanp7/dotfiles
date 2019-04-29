@@ -58,7 +58,7 @@ if [ -z "$WAKEUP_DELAY" ]; then WAKEUP_DELAY="1"; fi
 
 # ------------------------------------------------------------------------------
 
-get_url () { echo "ssh://$USER@$ADDRESS:$PORT/"; }
+get_url () { echo "ssh://$USER@$ADDRESS:$PORT"; }
 
 STATUS_TIMEOUT=5
 status_of () { run "nc -w $STATUS_TIMEOUT -z $ADDRESS $PORT"; }
