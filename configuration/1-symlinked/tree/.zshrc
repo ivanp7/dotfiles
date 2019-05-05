@@ -188,17 +188,7 @@ alias sudo='sudo '
     [ -f $HOME/.xaliases ] && . $HOME/.xaliases; } || true
 
 # element of yaft drawing bug workaround
-if [ "$TERM" = "yaft-256color" ]
-then
-    if [ -f /tmp/tmux-refresh-service-$(whoami)/tmp ]
-    then
-        echo $(tty) > /tmp/tmux-refresh-service-$(whoami)/$(cat /tmp/tmux-refresh-service-$(whoami)/tmp)
-        rm /tmp/tmux-refresh-service-$(whoami)/tmp
-    fi
-
-    tx
-    exit
-fi
+. $HOME/scripts/df/yaft-workaround.sh
 
 # unfreeze terminal if left frozen
 ttyctl -f
