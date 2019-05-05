@@ -2,5 +2,5 @@
 
 CONF_DIR=$(realpath `dirname $0`)
 
-cp -asfT $CONF_DIR/tree $HOME
+$CONF_DIR/configuration/op.sh u
 
