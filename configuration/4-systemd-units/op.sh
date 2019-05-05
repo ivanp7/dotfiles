@@ -40,8 +40,8 @@ uninstall()
 
     systemctl $USER_FLAG disable --now $(basename $target)
 
-    rm "$TARGET_DIR/$(basename $service)"
-    [ -e "$timer" ] && rm "/$TARGET_DIR/$(basename $timer)"
+    [ -e "$TARGET_DIR/$(basename $service)" ] && rm "$TARGET_DIR/$(basename $service)"
+    [ -e "$TARGET_DIR/$(basename $timer)" ] && rm "$TARGET_DIR/$(basename $timer)"
 }
 
 case $1 in
