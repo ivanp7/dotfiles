@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 run () { echo "$1"; sh -c "$1"; }
 
