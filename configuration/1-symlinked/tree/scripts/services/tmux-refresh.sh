@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 UNUSED_VT=13
 TMUX_TMP_WINDOW=yaft-tmp-window
