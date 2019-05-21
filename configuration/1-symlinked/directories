@@ -1,6 +1,6 @@
 .config/ranger
 .config/powerline
+.scripts/df
 .tmux/plugins
 .vim/plugged
 bin/df
-scripts/df

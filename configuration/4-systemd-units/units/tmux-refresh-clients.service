@@ -2,7 +2,7 @@
 Description=Tmux clients auto-refresh daemon
 
 [Service]
-ExecStart=/usr/bin/sh %h/scripts/services/tmux-refresh-clients.sh
+ExecStart=/usr/bin/sh %h/.scripts/services/tmux-refresh-clients.sh
 Restart=on-failure
 
 [Install]
