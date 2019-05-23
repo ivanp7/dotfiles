@@ -111,6 +111,14 @@ tunnel ()
 # ------------------------------------------------------------------------------
 
 case $MODE in
+    get_url) ;; status) ;; wakeup) ;;
+    upload) ;; wakeup-upload) ;; download) ;; wakeup-download) ;; 
+    mount) ;; wakeup-mount) ;;
+    command) ;; wakeup-command) ;; tunnel) ;; wakeup-tunnel) ;;
+    *) error "unknown command '$MODE'."
+esac
+
+case $MODE in
     get_url) get_url ;;
 
     status) status_of ;;
@@ -119,20 +127,16 @@ case $MODE in
     command) command_to ;; wakeup-command) wakeup_run command_to ;;
     tunnel) tunnel ;;      wakeup-tunnel) wakeup_run tunnel ;;
 
-    # modes with mandatory parameters are executed after check
-    upload) ;; wakeup-upload) ;; download) ;; wakeup-download) ;; 
-    mount) ;; wakeup-mount) ;;
-    *) error "unknown command '$MODE'."
-esac
+    *) 
+        if [ -z "$FIRST_P" ] || [ -z "$SECOND_P" ]
+        then error "required parameters missing."
+        fi
 
-if [ -z "$FIRST_P" ] || [ -z "$SECOND_P" ]
-then error "required parameters missing."
-fi
+        case $MODE in
+            upload) upload ;;      wakeup-upload) wakeup_run upload ;;
+            download) download ;;  wakeup-download) wakeup_run download ;;
 
-case $MODE in
-    upload) upload ;;      wakeup-upload) wakeup_run upload ;;
-    download) download ;;  wakeup-download) wakeup_run download ;;
-
-    mount) mount ;;        wakeup-mount) wakeup_run mount ;;
+            mount) mount ;;        wakeup-mount) wakeup_run mount ;;
+        esac
 esac
 
