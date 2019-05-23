@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 run () { echo "$1"; sh -c "$1"; }
 
@@ -13,9 +13,7 @@ error ()
 
 REMOTE_HOST="$1"
 MODE="$2"
-FIRST_P="$3"
-SECOND_P="$4"
-REST_P="${@:5}"
+shift 2
 
 # ------------------------------------------------------------------------------
 
@@ -26,6 +24,18 @@ unmount () { run "fusermount3 -u $FIRST_P"; }
 case $MODE in
     unmount) unmount; exit
 esac
+
+# ------------------------------------------------------------------------------
+
+if [ "$#" -gt 0 ]; then
+    FIRST_P="$1"
+    shift 1
+    if [ "$#" -gt 0 ]; then
+        SECOND_P="$1"
+        shift 1
+        REST_P="$@"
+    fi
+fi
 
 # ------------------------------------------------------------------------------
 
@@ -106,15 +116,23 @@ case $MODE in
     status) status_of ;;
     wakeup) wakeup ;;
 
+    command) command_to ;; wakeup-command) wakeup_run command_to ;;
+    tunnel) tunnel ;;      wakeup-tunnel) wakeup_run tunnel ;;
+
+    # modes with mandatory parameters are executed after check
+    upload) ;; wakeup-upload) ;; download) ;; wakeup-download) ;; 
+    mount) ;; wakeup-mount) ;;
+    *) error "unknown command '$MODE'."
+esac
+
+if [ -z "$FIRST_P" ] || [ -z "$SECOND_P" ]
+then error "required parameters missing."
+fi
+
+case $MODE in
     upload) upload ;;      wakeup-upload) wakeup_run upload ;;
     download) download ;;  wakeup-download) wakeup_run download ;;
 
     mount) mount ;;        wakeup-mount) wakeup_run mount ;;
-
-    command) command_to ;; wakeup-command) wakeup_run command_to ;;
-
-    tunnel) tunnel ;;      wakeup-tunnel) wakeup_run tunnel ;;
-
-    *) error "unknown command '$MODE'"
 esac
 

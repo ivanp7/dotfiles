@@ -11,10 +11,13 @@ else
     PKGMANAGER_SUDO="sudo pacman"
 fi
 
-case $1 in
+MODE="$1"
+shift 1
+
+case $MODE in
     update) PKG_COMMAND="$PKGMANAGER_SUDO -Syu" ;;
-    install) PKG_COMMAND="$PKGMANAGER_SUDO -S ${@:2}" ;;
-    uninstall) PKG_COMMAND="$PKGMANAGER_SUDO -Rns ${@:2}" ;;
+    install) PKG_COMMAND="$PKGMANAGER_SUDO -S $@" ;;
+    uninstall) PKG_COMMAND="$PKGMANAGER_SUDO -Rns $@" ;;
     uninstall-orphans) PKG_COMMAND="$PKGMANAGER_SUDO -Rns \$($PKGMANAGER -Qtdq)" ;;
     list) PKG_COMMAND="$PKGMANAGER -Qqet" ;;
     *)

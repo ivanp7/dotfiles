@@ -4,7 +4,8 @@ if [ ! -d "$HOME/.password-store/computers" ]
 then echo "Error: no remote hosts information available."; exit 2; fi
 
 MODE="$1"
-REST_P="${@:2}"
+shift 1
+REST_P="$@"
 
 HOST="$(hostname)"
 

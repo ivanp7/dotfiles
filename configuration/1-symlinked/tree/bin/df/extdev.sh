@@ -1,12 +1,7 @@
 #!/bin/sh
 
 MODE="$1"
-DEVICE="$2"
-OPTIONS="${@:3}"
-
-if [ -z "$OPTIONS" ]
-then OPTIONS="rw,uid=$(whoami),gid=$(whoami),dmask=0022,fmask=0133,defaults"
-fi
+shift 1
 
 case $MODE in
     list)
@@ -15,6 +10,14 @@ case $MODE in
         ;;
 
     mount)
+        DEVICE="$1"
+        if [ -z "$DEVICE" ]; then echo "Error: no device supplied."; exit 1; fi
+        shift 1
+        OPTIONS="$@"
+        if [ -z "$OPTIONS" ]
+        then OPTIONS="rw,uid=$(whoami),gid=$(whoami),dmask=0022,fmask=0133,defaults"
+        fi
+
         if mountpoint -q /mnt/dev/$DEVICE
         then
             echo "Error: device '$DEVICE' is already mounted"
@@ -31,6 +34,9 @@ case $MODE in
         ;;
 
     unmount)
+        DEVICE="$1"
+        if [ -z "$DEVICE" ]; then echo "Error: no device supplied."; exit 1; fi
+
         if ! mountpoint -q /mnt/dev/$DEVICE
         then
             echo "Error: device '$DEVICE' is not mounted"

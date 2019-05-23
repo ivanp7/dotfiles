@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 UNUSED_VT=13
 TMUX_TMP_WINDOW=yaft-tmp-window
@@ -75,7 +75,7 @@ refresh_tty()
     sleep 0.3
     sudo chvt $UNUSED_VT
     sleep 0.3
-    sudo chvt ${1:3} || sudo chvt 1
+    sudo chvt $(echo $1 | tail -c+4) || sudo chvt 1
     # sudo dd if=/dev/zero of=/dev/fb0 2> /dev/null
 }
 
