@@ -14,6 +14,8 @@ alias diff='diff --color=auto '
 
 alias less='/usr/share/vim/vim81/macros/less.sh '
 
+alias oct='octave --eval '
+
 alias rr='ranger '
 alias srr='sudo_ranger '
 
