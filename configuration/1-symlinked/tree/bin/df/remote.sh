@@ -105,8 +105,11 @@ tunnel ()
     then LOCAL_PORT="$FIRST_P"
     else LOCAL_PORT="65535"
     fi
-    run "ssh -D $LOCAL_PORT -N -p $PORT $USER@$ADDRESS"
+    run "ssh $1 $LOCAL_PORT -N -p $PORT $USER@$ADDRESS"
 }
+
+ftunnel () { tunnel -D; }
+rtunnel () { tunnel -R; }
 
 # ------------------------------------------------------------------------------
 
@@ -114,7 +117,7 @@ case $MODE in
     get_url) ;; status) ;; wakeup) ;;
     upload) ;; wakeup-upload) ;; download) ;; wakeup-download) ;; 
     mount) ;; wakeup-mount) ;;
-    command) ;; wakeup-command) ;; tunnel) ;; wakeup-tunnel) ;;
+    command) ;; wakeup-command) ;; tunnel) ;; wakeup-tunnel) ;; rtunnel) ;; wakeup-rtunnel) ;;
     *) error "unknown command '$MODE'."
 esac
 
@@ -125,7 +128,8 @@ case $MODE in
     wakeup) wakeup ;;
 
     command) command_to ;; wakeup-command) wakeup_run command_to ;;
-    tunnel) tunnel ;;      wakeup-tunnel) wakeup_run tunnel ;;
+    tunnel) ftunnel ;;     wakeup-tunnel) wakeup_run ftunnel ;;
+    rtunnel) rtunnel ;;    wakeup-rtunnel) wakeup_run rtunnel ;;
 
     *) 
         if [ -z "$FIRST_P" ] || [ -z "$SECOND_P" ]
