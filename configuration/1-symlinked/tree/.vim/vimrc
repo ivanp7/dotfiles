@@ -269,6 +269,7 @@ let g:vlime_window_settings = {'sldb': {'pos': 'belowright', 'vertical': v:true}
             \ 'preview': {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
 
 let g:vlime_force_default_keys = v:true
+" let g:vlime_cl_use_terminal = v:true
 
 " ####################################################################################
 " Custom key mappings
