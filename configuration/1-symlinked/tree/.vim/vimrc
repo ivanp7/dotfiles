@@ -271,6 +271,13 @@ let g:vlime_window_settings = {'sldb': {'pos': 'belowright', 'vertical': v:true}
 let g:vlime_force_default_keys = v:true
 " let g:vlime_cl_use_terminal = v:true
 
+let g:vlime_cl_impl = "ros"
+function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
+    return ["ros", "run",
+                \ "--load", a:vlime_loader,
+                \ "--eval", a:vlime_eval]
+endfunction
+
 " ####################################################################################
 " Custom key mappings
 
