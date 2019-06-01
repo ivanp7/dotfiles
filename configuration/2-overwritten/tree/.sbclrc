@@ -1,4 +1,0 @@
-(load "/usr/lib/quicklisp/setup")
-
-(setf *print-circle* t)
-
