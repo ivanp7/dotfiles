@@ -179,8 +179,8 @@ exec ros -Q -- $0 "$@"
                     (run (append 
                            `("ssh")
                            (when ssh-opts 
-                             `(,@(split-sequence:split-sequence 
-                                   #\Space ssh-opts :remove-empty-subseqs t)))
+                             (split-sequence:split-sequence 
+                               #\Space ssh-opts :remove-empty-subseqs t))
                            `("-p" ,port ,(format nil "~A@~A" user address))
                            (when command `(,command))))))))
     (setf (uiop:getenv "TERM") term)
@@ -192,8 +192,8 @@ exec ros -Q -- $0 "$@"
     (run (append 
            `("rsync" "-vP")
            (when rsync-opts 
-             `(,@(split-sequence:split-sequence 
-                   #\Space rsync-opts :remove-empty-subseqs t)))
+             (split-sequence:split-sequence 
+               #\Space rsync-opts :remove-empty-subseqs t))
            `("-e" ,(format nil "ssh -p ~A ~A" port ssh-opts))
            (let ((full-remote-path (format nil "~A@~A:~A" user address
                                            remote-path)))
@@ -207,8 +207,8 @@ exec ros -Q -- $0 "$@"
            `("sshfs" ,(format nil "~A@~A:~A" user address remote-path)
              ,local-path "-p" ,port "-o" "reconnect")
              (when sshfs-opts
-               `(,@(split-sequence:split-sequence
-                     #\Space sshfs-opts :remove-empty-subseqs t)))))))
+               (split-sequence:split-sequence
+                 #\Space sshfs-opts :remove-empty-subseqs t))))))
 
 (defun show-help ()
   (unix-opts:describe 
