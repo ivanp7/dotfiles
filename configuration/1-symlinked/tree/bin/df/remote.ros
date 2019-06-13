@@ -13,7 +13,7 @@ exec ros -Q -- $0 "$@"
 (defparameter *localhost-address* "localhost")
 (defparameter *default-ssh-port* "22")
 (defparameter *default-wakeup-port* "40000")
-(defparameter *default-wakeup-delay* 10)
+(defparameter *default-wakeup-delay* "10")
 
 (defparameter *status-timeout* "5")
 
@@ -238,7 +238,7 @@ exec ros -Q -- $0 "$@"
                                   (unless (getf options :lan) address))
                   (format *error-output* 
                           "Waiting for ~A seconds...~%" wakeup-delay)
-                  (sleep wakeup-delay)))
+                  (sleep (parse-integer wakeup-delay))))
 
               (when (getf options :operation)
                 (let ((user (get-user-name options)) 
