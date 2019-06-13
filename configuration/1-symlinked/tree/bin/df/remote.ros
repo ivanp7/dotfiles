@@ -1,0 +1,281 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (setf *load-verbose* nil *load-print* nil
+        *compile-verbose* nil *compile-print* nil)
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(:alexandria :split-sequence :unix-opts) 
+                           :silent t))
+
+(defparameter *default-address* "localhost")
+(defparameter *default-port* "22")
+(defparameter *default-wakeup-port* "40000")
+(defparameter *default-wakeup-delay* 5)
+
+(defparameter *status-timeout* "5")
+
+(defparameter *default-tunnel-argument* "65535")
+(defparameter *default-reverse-tunnel-argument* 
+  (concatenate 'string *default-tunnel-argument* ":localhost:" *default-port*))
+
+(defparameter *default-local-path* "./")
+(defparameter *default-remote-path* "~/")
+
+(flet ((str2key (str) (intern (string-upcase str) :keyword)))
+  (unix-opts:define-opts
+    (:name :help
+     :description "show usage help"
+     :long "help")
+    (:name :dry-run
+     :description "does not do anything"
+     :short #\n :long "dry-run")
+
+    (:name :user
+     :description "user name to login as"
+     :short #\u :long "user"
+     :arg-parser #'identity :meta-var "USERNAME")
+    (:name :host
+     :description "name of remote host with known address, port, etc."
+     :short #\h :long "host"
+     :arg-parser #'identity :meta-var "HOSTNAME")
+    (:name :lan
+     :description "try to use remote host's local address and port"
+     :short #\L :long "lan")
+    (:name :address
+     :description "address of remote host"
+     :short #\a :long "address"
+     :arg-parser #'identity :meta-var "ADDRESS")
+    (:name :port
+     :description "port of remote host"
+     :short #\p :long "port"
+     :arg-parser #'identity :meta-var "PORT")
+
+    (:name :mac-address
+     :description "MAC address to wake up"
+     :short #\m :long "mac"
+     :arg-parser #'identity :meta-var "MAC-ADDR")
+    (:name :wakeup-port
+     :description "port to send magic packet to"
+     :short #\P :long "wakeup-port"
+     :arg-parser #'identity :meta-var "PORT")
+    (:name :wakeup-delay
+     :description "time for remote host to wake up"
+     :short #\d :long "delay"
+     :arg-parser #'identity :meta-var "DELAY")
+
+    (:name :wakeup
+     :description "wake up remote computer before operation"
+     :short #\w :long "wakeup")
+    (:name :operation
+     :description "operation type"
+     :short #\o :long "op"
+     :arg-parser #'str2key :meta-var "TYPE")
+
+    (:name :ssh-command
+     :description "ssh command"
+     :short #\c :long "cmd"
+     :arg-parser #'identity :meta-vat "COMMAND")
+    (:name :ssh-opts
+     :description "ssh options"
+     :long "ssh-opts"
+     :arg-parser #'identity :meta-var "OPTIONS")
+
+    (:name :sshfs-opts
+     :description "sshfs options"
+     :long "sshfs-opts"
+     :arg-parser #'identity :meta-var "OPTIONS")
+    (:name :rsync-opts
+     :description "rsync options"
+     :long "rsync-opts"
+     :arg-parser #'identity :meta-var "OPTIONS")
+
+    (:name :tunnel-arg
+     :description "ssh tunnel argument (port and/or binding address)"
+     :short #\t :long "tunnel"
+     :arg-parser #'identity :meta-var "ARGUMENT")
+
+    (:name :local-path
+     :description "local path"
+     :short #\l :long "path"
+     :arg-parser #'identity :meta-var "PATH")
+    (:name :remote-path
+     :description "remote path"
+     :short #\r :long "rpath"
+     :arg-parser #'identity :meta-var "PATH")))
+
+(defun host-known-p (hostname)
+  (uiop/filesystem:directory-exists-p
+    (merge-pathnames (concatenate 'string ".password-store/computers/"
+                                  hostname) 
+                     (user-homedir-pathname))))
+
+(defun get-user-name (options)
+  (let ((username (getf options :user)))
+    (if username username (uiop:getenv "USER"))))
+
+(defun get-host-parameter (hostname parameter)
+  (uiop:run-program 
+    `("pass" ,(concatenate 'string "computers/" hostname "/net/" parameter))
+    :ignore-error-status t :input :interactive :output '(:string :stripped t)))
+
+(macrolet ((define-getter (name arg-key param default)
+             `(defun ,name (options)
+                (let ((value (getf options ,arg-key)))
+                  (if value value 
+                    (let ((value (get-host-parameter (getf options :host)
+                                                     ,param)))
+                      (if (string-equal value "") ,default value)))))))
+
+  (define-getter get-address :address 
+                 (if (getf options :lan) "local/ip-address" 
+                   "global/ip-address") 
+                 (if (getf options :host) (error "no address known for host")
+                   *default-address*))
+  (define-getter get-port :port
+                 (if (getf options :lan) "local/port-ssh" 
+                   "global/port-ssh") *default-port*)
+  (define-getter get-mac-address :mac-address
+                 "mac-address" (error "no MAC-address known for host"))
+  (define-getter get-wakeup-port :wakeup-port
+                 (if (getf options :lan) "local/port-wakeup" 
+                   "global/port-wakeup") *default-wakeup-port*)
+  (define-getter get-wakeup-delay :wakeup-delay
+                 "wakeup-delay" *default-wakeup-delay*))
+
+(defun get-url (user address port)
+  (concatenate 'string "ssh://" user "@" address ":" port))
+
+(defparameter *dry-run* nil)
+
+(defmacro run (command &rest args)
+  (alexandria:once-only (command)
+    `(progn
+       (format *error-output* "~{~A~^ ~}~%" ,command) 
+       (force-output)
+       (unless *dry-run*
+         (uiop:run-program ,command :ignore-error-status t :input :interactive
+                           :output :interactive :error-output :interactive 
+                           ,@args)))))
+
+(defmacro exit-code (run-form)
+  `(nth-value 2 ,run-form))
+
+(defun host-online-p (address port)
+  (= 0 (exit-code (run `("nc" "-w" ,*status-timeout* "-z" ,address ,port)))))
+
+(defun wake-up-remote (mac-address wol-port &optional address)
+  (exit-code (run (append `("wol" "-p" ,wol-port)
+                          (when address `("-i"  ,address)) 
+                          `(,mac-address)))))
+
+(defun ssh (user address port &optional ssh-opts command)
+  (let ((term (uiop:getenv "TERM")) 
+        (result (progn
+                  (setf (uiop:getenv "TERM") "xterm-256color")
+                  (exit-code 
+                    (run (append 
+                           `("ssh")
+                           (when ssh-opts 
+                             `(,@(split-sequence:split-sequence 
+                                   #\Space ssh-opts :remove-empty-subseqs t)))
+                           `("-p" ,port ,(format nil "~A@~A" user address))
+                           (when command `(,command))))))))
+    (setf (uiop:getenv "TERM") term)
+    result))
+
+(defun rsync (user address port direction local-path remote-path 
+                   &optional rsync-opts ssh-opts)
+  (exit-code 
+    (run (append 
+           `("rsync" "-vP")
+           (when rsync-opts 
+             `(,@(split-sequence:split-sequence 
+                   #\Space rsync-opts :remove-empty-subseqs t)))
+           `("-e" ,(format nil "ssh -p ~A ~A" port ssh-opts))
+           (let ((full-remote-path (format nil "~A@~A:~A" user address
+                                           remote-path)))
+             (ecase direction
+               (:up `(,local-path ,full-remote-path))
+               (:down `(,full-remote-path ,local-path))))))))
+
+(defun sshfs (user address port local-path remote-path &optional sshfs-opts)
+  (exit-code
+    (run (append
+           `("sshfs" ,(format nil "~A@~A:~A" user address remote-path)
+             ,local-path "-p" ,port "-o" "reconnect")
+             (when sshfs-opts
+               `(,@(split-sequence:split-sequence
+                     #\Space sshfs-opts :remove-empty-subseqs t)))))))
+
+(defun show-help ()
+  (unix-opts:describe 
+    :prefix 
+    (format nil "~A~%~A" "remote computer handling utility"
+            "(C) Ivan Podmazov, 2019")
+    :usage-of "remote.ros"))
+
+(defun main (&rest argv)
+  (handler-case
+      (multiple-value-bind (options free-args) (unix-opts:get-opts argv)
+        (if (getf options :help) (show-help)
+          (progn
+            (setf *dry-run* (getf options :dry-run))
+            (cond
+              (free-args (error "too many arguments specified"))
+              ((getf options :host) 
+               (unless (host-known-p (getf options :host))
+                 (error "unknown host provided"))))
+
+            (let ((address (get-address options)) (port (get-port options)))
+              (when (and (getf options :wakeup)
+                         (not (host-online-p address port)))
+                (let ((mac-address (get-mac-address options))
+                      (wakeup-port (get-wakeup-port options))
+                      (wakeup-delay (get-wakeup-delay options)))
+                  (wake-up-remote mac-address wakeup-port 
+                                  (unless (getf options :lan) address))
+                  (format *error-output* 
+                          "Waiting for ~A seconds...~%" wakeup-delay)
+                  (sleep wakeup-delay)))
+
+              (when (getf options :operation)
+                (let ((user (get-user-name options)) 
+                      (op (getf options :operation)))
+                  (case op
+                    ((:url :print-ssh-url) 
+                     (format t "~A~%" (get-url user address port)))
+                    ((:status)
+                     (host-online-p address port))
+                    ((:ssh :cmd :command)
+                     (ssh user address port (getf options :ssh-opts)
+                          (getf options :ssh-command)))
+                    ((:tnl :tunnel :ssh-tunnel 
+                      :rtnl :rtunnel :reverse-tunnel :reverse-ssh-tunnel)
+                     (let ((forward-p (member op '(:tnl :tunnel :ssh-tunnel))))
+                       (ssh user address port 
+                            (append 
+                              `("-N" (if forward-p "-D" "-R") 
+                                ,(getf options :tunnel-arg
+                                       (if forward-p 
+                                         *default-tunnel-argument*
+                                         *default-reverse-tunnel-argument*)))
+                                    (getf options :ssh-opts)))))
+                    ((:up :upload :down :download)
+                     (let ((up-p (member op '(:up :upload))))
+                       (rsync user address port (if up-p :up :down)
+                              (getf options :local-path *default-local-path*)
+                              (getf options :remote-path *default-remote-path*)
+                              (getf options :rsync-opts)
+                              (getf options :ssh-opts))))
+                    ((:mnt :mount :sshfs)
+                     (sshfs user address port
+                            (getf options :local-path *default-local-path*)
+                            (getf options :remote-path *default-remote-path*)
+                            (getf options :sshfs-opts)))
+                    (t (error "unknown operation requested")))))))))
+    (t (msg) (format *error-output* "Error: ~A~%" msg) 1)))
+
+;;; vim: set ft=lisp lisp:
