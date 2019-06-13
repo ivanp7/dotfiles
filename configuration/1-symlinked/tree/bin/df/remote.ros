@@ -7,19 +7,21 @@ exec ros -Q -- $0 "$@"
   (setf *load-verbose* nil *load-print* nil
         *compile-verbose* nil *compile-print* nil)
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(:alexandria :split-sequence :unix-opts) 
-                           :silent t))
+  #+quicklisp
+  (ql:quickload '(:alexandria :split-sequence :unix-opts) :silent t))
 
-(defparameter *default-address* "localhost")
-(defparameter *default-port* "22")
+(defparameter *localhost-address* "localhost")
+(defparameter *default-ssh-port* "22")
 (defparameter *default-wakeup-port* "40000")
-(defparameter *default-wakeup-delay* 5)
+(defparameter *default-wakeup-delay* 10)
 
 (defparameter *status-timeout* "5")
 
 (defparameter *default-tunnel-argument* "65535")
 (defparameter *default-reverse-tunnel-argument* 
-  (concatenate 'string *default-tunnel-argument* ":localhost:" *default-port*))
+  (concatenate 'string 
+               *default-tunnel-argument* ":" *localhost-address* ":" 
+               *default-ssh-port*))
 
 (defparameter *default-local-path* "./")
 (defparameter *default-remote-path* "~/")
@@ -133,10 +135,10 @@ exec ros -Q -- $0 "$@"
                  (if (getf options :lan) "local/ip-address" 
                    "global/ip-address") 
                  (if (getf options :host) (error "no address known for host")
-                   *default-address*))
+                   *localhost-address*))
   (define-getter get-port :port
                  (if (getf options :lan) "local/port-ssh" 
-                   "global/port-ssh") *default-port*)
+                   "global/port-ssh") *default-ssh-port*)
   (define-getter get-mac-address :mac-address
                  "mac-address" (error "no MAC-address known for host"))
   (define-getter get-wakeup-port :wakeup-port
@@ -178,9 +180,8 @@ exec ros -Q -- $0 "$@"
                   (exit-code 
                     (run (append 
                            `("ssh")
-                           (when ssh-opts 
-                             (split-sequence:split-sequence 
-                               #\Space ssh-opts :remove-empty-subseqs t))
+                           (split-sequence:split-sequence 
+                             #\Space ssh-opts :remove-empty-subseqs t)
                            `("-p" ,port ,(format nil "~A@~A" user address))
                            (when command `(,command))))))))
     (setf (uiop:getenv "TERM") term)
@@ -191,9 +192,8 @@ exec ros -Q -- $0 "$@"
   (exit-code 
     (run (append 
            `("rsync" "-vP")
-           (when rsync-opts 
-             (split-sequence:split-sequence 
-               #\Space rsync-opts :remove-empty-subseqs t))
+           (split-sequence:split-sequence 
+             #\Space rsync-opts :remove-empty-subseqs t)
            `("-e" ,(format nil "ssh -p ~A ~A" port ssh-opts))
            (let ((full-remote-path (format nil "~A@~A:~A" user address
                                            remote-path)))
@@ -206,9 +206,8 @@ exec ros -Q -- $0 "$@"
     (run (append
            `("sshfs" ,(format nil "~A@~A:~A" user address remote-path)
              ,local-path "-p" ,port "-o" "reconnect")
-             (when sshfs-opts
-               (split-sequence:split-sequence
-                 #\Space sshfs-opts :remove-empty-subseqs t))))))
+             (split-sequence:split-sequence
+               #\Space sshfs-opts :remove-empty-subseqs t)))))
 
 (defun show-help ()
   (unix-opts:describe 
