@@ -255,13 +255,12 @@ exec ros -Q -- $0 "$@"
                       :rtnl :rtunnel :reverse-tunnel :reverse-ssh-tunnel)
                      (let ((forward-p (member op '(:tnl :tunnel :ssh-tunnel))))
                        (ssh user address port 
-                            (append 
-                              `("-N" (if forward-p "-D" "-R") 
-                                ,(getf options :tunnel-arg
-                                       (if forward-p 
-                                         *default-tunnel-argument*
-                                         *default-reverse-tunnel-argument*)))
-                                    (getf options :ssh-opts)))))
+                            (concatenate 
+                              'string "-N " (if forward-p "-D " "-R ") 
+                              (getf options :tunnel-arg
+                                    (if forward-p 
+                                      *default-tunnel-argument*
+                                      *default-reverse-tunnel-argument*))))))
                     ((:up :upload :down :download)
                      (let ((up-p (member op '(:up :upload))))
                        (rsync user address port (if up-p :up :down)
