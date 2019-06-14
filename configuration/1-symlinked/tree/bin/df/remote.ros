@@ -260,7 +260,8 @@ exec ros -Q -- $0 "$@"
                               (getf options :tunnel-arg
                                     (if forward-p 
                                       *default-tunnel-argument*
-                                      *default-reverse-tunnel-argument*))))))
+                                      *default-reverse-tunnel-argument*))
+                              " " (getf options :ssh-opts)))))
                     ((:up :upload :down :download)
                      (let ((up-p (member op '(:up :upload))))
                        (rsync user address port (if up-p :up :down)
