@@ -228,21 +228,24 @@ exec ros -Q -- $0 "$@"
                (unless (host-known-p (getf options :host))
                  (error "unknown host provided"))))
 
-            (let ((address (get-address options)) (port (get-port options)))
+            (let ((address (get-address options)) (port (get-port options))
+                  woken-up)
               (when (and (getf options :wakeup)
                          (not (host-online-p address port)))
                 (let ((mac-address (get-mac-address options))
-                      (wakeup-port (get-wakeup-port options))
-                      (wakeup-delay (get-wakeup-delay options)))
+                      (wakeup-port (get-wakeup-port options)))
                   (wake-up-remote mac-address wakeup-port 
                                   (unless (getf options :lan) address))
-                  (format *error-output* 
-                          "Waiting for ~A seconds...~%" wakeup-delay)
-                  (sleep (parse-integer wakeup-delay))))
+                  (setf woken-up t)))
 
               (when (getf options :operation)
                 (let ((user (get-user-name options)) 
                       (op (getf options :operation)))
+                  (when woken-up
+                    (let ((wakeup-delay (get-wakeup-delay options)))
+                      (format *error-output* 
+                              "Waiting for ~A seconds...~%" wakeup-delay)
+                    (sleep (parse-integer wakeup-delay))))
                   (case op
                     ((:url :print-ssh-url) 
                      (format t "~A~%" (get-url user address port)))
