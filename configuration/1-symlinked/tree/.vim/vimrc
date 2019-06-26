@@ -1,34 +1,34 @@
-" ####################################################################################
+" #############################################################################
 " General settings
 
 set nocompatible
 
 set background  =dark
 
-set expandtab              " Use spaces instead of tabs.
-set softtabstop =4         " Tab key indents by 4 spaces.
-set shiftwidth  =4         " >> indents by 4 spaces.
-set shiftround             " >> indents to next multiple of 'shiftwidth'.
+set expandtab             " Use spaces instead of tabs.
+set softtabstop =4        " Tab key indents by 4 spaces.
+set shiftwidth  =4        " >> indents by 4 spaces.
+set shiftround            " >> indents to next multiple of 'shiftwidth'.
 
-set hidden                 " Switch between buffers without having to save first.
-set laststatus  =2         " Always show statusline.
-set display     =lastline  " Show as much as possible of the last line.
+set hidden                " Switch between buffers without having to save first.
+set laststatus  =2        " Always show statusline.
+set display     =lastline " Show as much as possible of the last line.
 set number
 set scroll      =10
 
-set showmode               " Show current mode in command-line.
-set showcmd                " Show already typed keys when more are expected.
+set showmode              " Show current mode in command-line.
+set showcmd               " Show already typed keys when more are expected.
 
-set ttyfast                " Faster redrawing.
-set lazyredraw             " Only redraw when necessary.
+set ttyfast               " Faster redrawing.
+set lazyredraw            " Only redraw when necessary.
 
-set splitbelow             " Open new windows below the current window.
-set splitright             " Open new windows right of the current window.
+set splitbelow            " Open new windows below the current window.
+set splitright            " Open new windows right of the current window.
 
-set cursorline             " Find the current line quickly.
-set wrapscan               " Searches wrap around end-of-file.
-set report      =0         " Always report changed lines.
-set synmaxcol   =200       " Only highlight the first 200 columns.
+set cursorline            " Find the current line quickly.
+set wrapscan              " Searches wrap around end-of-file.
+set report      =0        " Always report changed lines.
+set synmaxcol   =200      " Only highlight the first 200 columns.
 set colorcolumn =80
 
 set hlsearch
@@ -39,6 +39,8 @@ set autoread
 
 let g:matchparen_timeout = 50
 let g:matchparen_insert_timeout = 50
+
+let &colorcolumn=join(range(80,90),",")
 
 "set clipboard^=unnamedplus
 
@@ -74,7 +76,7 @@ set undofile
 set undodir     =$HOME/.vim/files/undo/
 set viminfo     ='100,n$HOME/.vim/files/info/viminfo
 
-" ####################################################################################
+" #############################################################################
 " Plug.vim plugin system
 
 " Autoload plug.vim
@@ -135,7 +137,7 @@ Plug 'l04m33/vlime', {'rtp': 'vim/'}
 " Initialize plugin system
 call plug#end()
 
-" ####################################################################################
+" #############################################################################
 " Basic things
 
 " Vim Easyclip ************************
@@ -162,7 +164,7 @@ let g:ranger_replace_netrw = 1 " open ranger when vim open a directory
 
 nmap <F8> :TagbarToggle<CR>
 
-" ####################################################################################
+" #############################################################################
 " Fixes for things
 
 " CSApprox ****************************
@@ -175,7 +177,7 @@ let g:CSApprox_hook_post = [
             \ 'highlight MatchParen        ctermbg=1',
             \]
 
-" ####################################################################################
+" #############################################################################
 " Color theme and highlighting
 
 " Vim-lightline
@@ -205,7 +207,8 @@ let g:lightline = {
 
 " Vim color scheme ********************
 
-" termguicolors should not be set under any circumstances, it conflicts with CSApprox:
+" termguicolors should not be set under any circumstances, 
+" it conflicts with CSApprox:
 " set termguicolors
 
 colorscheme darkglass
@@ -223,7 +226,7 @@ nmap # <Plug>MarkSearchGroupPrev
 nmap <Leader>1  <Plug>MarkSearchGroup1Next
 nmap <Leader>!  <Plug>MarkSearchGroup1Prev
 
-" ####################################################################################
+" #############################################################################
 " S-expressions and Lisp
 
 " Vim-Sexp ****************************
@@ -266,9 +269,10 @@ let g:sexp_mappings = {
 
 let g:vlime_leader = '<LocalLeader>'
 let g:vlime_enable_autodoc = v:true
-let g:vlime_window_settings = {'sldb': {'pos': 'belowright', 'vertical': v:true}, 
-            \ 'inspector': {'pos': 'belowright', 'vertical': v:true}, 
-            \ 'preview': {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
+let g:vlime_window_settings = 
+      \ {'sldb': {'pos': 'belowright', 'vertical': v:true}, 
+       \ 'inspector': {'pos': 'belowright', 'vertical': v:true}, 
+       \ 'preview': {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
 
 let g:vlime_force_default_keys = v:true
 " let g:vlime_cl_use_terminal = v:true
@@ -280,7 +284,7 @@ function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
                 \ "--eval", a:vlime_eval]
 endfunction
 
-" ####################################################################################
+" #############################################################################
 " Custom key mappings
 
 " Visual mode blockwise indent
@@ -325,7 +329,8 @@ function! SwitchToNextBuffer(incr)
     let last = bufnr("$")
     let new = current + a:incr
     while 1
-        if new != 0 && bufexists(new) && ((getbufvar(new, "&filetype") == 'help') == help_buffer)
+        if new != 0 && bufexists(new) && \
+           ((getbufvar(new, "&filetype") == 'help') == help_buffer)
             execute ":buffer ".new
             break
         else
