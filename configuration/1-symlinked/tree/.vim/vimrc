@@ -175,6 +175,7 @@ let g:CSApprox_hook_post = [
             \ 'highlight CursorLineNR      cterm=bold ctermfg=red',
             \ 'highlight CursorLine        cterm=NONE ctermbg=234',
             \ 'highlight MatchParen        ctermbg=1',
+            \ 'highlight ColorColumn       ctermbg=236',
             \]
 
 " #############################################################################
