@@ -330,8 +330,8 @@ function! SwitchToNextBuffer(incr)
     let last = bufnr("$")
     let new = current + a:incr
     while 1
-        if new != 0 && bufexists(new) && \
-           ((getbufvar(new, "&filetype") == 'help') == help_buffer)
+        if new != 0 && bufexists(new) &&
+           \ ((getbufvar(new, "&filetype") == 'help') == help_buffer)
             execute ":buffer ".new
             break
         else
