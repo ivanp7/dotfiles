@@ -194,7 +194,7 @@ exec ros -Q -- $0 "$@"
            `("rsync" "-vP")
            (split-sequence:split-sequence 
              #\Space rsync-opts :remove-empty-subseqs t)
-           `("-e" ,(format nil "ssh -p ~A ~A" port ssh-opts))
+           `("-e" ,(format nil "ssh -p ~A ~A" port (if ssh-opts ssh-opts "")))
            (let ((full-remote-path (format nil "~A@~A:~A" user address
                                            remote-path)))
              (ecase direction
