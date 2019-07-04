@@ -150,6 +150,20 @@ tx ()
 # color grid
 colorgrid ()
 {
+    local iter=0
+    while [ $iter -lt 16 ]
+    do
+        echo -en "\033[38;5;$(echo $iter)m█ "
+        printf "%03d" $iter
+
+        if [ $(($iter % 8)) = 7 ]
+        then printf '\r\n'; else printf ' '; fi
+
+        local iter=$(($iter+1))
+    done
+
+    printf '\r\n'
+
     local iter=16
     while [ $iter -lt 52 ]
     do
@@ -159,7 +173,6 @@ colorgrid ()
         local five=$(($four+36))
         local six=$(($five+36))
         local seven=$(($six+36))
-        if [ $seven -gt 250 ]; then seven=$(($seven-251)); fi
 
         echo -en "\033[38;5;$(echo $iter)m█ "
         printf "%03d" $iter
@@ -173,8 +186,10 @@ colorgrid ()
         printf "%03d" $five
         echo -en "   \033[38;5;$(echo $six)m█ "
         printf "%03d" $six
-        echo -en "   \033[38;5;$(echo $seven)m█ "
-        printf "%03d" $seven
+        if [ $seven -lt 256 ]; then
+            echo -en "   \033[38;5;$(echo $seven)m█ "
+            printf "%03d" $seven
+        fi
 
         local iter=$(($iter+1))
         printf '\r\n'
