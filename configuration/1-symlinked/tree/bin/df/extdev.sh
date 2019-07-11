@@ -9,6 +9,11 @@ case $MODE in
         ls /mnt/dev/ 2> /dev/null
         ;;
 
+    listall)
+        echo "All devices:"
+        sudo fdisk -l 2> /dev/null
+        ;;
+
     mount)
         DEVICE="$1"
         if [ -z "$DEVICE" ]; then echo "Error: no device supplied."; exit 1; fi

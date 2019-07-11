@@ -3,7 +3,7 @@
 _extdev_sh ()
 {
     _arguments \
-        "1:Command:(list mount unmount)" \
+        "1:Command:(list listall mount unmount)" \
         "2:Device:($(lsblk -lsd | tail -n+2 | cut -d' ' -f1))"
 }
 
