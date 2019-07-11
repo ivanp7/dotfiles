@@ -28,19 +28,25 @@ set splitright            " Open new windows right of the current window.
 set cursorline            " Find the current line quickly.
 set wrapscan              " Searches wrap around end-of-file.
 set report      =0        " Always report changed lines.
-set synmaxcol   =200      " Only highlight the first 200 columns.
+set synmaxcol   =400      " Only highlight the first 400 columns.
 set colorcolumn =80
 
 set hlsearch
 
 set mouse       =a
 
+if has("mouse_sgr")
+    set ttymouse=sgr
+else
+    set ttymouse=xterm2
+end
+
 set autoread
 
 let g:matchparen_timeout = 50
 let g:matchparen_insert_timeout = 50
 
-let &colorcolumn=join(range(80,90),",")
+let &colorcolumn="80,82,84,86,88,".join(range(90,400),",")
 
 "set clipboard^=unnamedplus
 
@@ -175,7 +181,7 @@ let g:CSApprox_hook_post = [
             \ 'highlight CursorLineNR      cterm=bold ctermfg=red',
             \ 'highlight CursorLine        cterm=NONE ctermbg=234',
             \ 'highlight MatchParen        ctermbg=1',
-            \ 'highlight ColorColumn       ctermbg=236',
+            \ 'highlight ColorColumn       ctermbg=232',
             \]
 
 " #############################################################################
