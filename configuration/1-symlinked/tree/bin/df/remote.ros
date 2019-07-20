@@ -165,8 +165,8 @@ exec ros -Q -- $0 "$@"
 (defmacro exit-code (run-form)
   `(nth-value 2 ,run-form))
 
-(defun host-online-p (address port)
-  (= 0 (exit-code (run `("nc" "-w" ,*status-timeout* "-z" ,address ,port)))))
+(defun host-status (address port)
+  (exit-code (run `("nc" "-w" ,*status-timeout* "-z" ,address ,port))))
 
 (defun wake-up-remote (mac-address wol-port &optional address)
   (exit-code (run (append `("wol" "-p" ,wol-port)
@@ -231,7 +231,7 @@ exec ros -Q -- $0 "$@"
             (let ((address (get-address options)) (port (get-port options))
                   woken-up)
               (when (and (getf options :wakeup)
-                         (not (host-online-p address port)))
+                         (/= 0 (host-status address port)))
                 (let ((mac-address (get-mac-address options))
                       (wakeup-port (get-wakeup-port options)))
                   (wake-up-remote mac-address wakeup-port 
@@ -250,7 +250,7 @@ exec ros -Q -- $0 "$@"
                     ((:url :print-ssh-url) 
                      (format t "~A~%" (get-url user address port)))
                     ((:status)
-                     (host-online-p address port))
+                     (host-status address port))
                     ((:ssh :cmd :command)
                      (ssh user address port (getf options :ssh-opts)
                           (getf options :ssh-command)))
