@@ -398,5 +398,6 @@ function! GetVisual() range
   return escaped_selection
 endfunction
 
+vmap <leader>v <Esc>/<c-r>=GetVisual()<cr>
 vmap <leader>z <Esc>:%s/<c-r>=GetVisual()<cr>//gc<left><left><left>
 
