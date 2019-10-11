@@ -27,7 +27,7 @@ _p_bot="└"
 _p_mid_r="┐"
 _p_bot_r="┘"
 
-############################################################################
+###############################################################################
 
 _p_preexec ()
 {
@@ -59,7 +59,7 @@ _p_prompt_init_f ()
 }
 add-zsh-hook precmd _p_prompt_init_f
 
-############################################################################
+###############################################################################
 
 _p_timeinfo_f ()
 {
@@ -164,7 +164,7 @@ _p_processinfo_f ()
 }
 add-zsh-hook precmd _p_processinfo_f
 
-############################################################################
+###############################################################################
 
 _p_userhostinfo_f ()
 {
@@ -290,6 +290,14 @@ _p_pwdinfo_f ()
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
     local FreeSpaceLength=$(($MaxOutputLength - ${#PWD}))
 
+    if [ "$_p_gitinfo_length" -ge "$MaxOutputLength" ]
+    then
+        local MaxOutputLength=$((MaxOutputLength + $_p_gitinfo_length))
+        local FreeSpaceLength=$(($FreeSpaceLength + $_p_gitinfo_length))
+        _p_gitinfo_length=0
+        unset _p_gitinfo
+    fi
+
     local DirColor=${_p_color_white}
     local SlashColor=${_p_stdcolor}
     local GapColor=$(_p_color 1)
@@ -310,7 +318,7 @@ _p_pwdinfo_f ()
 }
 add-zsh-hook precmd _p_pwdinfo_f
 
-############################################################################
+###############################################################################
 
 _p_cmdline_f ()
 {
@@ -361,7 +369,7 @@ TRAPINT ()
     return $(( 128 + $1 ))
 } 
 
-############################################################################
+###############################################################################
 
 _p_prompt ()
 {
