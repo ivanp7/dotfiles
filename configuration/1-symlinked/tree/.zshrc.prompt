@@ -290,7 +290,7 @@ _p_pwdinfo_f ()
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
     local FreeSpaceLength=$(($MaxOutputLength - ${#PWD}))
 
-    if [ "$_p_gitinfo_length" -ge "$MaxOutputLength" ]
+    if [ "$(($_p_gitinfo_length * 2))" -ge "$MaxOutputLength" ]
     then
         local MaxOutputLength=$((MaxOutputLength + $_p_gitinfo_length))
         local FreeSpaceLength=$(($FreeSpaceLength + $_p_gitinfo_length))
