@@ -277,12 +277,16 @@ let g:sexp_mappings = {
 let g:vlime_leader = '<LocalLeader>'
 let g:vlime_enable_autodoc = v:true
 let g:vlime_window_settings = 
-      \ {'sldb': {'pos': 'belowright', 'vertical': v:true}, 
+      \ {'repl':      {'pos': 'belowright', 'vertical': v:true},
+       \ 'sldb':      {'pos': 'belowright', 'vertical': v:true}, 
        \ 'inspector': {'pos': 'belowright', 'vertical': v:true}, 
-       \ 'preview': {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
+       \ 'preview':   {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
 
 let g:vlime_force_default_keys = v:true
 " let g:vlime_cl_use_terminal = v:true
+
+autocmd FileType lisp call vlime#plugin#InteractionMode()
+autocmd BufNewFile,BufRead * if &ft=~?'lisp'|:call vlime#plugin#InteractionMode()|endif
 
 let g:vlime_cl_impl = "ros"
 function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
