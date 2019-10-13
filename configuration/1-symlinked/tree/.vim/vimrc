@@ -285,8 +285,14 @@ let g:vlime_window_settings =
 let g:vlime_force_default_keys = v:true
 " let g:vlime_cl_use_terminal = v:true
 
-autocmd FileType lisp call vlime#plugin#InteractionMode()
-autocmd BufNewFile,BufRead * if &ft=~?'lisp'|:call vlime#plugin#InteractionMode()|endif
+function! VlimeEnableInteractionMode()
+    let b:vlime_interaction_mode = v:true
+    nnoremap <buffer> <silent> <cr> :call vlime#plugin#SendToREPL(vlime#ui#CurExprOrAtom())<cr>
+    vnoremap <buffer> <silent> <cr> :<c-u>call vlime#plugin#SendToREPL(vlime#ui#CurSelection())<cr>
+endfunction
+
+autocmd FileType lisp call VlimeEnableInteractionMode()
+autocmd BufNewFile,BufRead * if &ft=~?'lisp'|:call VlimeEnableInteractionMode()|endif
 
 let g:vlime_cl_impl = "ros"
 function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
