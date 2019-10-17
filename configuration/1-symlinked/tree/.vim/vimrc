@@ -410,4 +410,5 @@ endfunction
 
 vmap <leader>v <Esc>/<c-r>=GetVisual()<cr>
 vmap <leader>z <Esc>:%s/<c-r>=GetVisual()<cr>//gc<left><left><left>
+vmap <leader>Z <Esc>:%s/<c-r>=GetVisual()<cr>/<c-r>=GetVisual()<cr>/gc<left><left><left>
 
