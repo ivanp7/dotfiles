@@ -46,7 +46,8 @@ set autoread
 let g:matchparen_timeout = 50
 let g:matchparen_insert_timeout = 50
 
-let &colorcolumn="80,82,84,86,88,".join(range(90,400),",")
+" let &colorcolumn="80,82,84,86,88,".join(range(90,400),",")
+let &colorcolumn="80,82,84,86,88,90"
 
 "set clipboard^=unnamedplus
 
