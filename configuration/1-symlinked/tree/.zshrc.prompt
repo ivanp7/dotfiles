@@ -129,6 +129,7 @@ _p_processinfo_f ()
         s/sshd-.-sshd/ssh/;
         s/tmux: server/tmux/;
         s/screen-.-screen/screen/;
+        s/x-desktop.sh-.-startx-.-xinit-.-dwm-.-//;
         s/y-desktop.sh-.-screen-.-yaft/yaft/;
         s/-.-/]${_p_arrow}[/g; 
     ")"
