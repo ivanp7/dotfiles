@@ -27,6 +27,6 @@ case $1 in
 esac
 
 DIRECTORIES="$(sed 's,^,-path ./,; s,$, -prune -o ,' $CONF_DIR/directories | tr -d '\n')"
-for file in $(cd $CONF_DIR/tree; find . $DIRECTORIES -type f | sed 's,^\./,,')
+for file in $(cd $CONF_DIR/tree; find . $DIRECTORIES -type f -o -type l | sed 's,^\./,,')
 do $OP $file; done
 
