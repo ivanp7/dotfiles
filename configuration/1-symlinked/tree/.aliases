@@ -14,8 +14,7 @@ alias diff='diff --color=auto '
 
 alias less='/usr/share/vim/vim81/macros/less.sh '
 
-alias rr='ranger '
-alias srr='sudo_ranger '
+alias lf='lfcd '
 
 alias ssh_='TERM=xterm-256color ssh '
 

@@ -113,7 +113,7 @@ Plug 'tpope/vim-capslock'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'majutsushi/tagbar'
-Plug 'francoiscabrol/ranger.vim'
+Plug 'ptzz/lf.vim'
 Plug 'rbgrouleff/bclose.vim'
 Plug 'qpkorr/vim-bufkill'
 
@@ -164,9 +164,9 @@ let g:EasyClipShareYanksDirectory='$HOME/.vim'
 
 autocmd FileType lisp setlocal commentstring=;\ %s
 
-" ranger.vim **************************
+" lf.vim **************************
 
-let g:ranger_replace_netrw = 1 " open ranger when vim open a directory
+let g:lf_replace_netrw = 1 " open lf when vim open a directory
 
 " Tagbar ******************************
 

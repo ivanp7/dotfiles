@@ -111,7 +111,8 @@ fi
 stty -ixon -ixoff
 
 # man
-man () {
+man () 
+{
   env \
     LESS_TERMCAP_mb=$(printf "\e[1;31m") \
     LESS_TERMCAP_md=$(printf "\e[1;33m") \
@@ -123,23 +124,33 @@ man () {
     man -P "less -Q" "$@"
 }
 
-# ranger
-ranger ()
+# lf
+lfcd () 
 {
-    tempfile="$(mktemp -t tmp.XXXXXX)"
-    SHELL=$HOME/.scripts/df/r.shell /usr/bin/ranger --choosedir="$tempfile" "${@:-$(pwd)}"
-
-    test -f "$tempfile" &&
-        if [ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]; then
-            cd -- "$(cat "$tempfile")"
+    tmp="$(mktemp)"
+    fid="$(mktemp)"
+    lf -command '$printf $id > '"$fid"'' -last-dir-path="$tmp" "$@"
+    id="$(cat "$fid")"
+    archivemount_dir="/tmp/__lf_archivemount_$id"
+    if [ -f "$archivemount_dir" ]; then
+        cat "$archivemount_dir" | \
+            while read -r line; do
+                umount "$line"
+                rmdir "$line"
+            done
+        rm -f "$archivemount_dir"
+    fi
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        rm -f "$tmp"
+        if [ -d "$dir" ]; then
+            if [ "$dir" != "$(pwd)" ]; then
+                cd "$dir"
+            fi
         fi
-    rm -f -- "$tempfile"
+    fi
 }
 
-sudo_ranger ()
-{
-    sudo SHELL=$HOME/.scripts/df/r.shell /usr/bin/ranger "${@:-$(pwd)}"
-}
 
 tx ()
 {

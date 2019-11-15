@@ -1,5 +1,3 @@
-.config/mpv
-.config/ranger
 .config/powerline
 .scripts/df
 .tmux/plugins
