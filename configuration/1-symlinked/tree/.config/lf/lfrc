@@ -50,14 +50,17 @@ map X !$f
 
 # create directory
 cmd mkdir %mkdir "$@"
-map a push :mkdir<space>
+map [ push :mkdir<space>
 
 # create file
 cmd touch %touch "$@"
-map t push :touch<space>
+map ] push :touch<space>
 
 # edit files
 map e $$EDITOR $fx
+
+# read link
+map a %readlink $f
 
 # dedicated keys for file opener actions
 map o &mimeopen $f
