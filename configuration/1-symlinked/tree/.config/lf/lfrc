@@ -52,6 +52,10 @@ map X !$f
 cmd mkdir %mkdir "$@"
 map a push :mkdir<space>
 
+# create file
+cmd touch %touch "$@"
+map t push :touch<space>
+
 # edit files
 map e $$EDITOR $fx
 
