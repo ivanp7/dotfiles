@@ -79,6 +79,7 @@ cmd open ${{
             case $(file --mime-type $f -b) in
                 text/*) $EDITOR $fx;;
                 image/*) feh $fx &;;
+                application/pdf) zathura $fx &;;
                 *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
             esac
     esac
