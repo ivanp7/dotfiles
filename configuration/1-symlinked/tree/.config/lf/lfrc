@@ -52,6 +52,9 @@ map X !$f
 cmd mkdir %mkdir "$@"
 map a push :mkdir<space>
 
+# edit files
+map e $$EDITOR $fx
+
 # dedicated keys for file opener actions
 map o &mimeopen $f
 map O $mimeopen --ask $f
