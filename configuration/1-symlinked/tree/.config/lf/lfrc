@@ -60,7 +60,10 @@ map ] push :touch<space>
 map e $$EDITOR $fx
 
 # read link
-map a %readlink $f
+map al %readlink $f
+
+# display owner & group
+map ao %stat -c %U:%G $f
 
 # dedicated keys for file opener actions
 map o &mimeopen $f
