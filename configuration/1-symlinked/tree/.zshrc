@@ -213,9 +213,6 @@ alias sudo='sudo '
 { command -v xhost > /dev/null && xhost > /dev/null 2>&1 &&
     [ -f $HOME/.xaliases ] && . $HOME/.xaliases; } || true
 
-# element of yaft drawing bug workaround
-. $HOME/.scripts/df/yaft-workaround.sh
-
 # unfreeze terminal if left frozen
 ttyctl -f
 
