@@ -74,11 +74,11 @@ _p_cmdtimeinfo_f ()
     local CmdTimeInfoColor=${_p_color_white}
     if [ -n "$_p_timer_delta" ]
     then 
-        _p_cmdtimeinfo_length=$((4 + ${#_p_timer_delta}))
-        _p_cmdtimeinfo="${_p_dash}[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
+        _p_cmdtimeinfo_length=$((3 + ${#_p_timer_delta}))
+        _p_cmdtimeinfo="[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
     else 
-        _p_cmdtimeinfo_length=4
-        _p_cmdtimeinfo="${_p_dash}[${CmdTimeInfoColor}-${_p_stdcolor}]"
+        _p_cmdtimeinfo_length=3
+        _p_cmdtimeinfo="[${CmdTimeInfoColor}${_p_dot}${_p_stdcolor}]"
     fi
 }
 add-zsh-hook precmd _p_cmdtimeinfo_f
@@ -100,19 +100,10 @@ _p_cmdstatusinfo_f ()
         fi
     else 
         _p_cmdstatusinfo_length=4
-        _p_cmdstatusinfo="${_p_dash}[${NoCommandColor}-${_p_stdcolor}]"
+        _p_cmdstatusinfo="${_p_dash}[${NoCommandColor}${_p_dot}${_p_stdcolor}]"
     fi
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
-
-_p_ttyinfo_f ()
-{
-    local TTY="$(tty | sed "s,/dev/,,")"
-    _p_ttyinfo_length=$((3 + ${#TTY}))
-    local TtyColor=${_p_color_white}
-    _p_ttyinfo=" [${TtyColor}$TTY${_p_stdcolor}]"
-}
-add-zsh-hook precmd _p_ttyinfo_f
 
 _p_processinfo_f ()
 {
@@ -139,7 +130,7 @@ _p_processinfo_f ()
     fi
 
     local PromptLength=$((1 + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
-                          $_p_cmdstatusinfo_length + $_p_ttyinfo_length + 3))
+                          $_p_cmdstatusinfo_length + 2))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     local PNameColor=${_p_color_white}
@@ -154,13 +145,13 @@ _p_processinfo_f ()
     then
         local HalfColoredOutputStr=${OutputStr//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStr=${HalfColoredOutputStr//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=":[$PNameColor$ColoredOutputStr${_p_stdcolor}]"
+        _p_processinfo=" [$PNameColor$ColoredOutputStr${_p_stdcolor}]"
     else
         local OutputStrExcessLength=$((3 + ${#OutputStr} - $MaxOutputLength))
         local OutputStrShort=${OutputStr:$OutputStrExcessLength}
         local HalfColoredOutputStrShort=${OutputStrShort//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStrShort=${HalfColoredOutputStrShort//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=":$GapColor...${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
+        _p_processinfo=" $GapColor...${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
     fi
 }
 add-zsh-hook precmd _p_processinfo_f
