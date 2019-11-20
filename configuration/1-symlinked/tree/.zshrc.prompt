@@ -326,7 +326,7 @@ _p_cmdline_f ()
 
     PROMPT="${_p_stdcolor}${_p_bot}[$2$1${_p_stdcolor}]${PromptCharacter}"
     local CSI=$'\e['
-    local len=$((${#1} + 2))
+    local len=$((8 + 2))
     local FixPrevPromptPrefix="%{${CSI}A${_p_mid0}$(printf "%0.s " $(seq 1 $len))  ${CSI}${len}D${CSI}3D${CSI}B%}"
     PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${_p_bot}[$2$1${_p_stdcolor}]${PromptCharacter}"
 }
@@ -353,7 +353,8 @@ zle -N zle-line-init
 zle-line-finish ()
 {
     [ "$TERM" != "linux" ] && echoti rmkx
-    _p_cmdline_f "%D{%T}" "${_p_color_white}"
+    if [ "${BUFFER: -1}" != "\\" ] || { [ "${#BUFFER}" -gt 1 ] && [ "${BUFFER: -2:1}" = "\\" ]; }
+    then _p_cmdline_f "%D{%T}" "${_p_color_white}"; fi
     zle reset-prompt
 }
 zle -N zle-line-finish
