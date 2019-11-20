@@ -124,6 +124,11 @@ man ()
     man -P "less -Q" "$@"
 }
 
+gh ()
+{
+    cd ~
+}
+
 # lf
 lfcd () 
 {

@@ -19,13 +19,19 @@ _p_cmdcolor=${_p_color_white}
 _p_dot="·"
 _p_dash="─"
 _p_2dash="═"
-_p_arrow="→"
+_p_rightarrow="→"
 _p_top="┌"
 _p_mid1="├"
 _p_mid2="╞"
 _p_bot="└"
 _p_mid_r="┐"
 _p_bot_r="┘"
+_p_diamond="◆"
+_p_uparrow="↑"
+_p_downarrow="↓"
+_p_updownarrow="↕"
+
+_p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
 ###############################################################################
 
@@ -122,7 +128,7 @@ _p_processinfo_f ()
         s/screen-.-screen/screen/;
         s/x-desktop.sh-.-startx-.-xinit-.-dwm-.-//;
         s/y-desktop.sh-.-screen-.-yaft/yaft/;
-        s/-.-/]${_p_arrow}[/g; 
+        s/-.-/]${_p_rightarrow}[/g; 
     ")"
 
     if [ -z "$OutputStr" ]
@@ -136,10 +142,10 @@ _p_processinfo_f ()
     local PNameColor=${_p_color_white}
     local GapColor=$(_p_color 1)
 
-    local SeparatorL="]${_p_arrow}"
-    local ColSeparatorL="${_p_stdcolor}]${_p_arrow}"
-    local SeparatorR="${_p_arrow}["
-    local ColSeparatorR="${_p_arrow}[$PNameColor"
+    local SeparatorL="]${_p_rightarrow}"
+    local ColSeparatorL="${_p_stdcolor}]${_p_rightarrow}"
+    local SeparatorR="${_p_rightarrow}["
+    local ColSeparatorR="${_p_rightarrow}[$PNameColor"
 
     if [ ${#OutputStr} -le $MaxOutputLength ]
     then
@@ -147,11 +153,11 @@ _p_processinfo_f ()
         local ColoredOutputStr=${HalfColoredOutputStr//$SeparatorR/$ColSeparatorR}
         _p_processinfo=" [$PNameColor$ColoredOutputStr${_p_stdcolor}]"
     else
-        local OutputStrExcessLength=$((3 + ${#OutputStr} - $MaxOutputLength))
+        local OutputStrExcessLength=$((${#_p_ellipsis} + ${#OutputStr} - $MaxOutputLength))
         local OutputStrShort=${OutputStr:$OutputStrExcessLength}
         local HalfColoredOutputStrShort=${OutputStrShort//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStrShort=${HalfColoredOutputStrShort//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=" $GapColor...${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
+        _p_processinfo=" $GapColor${_p_ellipsis}${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
     fi
 }
 add-zsh-hook precmd _p_processinfo_f
@@ -192,7 +198,7 @@ _p_gitinfo_f ()
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1
     then
         _p_gitinfo_length=4
-        _p_gitinfo="${_p_2dash}[${LocationColor}-${_p_stdcolor}]"
+        _p_gitinfo="${_p_2dash}[${_p_color_white}${_p_dot}${_p_stdcolor}]"
         return
     fi
 
@@ -208,13 +214,13 @@ _p_gitinfo_f ()
     local ModifiedColor=$(_p_safe_color "$(_p_color 214)" "${_p_bold}$(_p_color 3)")
     local StagedColor=$(_p_safe_color "$(_p_color 34)" "$(_p_color 2)")
 
-    local AHEAD="${AheadColor}↑NUM${_p_stdcolor}"
-    local BEHIND="${BehindColor}↓NUM${_p_stdcolor}"
+    local AHEAD="${AheadColor}${_p_uparrow}NUM${_p_stdcolor}"
+    local BEHIND="${BehindColor}${_p_downarrow}NUM${_p_stdcolor}"
 
-    local MERGING="${MergingColor}↕${_p_stdcolor}"
-    local UNTRACKED="${UntrackedColor}◆${_p_stdcolor}"
-    local MODIFIED="${ModifiedColor}◆${_p_stdcolor}"
-    local STAGED="${StagedColor}◆${_p_stdcolor}"
+    local MERGING="${MergingColor}${_p_updownarrow}${_p_stdcolor}"
+    local UNTRACKED="${UntrackedColor}${_p_diamond}${_p_stdcolor}"
+    local MODIFIED="${ModifiedColor}${_p_diamond}${_p_stdcolor}"
+    local STAGED="${StagedColor}${_p_diamond}${_p_stdcolor}"
 
     local -a DIVERGENCES
     local -a FLAGS
@@ -278,7 +284,7 @@ add-zsh-hook precmd _p_gitinfo_f
 
 _p_pwdinfo_f ()
 {
-    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
+    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 2))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
     local FreeSpaceLength=$(($MaxOutputLength - ${#PWD}))
 
@@ -297,15 +303,15 @@ _p_pwdinfo_f ()
     if [ "$FreeSpaceLength" -ge 0 ]
     then
         local ColPWD=$DirColor${PWD//\//$SlashColor\/$DirColor}
-        _p_pwdinfo="${_p_2dash}[$ColPWD${_p_stdcolor}]"
+        _p_pwdinfo="[$ColPWD${_p_stdcolor}]"
     else
-        local PWDExcessLength=$((3 + ${#PWD} - $MaxOutputLength))
+        local PWDExcessLength=$((${#_p_ellipsis} + ${#PWD} - $MaxOutputLength))
         local PWD1=${PWD:0:(${#PWD} / 2 - ($PWDExcessLength + 1) / 2)}
         local ColPWD1=$DirColor${PWD1//\//$SlashColor\/$DirColor}
         local PWD2=${PWD:(${#PWD} / 2 + $PWDExcessLength / 2)}
         local ColPWD2=$DirColor${PWD2//\//$SlashColor\/$DirColor}
 
-        _p_pwdinfo="${_p_2dash}[$ColPWD1$GapColor...$ColPWD2${_p_stdcolor}]"
+        _p_pwdinfo="[$ColPWD1$GapColor${_p_ellipsis}$ColPWD2${_p_stdcolor}]"
     fi
 }
 add-zsh-hook precmd _p_pwdinfo_f
