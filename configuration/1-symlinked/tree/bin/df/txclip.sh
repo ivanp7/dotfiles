@@ -1,4 +1,4 @@
 #!/bin/sh
 
-tmux set-buffer $(cat)
+tmux set-buffer "$(cat)"
 
