@@ -21,6 +21,7 @@ _p_dash="─"
 _p_2dash="═"
 _p_rightarrow="→"
 _p_top="┌"
+_p_mid0="│"
 _p_mid1="├"
 _p_mid2="╞"
 _p_bot="└"
@@ -69,9 +70,9 @@ add-zsh-hook precmd _p_prompt_init_f
 
 _p_timeinfo_f ()
 {
-    _p_timeinfo_length=11
+    _p_timeinfo_length=10
     local TimeInfoColor=${_p_color_white}
-    _p_timeinfo="${_p_dash}[${TimeInfoColor}%D{%T}${_p_stdcolor}]"
+    _p_timeinfo="[${TimeInfoColor}%D{%T}${_p_stdcolor}]"
 }
 add-zsh-hook precmd _p_timeinfo_f
 
@@ -322,13 +323,12 @@ _p_cmdline_f ()
 {
     local PromptCharacterColor=$(_p_safe_color "$(_p_color 250)" "$(_p_color 7)")
     local PromptCharacter="${PromptCharacterColor} $([ "$(id -u)" -ne 0 ] && echo "$" || echo "#") ${_p_cmdcolor}"
-    local PromptCharacter2="${PromptCharacterColor} > ${_p_cmdcolor}"
 
-    PROMPT="${_p_stdcolor}${_p_bot}${_p_dash}[$2$1${_p_stdcolor}]${_p_dash}${PromptCharacter}"
+    PROMPT="${_p_stdcolor}${_p_bot}[$2$1${_p_stdcolor}]${PromptCharacter}"
     local CSI=$'\e['
-    local len=$((${#1} + 3))
-    local FixPrevPromptPrefix="%{${CSI}A${_p_mid1}$(printf "%0.s${_p_dash}" $(seq 1 $len))${CSI}${len}D${CSI}D${CSI}B%}"
-    PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${_p_bot}${_p_dash}[$2$1${_p_stdcolor}]${_p_dash}${PromptCharacter2}"
+    local len=$((${#1} + 2))
+    local FixPrevPromptPrefix="%{${CSI}A${_p_mid0}$(printf "%0.s " $(seq 1 $len))  ${CSI}${len}D${CSI}3D${CSI}B%}"
+    PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${_p_bot}[$2$1${_p_stdcolor}]${PromptCharacter}"
 }
 
 zle-keymap-select ()
