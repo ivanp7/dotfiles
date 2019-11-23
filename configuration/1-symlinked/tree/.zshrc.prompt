@@ -84,8 +84,8 @@ _p_cmdtimeinfo_f ()
         _p_cmdtimeinfo_length=$((3 + ${#_p_timer_delta}))
         _p_cmdtimeinfo="[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
     else 
-        _p_cmdtimeinfo_length=3
-        _p_cmdtimeinfo="[${CmdTimeInfoColor}${_p_dot}${_p_stdcolor}]"
+        _p_cmdtimeinfo_length=0
+        _p_cmdtimeinfo=""
     fi
 }
 add-zsh-hook precmd _p_cmdtimeinfo_f
@@ -94,7 +94,7 @@ _p_cmdstatusinfo_f ()
 {
     local SuccessColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
     local FailureColor=$(_p_safe_color "$(_p_color 160)" "${_p_bold}$(_p_color 1)")
-    local NoCommandColor=${_p_color_white}
+    local NoCommandColor=${_p_stdcolor}
     if [ -n "$_p_exitcode" ]
     then
         if [ "$_p_exitcode" -eq 0 ]
@@ -106,8 +106,8 @@ _p_cmdstatusinfo_f ()
             _p_cmdstatusinfo="${_p_dash}[${FailureColor}error ${_p_exitcode}${_p_stdcolor}]"
         fi
     else 
-        _p_cmdstatusinfo_length=4
-        _p_cmdstatusinfo="${_p_dash}[${NoCommandColor}${_p_dot}${_p_stdcolor}]"
+        _p_cmdstatusinfo_length=6
+        _p_cmdstatusinfo="${_p_dash}[${NoCommandColor}nop${_p_stdcolor}]"
     fi
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
@@ -137,7 +137,7 @@ _p_processinfo_f ()
     fi
 
     local PromptLength=$((1 + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
-                          $_p_cmdstatusinfo_length + 2))
+                          $_p_cmdstatusinfo_length + 3))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     local PNameColor=${_p_color_white}
@@ -154,7 +154,7 @@ _p_processinfo_f ()
         local ColoredOutputStr=${HalfColoredOutputStr//$SeparatorR/$ColSeparatorR}
         _p_processinfo=" [$PNameColor$ColoredOutputStr${_p_stdcolor}]"
     else
-        local OutputStrExcessLength=$((${#_p_ellipsis} + ${#OutputStr} - $MaxOutputLength))
+        local OutputStrExcessLength=$((${#_p_ellipsis} + ${#OutputStr} - $MaxOutputLength - 1))
         local OutputStrShort=${OutputStr:$OutputStrExcessLength}
         local HalfColoredOutputStrShort=${OutputStrShort//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStrShort=${HalfColoredOutputStrShort//$SeparatorR/$ColSeparatorR}
@@ -374,7 +374,7 @@ _p_prompt ()
 {
     print -P "${_p_stdcolor}"
     print -P "${_p_stdcolor}${_p_separator}"
-    print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_ttyinfo}${_p_processinfo}"
+    print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_processinfo}"
     print -P "${_p_stdcolor}${_p_mid2}${_p_userhostinfo}${_p_gitinfo}${_p_pwdinfo}"
 
     _p_cmdline_f "        "
