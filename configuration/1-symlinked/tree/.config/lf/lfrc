@@ -23,8 +23,6 @@ set scrolloff 10
 set drawbox on
 set tabstop 4
 
-set relativenumber
-
 map zp set preview!
 map z1 :set nopreview; set ratios 1
 map z2 set ratios 1:2
