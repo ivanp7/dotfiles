@@ -114,6 +114,8 @@ add-zsh-hook precmd _p_cmdstatusinfo_f
 
 _p_processinfo_f ()
 {
+    local bra="("
+    local ket=")"
     local OutputStr="$(echo "$(pstree -ls $$)" | head -n1 | sed "
         s/systemd//;
         s/-.-login//;
@@ -129,7 +131,7 @@ _p_processinfo_f ()
         s/screen-.-screen/screen/;
         s/x-desktop.sh-.-startx-.-xinit-.-dwm-.-//;
         s/y-desktop.sh-.-screen-.-yaft/yaft/;
-        s/-.-/]${_p_rightarrow}[/g; 
+        s/-.-/${ket}${_p_rightarrow}${bra}/g; 
     ")"
 
     if [ -z "$OutputStr" ]
@@ -143,22 +145,22 @@ _p_processinfo_f ()
     local PNameColor=${_p_color_white}
     local GapColor=$(_p_color 1)
 
-    local SeparatorL="]${_p_rightarrow}"
-    local ColSeparatorL="${_p_stdcolor}]${_p_rightarrow}"
-    local SeparatorR="${_p_rightarrow}["
-    local ColSeparatorR="${_p_rightarrow}[$PNameColor"
+    local SeparatorL="${ket}${_p_rightarrow}"
+    local ColSeparatorL="${_p_stdcolor}${ket}${_p_rightarrow}"
+    local SeparatorR="${_p_rightarrow}${bra}"
+    local ColSeparatorR="${_p_rightarrow}${bra}$PNameColor"
 
     if [ ${#OutputStr} -le $MaxOutputLength ]
     then
         local HalfColoredOutputStr=${OutputStr//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStr=${HalfColoredOutputStr//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=" [$PNameColor$ColoredOutputStr${_p_stdcolor}]"
+        _p_processinfo=" ${bra}$PNameColor$ColoredOutputStr${_p_stdcolor}${ket}"
     else
         local OutputStrExcessLength=$((${#_p_ellipsis} + ${#OutputStr} - $MaxOutputLength - 1))
         local OutputStrShort=${OutputStr:$OutputStrExcessLength}
         local HalfColoredOutputStrShort=${OutputStrShort//$SeparatorL/$ColSeparatorL}
         local ColoredOutputStrShort=${HalfColoredOutputStrShort//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=" $GapColor${_p_ellipsis}${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}]"
+        _p_processinfo=" $GapColor${_p_ellipsis}${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}${ket}"
     fi
 }
 add-zsh-hook precmd _p_processinfo_f
