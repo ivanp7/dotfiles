@@ -107,7 +107,7 @@ _p_cmdstatusinfo_f ()
         fi
     else 
         _p_cmdstatusinfo_length=6
-        _p_cmdstatusinfo="${_p_dash}[${NoCommandColor}nop${_p_stdcolor}]"
+        _p_cmdstatusinfo="${_p_dash}(${NoCommandColor}nop${_p_stdcolor})"
     fi
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
