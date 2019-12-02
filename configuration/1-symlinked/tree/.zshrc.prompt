@@ -355,7 +355,7 @@ zle -N zle-line-init
 zle-line-finish ()
 {
     (( ${+terminfo[rmkx]} )) && echoti rmkx
-    if [ "${BUFFER: -1}" != "\\" ] || { [ "${#BUFFER}" -gt 1 ] && [ "${BUFFER: -2:1}" = "\\" ]; }
+    if [ "$(($(echo -En "$BUFFER" | sed -E 's;(.*[^\\])(\\*)$;\2;' | wc -m) % 2))" -eq 0 ]
     then _p_cmdline_f "%D{%T}" "${_p_color_white}"; fi
     zle reset-prompt
 }
