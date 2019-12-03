@@ -126,6 +126,7 @@ Plug 'tpope/vim-capslock'
 Plug 'guns/xterm-color-table.vim'
 
 Plug 'itchyny/lightline.vim'
+Plug 'edkolev/tmuxline.vim'
 Plug 'smancill/darkglass'
 Plug 'raymond-w-ko/vim-niji'
 
