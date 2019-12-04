@@ -339,12 +339,7 @@ nnoremap <silent> <C-W><C-H> :vert res -10<CR>
 nnoremap <silent> <C-W><C-J> :res -5<CR>
 nnoremap <silent> <C-W><C-K> :res +5<CR>
 nnoremap <silent> <C-W><C-L> :vert res +10<CR>
-
-" Switch between windows
-nmap <silent> <C-h> :wincmd h<CR>
-nmap <silent> <C-j> :wincmd j<CR>
-nmap <silent> <C-k> :wincmd k<CR>
-nmap <silent> <C-l> :wincmd l<CR>
+" Switch between windows: nmap <silent> <C-hjkl> :wincmd hjkl<CR>
 
 function! SwitchToNextBuffer(incr)
     let help_buffer = (&filetype == 'help')
