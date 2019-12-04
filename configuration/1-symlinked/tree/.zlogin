@@ -23,8 +23,6 @@ then
     fi
 fi
 
-powerline-daemon -q
-
 sleep 1
 clear
 
