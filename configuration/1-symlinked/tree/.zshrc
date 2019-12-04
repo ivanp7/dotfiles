@@ -124,9 +124,9 @@ man ()
     man -P "less -Q" "$@"
 }
 
-gh ()
+cdlf ()
 {
-    cd ~
+    if [ -n "$id" ]; then lf -remote "send $id cd \"$PWD\""; fi
 }
 
 # lf

@@ -116,6 +116,8 @@ Plug 'ptzz/lf.vim'
 Plug 'rbgrouleff/bclose.vim'
 Plug 'qpkorr/vim-bufkill'
 
+Plug 'christoomey/vim-tmux-navigator'
+
 " Fixes for things
 Plug 'godlygeek/csapprox'
 Plug 'powerman/vim-plugin-AnsiEsc'
@@ -305,6 +307,8 @@ endfunction
 
 " #############################################################################
 " Custom key mappings
+
+map <F5> :source $MYVIMRC<CR>
 
 " Visual mode blockwise indent
 vmap > >gv
