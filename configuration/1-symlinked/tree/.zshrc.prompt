@@ -125,11 +125,14 @@ _p_processinfo_f ()
         s/-.-dash//g;
         s/-.-bash//g;
         s/-.-zsh//g;
+        s/-.-startx//g;
+        s/-.-xinit//g;
+        s/-.-dwm//g;
+        s/-.-x-desktop\.sh//g;
         s/^-.-//;
         s/sshd-.-sshd/ssh/;
         s/tmux: server/tmux/;
         s/screen-.-screen/screen/;
-        s/x-desktop.sh-.-startx-.-xinit-.-dwm-.-//;
         s/y-desktop.sh-.-screen-.-yaft/yaft/;
         s/-.-/${ket}${_p_rightarrow}${bra}/g; 
     ")"
