@@ -100,6 +100,29 @@ cmd open ${{
 # cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
 # map r push :rename<space>
 
+cmd bulk_rename !{{
+    original_names_file=$(mktemp)
+    echo -nE "$fx" > $original_names_file
+    sed -iE 's/ /\\ /g' $original_names_file
+
+    names_file=$(mktemp)
+    echo -nE "$fx" > $names_file
+    $EDITOR $names_file
+    sed -iE 's/ /\\ /g' $names_file
+
+    commands_file=$(mktemp)
+    paste -d" " $original_names_file $names_file > $commands_file
+    rm $original_names_file $names_file
+    sed -i 's/^/mv -vi -- /' $commands_file
+    $EDITOR $commands_file
+
+    for cmd in $(cat $commands_file)
+    do $SHELL -c "$cmd"
+    done
+    rm $commands_file
+}}
+map R bulk_rename
+
 # pasting done right
 # cmd paste !{{
 #     send="while read -r line; do lf -remote \"send $id echo \$line\"; done && lf -remote 'send reload'"
