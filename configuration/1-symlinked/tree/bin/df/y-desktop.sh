@@ -1,6 +1,6 @@
 #!/bin/sh
 
-WALLPAPER=$(find $HOME/wallpapers/ -name "*.pic" | shuf -n1)
+WALLPAPER=$(find -L $HOME/wallpapers/ -name "*.pic" | shuf -n1)
 
 if [ -n "$WALLPAPER" ]
 then screen -c $HOME/.screenrc_noui yaft_wall $WALLPAPER;
