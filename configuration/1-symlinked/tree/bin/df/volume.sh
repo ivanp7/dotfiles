@@ -1,7 +1,30 @@
 #!/bin/sh
 
-STATE=$(amixer sget Master | grep 'Mono:' | sed -E 's/.*\[(on|off)\].*/\1/')
-LEVEL=$(amixer -M sget Master | grep 'Mono:' | sed -E 's/.*\[(.*)%\].*/\1/')
+state ()
+{
+    echo $(amixer sget Master | grep "$1:" | sed -E 's/.*\[(on|off)\].*/\1/' 2> /dev/null)
+}
+
+level ()
+{
+    echo $(amixer -M sget Master | grep "$1:" | sed -E 's/.*\[(.*)%\].*/\1/' 2> /dev/null)
+}
+
+STATE=$(state "Mono")
+LEVEL=$(level "Mono")
+
+if [ -z "$STATE" ]
+then
+    STATE_LEFT=$(state "Front Left")
+    STATE_RIGHT=$(state "Front Right")
+    if [ "$STATE_LEFT" = "on" ] || [ "$STATE_RIGHT" = "off" ]
+    then STATE="on"
+    else STATE="off"
+    fi
+    LEVEL_LEFT=$(level "Front Left")
+    LEVEL_RIGHT=$(level "Front Right")
+    LEVEL=$(( ($LEVEL_LEFT + $LEVEL_RIGHT) / 2 ))
+fi
 
 case $1 in
     "") echo "$LEVEL% $STATE" ;;
