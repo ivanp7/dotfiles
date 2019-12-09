@@ -2,12 +2,12 @@
 
 state ()
 {
-    echo $(amixer sget Master | grep "$1:" | sed -E 's/.*\[(on|off)\].*/\1/' 2> /dev/null)
+    echo $(amixer sget Master | sed -E "/.*$1:.*\[(on|off)\].*/!d;s//\1/" 2> /dev/null)
 }
 
 level ()
 {
-    echo $(amixer -M sget Master | grep "$1:" | sed -E 's/.*\[(.*)%\].*/\1/' 2> /dev/null)
+    echo $(amixer -M sget Master | sed -E "/.*$1:.*\[(.*)%\].*/!d;s//\1/" 2> /dev/null)
 }
 
 STATE=$(state "Mono")
@@ -32,13 +32,13 @@ case $1 in
         if [ "$STATE" = "on" ]
         then
             amixer -q sset Master mute
-            amixer -q sset Speaker mute
-            amixer -q sset Headphone mute
+            amixer -q sset Speaker mute 2> /dev/null
+            amixer -q sset Headphone mute 2> /dev/null
         elif [ "$STATE" = "off" ]
         then
             amixer -q sset Master unmute
-            amixer -q sset Speaker unmute
-            amixer -q sset Headphone unmute
+            amixer -q sset Speaker unmute 2> /dev/null
+            amixer -q sset Headphone unmute 2> /dev/null
         fi
         ;;
     up) amixer -q -M sset Master 3%+ ;;
@@ -46,6 +46,6 @@ case $1 in
     *) amixer -q -M sset Master $1%
 esac
 
-amixer -q -M sset Speaker 100%
-amixer -q -M sset Headphone 100%
+amixer -q -M sset Speaker 100% 2> /dev/null
+amixer -q -M sset Headphone 100% 2> /dev/null
 
