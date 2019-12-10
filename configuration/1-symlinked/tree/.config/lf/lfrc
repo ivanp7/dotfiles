@@ -66,6 +66,14 @@ map al %readlink $f
 # display owner & group
 map ao %stat -c %U:%G $f
 
+# copy path
+map Ypx $echo -n "$f" | xclip -i -selection clipboard
+map Ydx $echo -n "$(dirname $f)" | xclip -i -selection clipboard
+map Ynx $echo -n "$(basename $f)" | xclip -i -selection clipboard
+map Ypt $tmux set-buffer -- "$f"
+map Ydt $tmux set-buffer -- "$(dirname $f)"
+map Ynt $tmux set-buffer -- "$(basename $f)"
+
 # dedicated keys for file opener actions
 map o &mimeopen $f
 map O $mimeopen --ask $f
