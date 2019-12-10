@@ -104,6 +104,10 @@ cmd open ${{
     esac
 }}
 
+# glob select&unselect
+map V push ::glob-select<space>
+map U push ::glob-unselect<space>
+
 # define a custom 'rename' command without prompt for overwrite
 # cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
 # map r push :rename<space>
@@ -118,8 +122,9 @@ cmd bulk_rename !{{
     done
     $EDITOR $changed_names_file
 
-    sed -i 's/\\/\\\\/g; s/ /\\ /g; s/\$/\\\$/g' $original_names_file
-    sed -i 's/\\/\\\\/g; s/ /\\ /g; s/\$/\\\$/g' $changed_names_file
+    NAME_FIX='s/\\/\\\\/g; s/ /\\ /g; s/\$/\\\$/g'
+    sed -i "$NAME_FIX" $original_names_file
+    sed -i "$NAME_FIX" $changed_names_file
 
     if [ "$(cat $original_names_file | wc -l)" -ne "$(cat $changed_names_file | wc -l)" ]
     then
