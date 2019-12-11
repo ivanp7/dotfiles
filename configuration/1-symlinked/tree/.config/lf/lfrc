@@ -50,11 +50,11 @@ map x !$f
 map X &$f
 
 # create directory
-cmd mkdir %mkdir "$@"
+cmd mkdir %mkdir "$(echo "$@")"
 map [ push ::mkdir<space>
 
 # create file
-cmd touch %touch "$@"
+cmd touch %touch "$(echo "$@")"
 map ] push ::touch<space>
 
 # edit files
