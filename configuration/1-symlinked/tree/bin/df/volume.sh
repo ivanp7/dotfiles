@@ -17,7 +17,7 @@ if [ -z "$STATE" ]
 then
     STATE_LEFT=$(state "Front Left")
     STATE_RIGHT=$(state "Front Right")
-    if [ "$STATE_LEFT" = "on" ] || [ "$STATE_RIGHT" = "off" ]
+    if [ "$STATE_LEFT" = "on" ] || [ "$STATE_RIGHT" = "on" ]
     then STATE="on"
     else STATE="off"
     fi
