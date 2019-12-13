@@ -159,8 +159,11 @@ lfcd ()
 
 tx ()
 {
+    DIR="$PWD"
+    cd ~
     if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
     then tmux attach || . $HOME/.scripts/df/tmux-default-session.sh; fi
+    cd -- $DIR
 }
 
 # color grid
