@@ -117,25 +117,28 @@ _p_processinfo_f ()
     local bra="("
     local ket=")"
     local OutputStr="$(echo "$(pstree -ls $$)" | head -n1 | sed "
+        s/-.-/---/g; 
         s/systemd//;
-        s/-.-login//;
-        s/-.-pstree//;
-        s/-.-head//;
-        s/-.-sh//g;
-        s/-.-dash//g;
-        s/-.-bash//g;
-        s/-.-zsh//g;
-        s/-.-startx//g;
-        s/-.-xinit//g;
-        s/-.-dwm//g;
-        s/-.-x-desktop\.sh//g;
-        s/^-.-//;
-        s/sshd-.-sshd/ssh/;
+        s/---login//;
+        s/---pstree//;
+        s/---head//;
+        s/---sh//g;
+        s/---dash//g;
+        s/---zsh//g;
+        s/---bash//g;
+        s/---startx//g;
+        s/---xinit//g;
+        s/---dwm//g;
+        s/---x-desktop\.sh//g;
+        s/^---//;
+        s/sshd---sshd/ssh/;
         s/tmux: server/tmux/;
-        s/screen-.-screen/screen/;
-        s/y-desktop.sh-.-screen-.-yaft/yaft/;
-        s/-.-/${ket}${_p_rightarrow}${bra}/g; 
+        s/screen---screen/screen/;
+        s/y-desktop\.sh---screen---yaft/yaft/;
+        s@---@///@g; 
     ")"
+
+    #s/---/${ket}${_p_rightarrow}${bra}/g; 
 
     if [ -z "$OutputStr" ]
     then unset _p_processinfo; return
@@ -146,24 +149,33 @@ _p_processinfo_f ()
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     local PNameColor=${_p_color_white}
-    local GapColor=$(_p_color 1)
+    local PrettifyingRegEx='s@///@'"${_p_stdcolor}$ket${_p_rightarrow}$bra$PNameColor"'@g'
 
-    local SeparatorL="${ket}${_p_rightarrow}"
-    local ColSeparatorL="${_p_stdcolor}${ket}${_p_rightarrow}"
-    local SeparatorR="${_p_rightarrow}${bra}"
-    local ColSeparatorR="${_p_rightarrow}${bra}$PNameColor"
-
-    if [ ${#OutputStr} -le $MaxOutputLength ]
+    if [ "${#OutputStr}" -le "$MaxOutputLength" ]
     then
-        local HalfColoredOutputStr=${OutputStr//$SeparatorL/$ColSeparatorL}
-        local ColoredOutputStr=${HalfColoredOutputStr//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=" ${bra}$PNameColor$ColoredOutputStr${_p_stdcolor}${ket}"
+        local OutputStr=$(echo "$OutputStr" | sed -E "$PrettifyingRegEx")
+        _p_processinfo=" ${bra}$PNameColor$OutputStr${_p_stdcolor}${ket}"
     else
-        local OutputStrExcessLength=$((${#_p_ellipsis} + ${#OutputStr} - $MaxOutputLength - 1))
-        local OutputStrShort=${OutputStr:$OutputStrExcessLength}
-        local HalfColoredOutputStrShort=${OutputStrShort//$SeparatorL/$ColSeparatorL}
-        local ColoredOutputStrShort=${HalfColoredOutputStrShort//$SeparatorR/$ColSeparatorR}
-        _p_processinfo=" $GapColor${_p_ellipsis}${_p_stdcolor}$ColoredOutputStrShort${_p_stdcolor}${ket}"
+        local OutputStr="$OutputStr///"
+        local MaxOutputLength=$(($MaxOutputLength - ${#_p_ellipsis}))
+        local SkipColor=$(_p_color 1)
+        local SkipRegEx='s@^([^/]*///)(.*)@\2@'
+
+        local OutputStrShorter=$(echo "$OutputStr" | sed -E "$SkipRegEx")
+        while [ "${#OutputStr}" -gt "$MaxOutputLength" ] && [ "${#OutputStrShorter}" -lt "${#OutputStr}" ]
+        do
+            local OutputStr="$OutputStrShorter"
+            local OutputStrShorter=$(echo "$OutputStr" | sed -E "$SkipRegEx")
+        done
+
+        if [ -n "$OutputStr" ]
+        then
+            local OutputStr="$SkipColor${_p_ellipsis}///${OutputStr:0:-3}"
+            local OutputStr=$(echo "$OutputStr" | sed -E "$PrettifyingRegEx")
+            _p_processinfo=" ${bra}$OutputStr${_p_stdcolor}$ket"
+        else
+            _p_processinfo=" ${bra}$SkipColor${_p_ellipsis}${_p_stdcolor}$ket"
+        fi
     fi
 }
 add-zsh-hook precmd _p_processinfo_f
@@ -290,35 +302,43 @@ add-zsh-hook precmd _p_gitinfo_f
 
 _p_pwdinfo_f ()
 {
-    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 2))
+    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 1))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
-    local FreeSpaceLength=$(($MaxOutputLength - ${#PWD}))
 
     if [ "$(($_p_gitinfo_length * 2))" -ge "$MaxOutputLength" ]
     then
-        local MaxOutputLength=$((MaxOutputLength + $_p_gitinfo_length))
-        local FreeSpaceLength=$(($FreeSpaceLength + $_p_gitinfo_length))
+        local MaxOutputLength=$(($MaxOutputLength + $_p_gitinfo_length))
         _p_gitinfo_length=0
         unset _p_gitinfo
     fi
 
     local DirColor=${_p_color_white}
     local SlashColor=${_p_stdcolor}
-    local GapColor=$(_p_color 1)
+    local DirColoringRegEx="s@/@$SlashColor/$DirColor@g"
 
-    if [ "$FreeSpaceLength" -ge 0 ]
-    then
-        local ColPWD=$DirColor${PWD//\//$SlashColor\/$DirColor}
-        _p_pwdinfo="[$ColPWD${_p_stdcolor}]"
-    else
-        local PWDExcessLength=$((${#_p_ellipsis} + ${#PWD} - $MaxOutputLength))
-        local PWD1=${PWD:0:(${#PWD} / 2 - ($PWDExcessLength + 1) / 2)}
-        local ColPWD1=$DirColor${PWD1//\//$SlashColor\/$DirColor}
-        local PWD2=${PWD:(${#PWD} / 2 + $PWDExcessLength / 2)}
-        local ColPWD2=$DirColor${PWD2//\//$SlashColor\/$DirColor}
+    local SkipColor=$(_p_color 1)
+    local SkipRegEx='s@/(.)([^/][^/]+)/@/\1~/@'
+    local SkipColoringRegEx="s@~/@$SkipColor~$SlashColor/@"
+    local SkipCounter=0
 
-        _p_pwdinfo="[$ColPWD1$GapColor${_p_ellipsis}$ColPWD2${_p_stdcolor}]"
-    fi
+    local DirPath="$PWD/"
+    local DirPathShorter=$(echo "$DirPath" | sed -E "$SkipRegEx")
+
+    while [ "${#DirPath}" -gt "$MaxOutputLength" ] && [ "${#DirPathShorter}" -lt "${#DirPath}" ]
+    do
+        local DirPath="$DirPathShorter"
+        local DirPathShorter=$(echo "$DirPath" | sed -E "$SkipRegEx")
+        local SkipCounter=$(($SkipCounter + 1))
+    done
+
+    for i in $(seq 1 $SkipCounter)
+    do local DirPath=$(echo "$DirPath" | sed -E "$SkipColoringRegEx")
+    done
+
+    local DirPath=${DirPath:0:-1}
+    local DirPath=$(echo "$DirPath" | sed -E "$DirColoringRegEx")
+
+    _p_pwdinfo="[$DirColor$DirPath${_p_stdcolor}]"
 }
 add-zsh-hook precmd _p_pwdinfo_f
 
