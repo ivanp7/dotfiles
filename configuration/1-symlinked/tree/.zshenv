@@ -6,3 +6,6 @@ path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/.roswell/bin)
 export EDITOR=/usr/bin/vim
 export VISUAL=$EDITOR
 
+# terminal
+export TERMINAL=/usr/bin/st
+
