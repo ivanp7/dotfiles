@@ -2,12 +2,11 @@
 typeset -U path
 path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/.roswell/bin)
 
-# default editor
+# default applications
 export EDITOR=/usr/bin/vim
 export VISUAL=$EDITOR
-
-# terminal
 export TERMINAL=/usr/bin/st
+export FILE=lfcd
 
 # default font
 export DEFAULT_FONT="xos4 Terminus:size=10"
