@@ -1,4 +1,4 @@
-HISTFILE=~/.histfile
+HISTFILE=~/.cache/zsh/history
 HISTSIZE=100000
 SAVEHIST=10000
 setopt appendhistory extendedglob nomatch
@@ -19,12 +19,12 @@ alias help=run-help
 # completion
 fpath=($fpath $HOME/.zsh/completion) 
 
+autoload -Uz compinit
 zmodload zsh/complist
 zstyle :compinstall filename "$HOME/.zshrc"
-autoload -Uz compinit
-compinit
-
 zstyle ':completion:*' menu select
+compinit
+_comp_options+=(globdots) # Include hidden files
 
 # auto prehash
 zshcache_time="$(date +%s%N)"
