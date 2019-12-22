@@ -9,3 +9,6 @@ export VISUAL=$EDITOR
 # terminal
 export TERMINAL=/usr/bin/st
 
+# default font
+export DEFAULT_FONT="xos4 Terminus:size=10"
+
