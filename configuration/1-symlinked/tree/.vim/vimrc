@@ -49,9 +49,9 @@ let g:matchparen_timeout = 50
 let g:matchparen_insert_timeout = 50
 
 " let &colorcolumn="80,82,84,86,88,".join(range(90,400),",")
-let &colorcolumn="80,82,84,86,88,90"
+let &colorcolumn="80,90,100"
 
-"set clipboard^=unnamedplus
+set clipboard^=unnamedplus
 
 set list                   " Show non-printable characters.
 if has('multi_byte') && &encoding ==# 'utf-8'
@@ -106,8 +106,6 @@ Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-tbone'
 
 Plug 'tpope/vim-surround'
-Plug 'kana/vim-fakeclip'
-Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-capslock'
 
@@ -122,7 +120,6 @@ Plug 'christoomey/vim-tmux-navigator'
 " Fixes for things
 Plug 'godlygeek/csapprox'
 Plug 'powerman/vim-plugin-AnsiEsc'
-Plug 'tpope/vim-capslock'
 " Plug 'tmux-plugins/vim-tmux-focus-events'
 
 " Color theme and highlighting
@@ -150,18 +147,6 @@ call plug#end()
 
 " #############################################################################
 " Basic things
-
-" Vim Easyclip ************************
-
-nnoremap gm m
-nnoremap gM M
-nmap M <Plug>MoveMotionEndOfLinePlug
-let g:EasyClipUseSubstituteDefaults = 1
-
-let g:EasyClipAutoFormat = 1
-let g:EasyClipPreserveCursorPositionAfterYank = 1
-let g:EasyClipShareYanks = 1
-let g:EasyClipShareYanksDirectory='$HOME/.vim'
 
 " Vim Commentary **********************
 
@@ -313,6 +298,11 @@ endfunction
 
 " #############################################################################
 " Custom key mappings
+
+noremap x "_x
+noremap X "_X
+noremap s "_s
+noremap S "_S
 
 map <F5> :source $MYVIMRC<CR>
 
