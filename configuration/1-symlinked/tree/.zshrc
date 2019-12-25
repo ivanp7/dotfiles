@@ -126,6 +126,7 @@ man ()
 
 cdlf ()
 {
+    if [ "$#" -gt 0 ]; then cd "$@"; fi
     if [ -n "$id" ]; then lf -remote "send $id cd \"$PWD\""; fi
 }
 
