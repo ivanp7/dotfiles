@@ -299,25 +299,18 @@ endfunction
 " #############################################################################
 " Custom key mappings
 
-noremap x "_x
-noremap X "_X
-noremap s "_s
-noremap S "_S
-
+" Reload vimrc
 map <F5> :source $MYVIMRC<CR>
-
-" Visual mode blockwise indent
-vmap > >gv
-vmap < <gv
-
-" Ident the whole buffer
-map <F7> gmzgg=G`z
-
-" Paste mode toggle
-autocmd VimEnter * set pastetoggle=<F2>
 
 " Record into register 'q', playback with 'Q'
 nnoremap Q @q
+
+let mapleader=","
+let maplocalleader=" "
+
+" ==============================
+" movement mappings
+" ==============================
 
 " Map the cursor keys for precision scrolling by visual lines
 imap <up> <C-O>gk
@@ -327,47 +320,36 @@ nmap <down> gj
 vmap <up> gk
 vmap <down> gj
 
-" Switch language
-nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
+" ==============================
+" copy-paste mappings
+" ==============================
 
-" Resize windows
-nnoremap <silent> <C-W><C-H> :vert res -10<CR>
-nnoremap <silent> <C-W><C-J> :res -5<CR>
-nnoremap <silent> <C-W><C-K> :res +5<CR>
-nnoremap <silent> <C-W><C-L> :vert res +10<CR>
-" Switch between windows: nmap <silent> <C-hjkl> :wincmd hjkl<CR>
+noremap Y y$
 
-function! SwitchToNextBuffer(incr)
-    let help_buffer = (&filetype == 'help')
-    let current = bufnr("%")
-    let last = bufnr("$")
-    let new = current + a:incr
-    while 1
-        if new != 0 && bufexists(new) &&
-           \ ((getbufvar(new, "&filetype") == 'help') == help_buffer)
-            execute ":buffer ".new
-            break
-        else
-            let new = new + a:incr
-            if new < 1
-                let new = last
-            elseif new > last
-                let new = 1
-            endif
-            if new == current
-                break
-            endif
-        endif
-    endwhile
-endfunction
-nnoremap <silent> gb :call SwitchToNextBuffer(1)<CR>
-nnoremap <silent> gB :call SwitchToNextBuffer(-1)<CR>
+" black hole register operations
+map <leader>d "_d
+map <leader>D "_D
+map <leader>x "_x
+map <leader>X "_X
+map <leader>c "_c
+map <leader>C "_C
+map <leader>s "_s
+map <leader>S "_S
 
-let mapleader=","
-let maplocalleader=" "
+" ==============================
+" indentation mappings
+" ==============================
 
-command! CCI let @" = @+
-command! CCO let @+ = @" | let @* = @"
+" Visual mode blockwise indent
+vmap > >gv
+vmap < <gv
+
+" Ident the whole buffer
+map <F7> gmzgg=G`z
+
+" ==============================
+" search&replace mappings
+" ==============================
 
 " Escape special characters in a string for exact matching.
 " This is useful to copying strings from the file to the search tool
@@ -408,4 +390,52 @@ endfunction
 vmap <leader>v <Esc>/<c-r>=GetVisual()<cr>
 vmap <leader>z <Esc>:%s/<c-r>=GetVisual()<cr>//gc<left><left><left>
 vmap <leader>Z <Esc>:%s/<c-r>=GetVisual()<cr>/<c-r>=GetVisual()<cr>/gc<left><left><left>
+
+" ==============================
+" user interface operations mappings
+" ==============================
+
+" Paste mode toggle
+autocmd VimEnter * set pastetoggle=<F2>
+
+" Switch language
+nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
+
+" Resize windows
+nnoremap <silent> <C-W><C-H> :vert res -10<CR>
+nnoremap <silent> <C-W><C-J> :res -5<CR>
+nnoremap <silent> <C-W><C-K> :res +5<CR>
+nnoremap <silent> <C-W><C-L> :vert res +10<CR>
+" Switch between windows: nmap <silent> <C-hjkl> :wincmd hjkl<CR>
+
+function! SwitchToNextBuffer(incr)
+    let help_buffer = (&filetype == 'help')
+    let current = bufnr("%")
+    let last = bufnr("$")
+    let new = current + a:incr
+    while 1
+        if new != 0 && bufexists(new) &&
+           \ ((getbufvar(new, "&filetype") == 'help') == help_buffer)
+            execute ":buffer ".new
+            break
+        else
+            let new = new + a:incr
+            if new < 1
+                let new = last
+            elseif new > last
+                let new = 1
+            endif
+            if new == current
+                break
+            endif
+        endif
+    endwhile
+endfunction
+
+nnoremap <silent> gb :call SwitchToNextBuffer(1)<CR>
+nnoremap <silent> gB :call SwitchToNextBuffer(-1)<CR>
+
+" Copy text to/from the system clipboard
+command! CCI let @" = @+
+command! CCO let @+ = @" | let @* = @"
 
