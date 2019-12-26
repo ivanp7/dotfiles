@@ -130,6 +130,7 @@ _p_processinfo_f ()
         s/---xinit//g;
         s/---dwm//g;
         s/---x-desktop\.sh//g;
+        s/---dropdown-termin//g;
         s/^---//;
         s/sshd---sshd/ssh/;
         s/tmux: server/tmux/;
