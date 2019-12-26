@@ -345,7 +345,7 @@ vmap > >gv
 vmap < <gv
 
 " Ident the whole buffer
-map <F7> gmzgg=G`z
+map <F7> mzgg=G`z
 
 " ==============================
 " search&replace mappings
