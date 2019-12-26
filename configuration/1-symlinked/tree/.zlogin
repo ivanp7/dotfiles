@@ -26,5 +26,8 @@ fi
 sleep 1
 clear
 
-$HOME/bin/df/print-motd.sh
+echo
+echo
+neofetch
+echo
 

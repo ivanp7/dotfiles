@@ -8,6 +8,7 @@ export VISUAL=$EDITOR
 export TERMINAL=/usr/bin/st
 export FILE=lfcd
 export PLAYER=/usr/bin/mpv
+export BROWSER=/usr/bin/surf
 
 # default font
 export DEFAULT_FONT="xos4 Terminus:size=10"
