@@ -5,9 +5,12 @@ path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/.roswell/bin)
 # default applications
 export EDITOR=/usr/bin/vim
 export VISUAL=$EDITOR
-export TERMINAL=/usr/bin/st
 export FILE=lfcd
+
+export TERMINAL=/usr/bin/st
+export VIEWER=/usr/bin/sxiv
 export PLAYER=/usr/bin/mpv
+export PDFVIEWER=/usr/bin/zathura
 export BROWSER=/usr/bin/surf
 
 # default font
