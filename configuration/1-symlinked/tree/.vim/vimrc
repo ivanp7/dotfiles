@@ -18,7 +18,8 @@ set number
 set relativenumber
 set scroll      =10
 
-set showmode              " Show current mode in command-line.
+" set showmode              " Show current mode in command-line.
+set noshowmode
 set showcmd               " Show already typed keys when more are expected.
 
 set ttyfast               " Faster redrawing.
@@ -183,8 +184,6 @@ let g:CSApprox_hook_post = [
 " Color theme and highlighting
 
 " Vim-lightline
-
-set noshowmode
 
 function! LanguageStatus(...) abort
     return &iminsert == 1 ? (a:0 == 1 ? a:1 : 'RU') : ''
