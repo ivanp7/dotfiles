@@ -2,12 +2,12 @@
 
 state ()
 {
-    echo $(amixer sget Master | sed -E "/.*$1:.*\[(on|off)\].*/!d;s//\1/" 2> /dev/null)
+    amixer sget Master | sed -E "/.*$1:.*\[(on|off)\].*/!d;s//\1/" 2> /dev/null
 }
 
 level ()
 {
-    echo $(amixer -M sget Master | sed -E "/.*$1:.*\[(.*)%\].*/!d;s//\1/" 2> /dev/null)
+    amixer -M sget Master | sed -E "/.*$1:.*\[(.*)%\].*/!d;s//\1/" 2> /dev/null
 }
 
 STATE=$(state "Mono")
