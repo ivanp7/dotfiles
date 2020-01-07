@@ -12,17 +12,6 @@ install()
     fi
 }
 
-uninstall()
-{
-    true
-}
-
-case $1 in
-    i) OP=install ;;
-    u) OP=uninstall ;;
-    *) exit 1 ;;
-esac
-
 for file in $(cd $CONF_DIR/tree; find . -type f | sed 's,^\./,,')
-do $OP $file; done
+do install $file; done
 
