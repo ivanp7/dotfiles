@@ -7,7 +7,7 @@ install()
     if [ ! -f "$HOME/$1" ]
     then
         mkdir -p "$HOME/$(dirname $1)"
-        cp -n "$CONF_DIR/tree/$1" "$HOME/$1"
+        cp -nT "$CONF_DIR/tree/$1" "$HOME/$1"
         chmod 644 "$HOME/$1"
     fi
 }

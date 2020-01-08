@@ -6,7 +6,7 @@ UNINST_SCRIPT=$1
 install()
 {
     mkdir -p "$HOME/$(dirname $1)"
-    cp -f "$CONF_DIR/tree/$1" "$HOME/$1"
+    cp -fT "$CONF_DIR/tree/$1" "$HOME/$1"
     chmod 644 "$HOME/$1"
 
     [ -n "$UNINST_SCRIPT" ] && echo 'delete_copied_file "'"$HOME/$1"'"' >> $UNINST_SCRIPT

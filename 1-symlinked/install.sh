@@ -6,7 +6,7 @@ UNINST_SCRIPT=$1
 install()
 {
     mkdir -p "$HOME/$(dirname $1)"
-    ln -sf "$CONF_DIR/tree/$1" "$HOME/$1"
+    ln -sfT "$CONF_DIR/tree/$1" "$HOME/$1"
 
     [ -n "$UNINST_SCRIPT" ] && echo 'delete_symlink "'"$HOME/$1"'"' >> $UNINST_SCRIPT
 }
