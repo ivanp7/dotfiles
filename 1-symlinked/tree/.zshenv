@@ -14,5 +14,8 @@ export PDFVIEWER=/usr/bin/zathura
 export BROWSER=/usr/bin/surf
 
 # default font
-export DEFAULT_FONT="xos4 Terminus:size=10"
+if [ -r "$HOME/.default_font" ]
+then export DEFAULT_FONT=$(cat "$HOME/.default_font")
+else export DEFAULT_FONT="xos4 Terminus:size=10"
+fi
 
