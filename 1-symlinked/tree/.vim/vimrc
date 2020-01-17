@@ -304,6 +304,9 @@ map <F5> :source $MYVIMRC<CR>
 " Record into register 'q', playback with 'Q'
 nnoremap Q @q
 
+noremap ,, ,
+noremap ,; ,
+
 let mapleader=","
 let maplocalleader=" "
 
