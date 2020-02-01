@@ -402,6 +402,8 @@ autocmd VimEnter * set pastetoggle=<F2>
 
 " Switch language
 nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
+nnoremap <silent> <C-S> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
+inoremap <silent> <C-S> <ESC>:let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>a
 
 " Resize windows
 nnoremap <silent> <C-W><C-H> :vert res -10<CR>
