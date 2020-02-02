@@ -310,6 +310,14 @@ noremap ,; ,
 let mapleader=","
 let maplocalleader=" "
 
+" Paste mode toggle
+autocmd VimEnter * set pastetoggle=<F2>
+
+" Switch language
+nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
+nnoremap <silent> <C-S> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
+inoremap <silent> <C-S> <C-O>:let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
+
 " ==============================
 " movement mappings
 " ==============================
@@ -321,6 +329,18 @@ nmap <up> gk
 nmap <down> gj
 vmap <up> gk
 vmap <down> gj
+
+" Emacs-style editing in insert mode and on the command-line: 
+" start of line
+noremap! <C-A>		<Home>
+" back one character
+noremap! <C-B>		<Left>
+" delete character under cursor
+noremap! <C-D>		<Del>
+" end of line
+noremap! <C-E>		<End>
+" forward one character
+noremap! <C-F>		<Right>
 
 " ==============================
 " copy-paste mappings
@@ -396,14 +416,6 @@ vmap <leader>Z <Esc>:%s/<c-r>=GetVisual()<cr>/<c-r>=GetVisual()<cr>/gc<left><lef
 " ==============================
 " user interface operations mappings
 " ==============================
-
-" Paste mode toggle
-autocmd VimEnter * set pastetoggle=<F2>
-
-" Switch language
-nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
-nnoremap <silent> <C-S> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
-inoremap <silent> <C-S> <ESC>:let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>a
 
 " Resize windows
 nnoremap <silent> <C-W><C-H> :vert res -10<CR>
