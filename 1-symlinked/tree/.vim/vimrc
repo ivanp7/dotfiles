@@ -310,6 +310,8 @@ noremap ,; ,
 let mapleader=","
 let maplocalleader=" "
 
+set cedit=\<C-Y>
+
 " Paste mode toggle
 autocmd VimEnter * set pastetoggle=<F2>
 
