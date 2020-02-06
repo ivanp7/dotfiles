@@ -130,6 +130,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'edkolev/tmuxline.vim'
 Plug 'smancill/darkglass'
 Plug 'raymond-w-ko/vim-niji'
+Plug 'Yggdroot/indentLine'
 
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
@@ -213,6 +214,10 @@ let g:lightline = {
 " set termguicolors
 
 colorscheme darkglass
+
+" indentLine **************************
+
+let g:indentLine_setColors = 0
 
 " Vim-mark ****************************
 
