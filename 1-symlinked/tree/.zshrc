@@ -87,6 +87,11 @@ bindkey -M vicmd 'j' down-line-or-beginning-search
 bindkey '^v' edit-command-line
 bindkey -M vicmd '^v' edit-command-line
 
+bindkey '\C-b' vi-backward-char
+bindkey '\C-f' vi-forward-char
+bindkey '\C-a' vi-beginning-of-line
+bindkey '\C-e' vi-end-of-line
+
 # Finally, make sure the terminal is in application mode, when zle is
 # active. Only then are the values from $terminfo valid.
 if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
