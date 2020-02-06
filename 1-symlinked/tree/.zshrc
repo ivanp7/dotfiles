@@ -1,4 +1,4 @@
-HISTFILE=~/.cache/zsh/history
+HISTFILE=~/.zsh-history
 HISTSIZE=100000
 SAVEHIST=10000
 setopt appendhistory extendedglob nomatch
