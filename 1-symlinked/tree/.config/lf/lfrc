@@ -31,6 +31,8 @@ map z3 set ratios 1:2:3
 map z4 set ratios 1:2:3:5
 map z5 set ratios 1:2:3:5:8
 
+set relativenumber
+
 # cmd recol %{{
 #     w=$(tput cols)
 #     if [ $w -le 80 ]; then
