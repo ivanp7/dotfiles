@@ -110,6 +110,9 @@ cmd open ${{
 map V push ::glob-select<space>
 map U push ::glob-unselect<space>
 
+cmd back_toggle :toggle; up; up
+map b back_toggle
+
 # define a custom 'rename' command without prompt for overwrite
 # cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
 # map r push :rename<space>
