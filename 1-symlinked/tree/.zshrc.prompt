@@ -34,6 +34,8 @@ _p_updownarrow="↕"
 
 _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
+_p_default_prompt_text="/bin/zsh"
+
 ###############################################################################
 
 _p_preexec ()
@@ -361,8 +363,8 @@ zle-keymap-select ()
 {
     CommandModeIndicatorColor=$(_p_safe_color "$(_p_color 15 1)" "${_p_bold}$(_p_color 7 1)")
     if [ "$KEYMAP" = "vicmd" ]
-    then _p_cmdline_f " NORMAL " "${CommandModeIndicatorColor}"
-    else _p_cmdline_f "        "
+    then _p_cmdline_f "${_p_default_prompt_text}" "${CommandModeIndicatorColor}"
+    else _p_cmdline_f "${_p_default_prompt_text}"
     fi
     zle reset-prompt
 }
@@ -371,7 +373,7 @@ zle -N zle-keymap-select
 zle-line-init ()
 {
     (( ${+terminfo[smkx]} )) && echoti smkx
-    _p_cmdline_f "        "
+    _p_cmdline_f "${_p_default_prompt_text}"
     zle reset-prompt
 }
 zle -N zle-line-init
@@ -389,7 +391,7 @@ zle -N zle-line-finish
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
 TRAPINT ()
 {
-    _p_cmdline_f "        "
+    _p_cmdline_f "${_p_default_prompt_text}"
     zle && { zle reset-prompt; zle -R; }
     return $(( 128 + $1 ))
 } 
@@ -403,7 +405,7 @@ _p_prompt ()
     print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_processinfo}"
     print -P "${_p_stdcolor}${_p_mid2}${_p_userhostinfo}${_p_gitinfo}${_p_pwdinfo}"
 
-    _p_cmdline_f "        "
+    _p_cmdline_f "${_p_default_prompt_text}"
 }
 add-zsh-hook precmd _p_prompt
 
