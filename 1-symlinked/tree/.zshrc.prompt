@@ -84,7 +84,7 @@ _p_cmdtimeinfo_f ()
     if [ -n "$_p_timer_delta" ]
     then 
         _p_cmdtimeinfo_length=$((3 + ${#_p_timer_delta}))
-        _p_cmdtimeinfo="[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
+        _p_cmdtimeinfo="<${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}>"
     else 
         _p_cmdtimeinfo_length=0
         _p_cmdtimeinfo=""
@@ -96,7 +96,6 @@ _p_cmdstatusinfo_f ()
 {
     local SuccessColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
     local FailureColor=$(_p_safe_color "$(_p_color 160)" "${_p_bold}$(_p_color 1)")
-    local NoCommandColor=${_p_stdcolor}
     if [ -n "$_p_exitcode" ]
     then
         if [ "$_p_exitcode" -eq 0 ]
@@ -104,12 +103,12 @@ _p_cmdstatusinfo_f ()
             _p_cmdstatusinfo_length=5
             _p_cmdstatusinfo="${_p_dash}[${SuccessColor}ok${_p_stdcolor}]"
         else 
-            _p_cmdstatusinfo_length=$((9 + ${#_p_exitcode}))
-            _p_cmdstatusinfo="${_p_dash}[${FailureColor}error ${_p_exitcode}${_p_stdcolor}]"
+            _p_cmdstatusinfo_length=$((8 + ${#_p_exitcode}))
+            _p_cmdstatusinfo="${_p_dash}[${FailureColor}code ${_p_exitcode}${_p_stdcolor}]"
         fi
     else 
-        _p_cmdstatusinfo_length=6
-        _p_cmdstatusinfo="${_p_dash}(${NoCommandColor}nop${_p_stdcolor})"
+        _p_cmdstatusinfo_length=0
+        _p_cmdstatusinfo=
     fi
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
@@ -218,8 +217,8 @@ _p_gitinfo_f ()
     # Exit if not inside a Git repository
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1
     then
-        _p_gitinfo_length=4
-        _p_gitinfo="${_p_2dash}[${_p_color_white}${_p_dot}${_p_stdcolor}]"
+        _p_gitinfo_length=1
+        _p_gitinfo="${_p_2dash}"
         return
     fi
 
