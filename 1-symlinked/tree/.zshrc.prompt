@@ -84,7 +84,7 @@ _p_cmdtimeinfo_f ()
     if [ -n "$_p_timer_delta" ]
     then 
         _p_cmdtimeinfo_length=$((3 + ${#_p_timer_delta}))
-        _p_cmdtimeinfo="<${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}>"
+        _p_cmdtimeinfo="[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
     else 
         _p_cmdtimeinfo_length=0
         _p_cmdtimeinfo=""
@@ -95,16 +95,16 @@ add-zsh-hook precmd _p_cmdtimeinfo_f
 _p_cmdstatusinfo_f ()
 {
     local SuccessColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
-    local FailureColor=$(_p_safe_color "$(_p_color 160)" "${_p_bold}$(_p_color 1)")
+    local FailureColor=$(_p_safe_color "$(_p_color 196)" "${_p_bold}$(_p_color 1)")
     if [ -n "$_p_exitcode" ]
     then
         if [ "$_p_exitcode" -eq 0 ]
         then 
-            _p_cmdstatusinfo_length=5
-            _p_cmdstatusinfo="${_p_dash}[${SuccessColor}ok${_p_stdcolor}]"
+            _p_cmdstatusinfo_length=3
+            _p_cmdstatusinfo=" ${_p_color_white}↓${SuccessColor}0${_p_stdcolor}"
         else 
-            _p_cmdstatusinfo_length=$((8 + ${#_p_exitcode}))
-            _p_cmdstatusinfo="${_p_dash}[${FailureColor}code ${_p_exitcode}${_p_stdcolor}]"
+            _p_cmdstatusinfo_length=$((2 + ${#_p_exitcode}))
+            _p_cmdstatusinfo=" ${_p_color_white}↓${FailureColor}${_p_exitcode}${_p_stdcolor}"
         fi
     else 
         _p_cmdstatusinfo_length=0
