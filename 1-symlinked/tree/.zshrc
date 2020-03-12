@@ -2,7 +2,8 @@ HISTFILE=~/.zsh-history
 HISTSIZE=100000
 SAVEHIST=10000
 setopt appendhistory extendedglob nomatch
-unsetopt autocd beep notify
+setopt autocd autopushd pushdignoredups
+unsetopt beep notify
 
 setopt COMPLETE_ALIASES
 setopt HIST_IGNORE_DUPS HIST_FIND_NO_DUPS
