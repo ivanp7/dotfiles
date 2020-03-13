@@ -217,8 +217,8 @@ _p_gitinfo_f ()
     # Exit if not inside a Git repository
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1
     then
-        _p_gitinfo_length=1
-        _p_gitinfo="${_p_2dash}"
+        _p_gitinfo_length=0
+        _p_gitinfo=""
         return
     fi
 
@@ -292,19 +292,19 @@ _p_gitinfo_f ()
         FLAGS+=( "$STAGED" )
     fi
 
-    [ -n "$_p_gitinfo_flag" ] && _p_gitinfo_length=$(($_p_gitinfo_length + 2))
+    [ -n "$_p_gitinfo_flag" ] && _p_gitinfo_length=$(($_p_gitinfo_length + 3))
 
     local -a GIT_INFO
     GIT_INFO+=( "${LocationColor}$GIT_LOCATION${_p_stdcolor}" )
     [ "${#DIVERGENCES[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
     [ "${#FLAGS[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)FLAGS}" )
-    _p_gitinfo="${_p_2dash}[${(j:][:)GIT_INFO}]"
+    _p_gitinfo=" <${(j:><:)GIT_INFO}>"
 }
 add-zsh-hook precmd _p_gitinfo_f
 
 _p_pwdinfo_f ()
 {
-    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 1))
+    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     if [ "$(($_p_gitinfo_length * 2))" -ge "$MaxOutputLength" ]
@@ -326,7 +326,7 @@ _p_pwdinfo_f ()
     local DirPath="$PWD/"
     local DirPathShorter=$(echo "$DirPath" | sed -E "$SkipRegEx")
 
-    while [ "${#DirPath}" -gt "$MaxOutputLength" ] && [ "${#DirPathShorter}" -lt "${#DirPath}" ]
+    while [ "$((${#DirPath} - 1))" -gt "$MaxOutputLength" ] && [ "${#DirPathShorter}" -lt "${#DirPath}" ]
     do
         local DirPath="$DirPathShorter"
         local DirPathShorter=$(echo "$DirPath" | sed -E "$SkipRegEx")
@@ -340,7 +340,7 @@ _p_pwdinfo_f ()
     local DirPath=${DirPath:0:-1}
     local DirPath=$(echo "$DirPath" | sed -E "$DirColoringRegEx")
 
-    _p_pwdinfo="[$DirColor$DirPath${_p_stdcolor}]"
+    _p_pwdinfo=" [$DirColor$DirPath${_p_stdcolor}]"
 }
 add-zsh-hook precmd _p_pwdinfo_f
 
