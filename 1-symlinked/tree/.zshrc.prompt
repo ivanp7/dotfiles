@@ -113,6 +113,14 @@ _p_cmdstatusinfo_f ()
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
 
+_p_ttyinfo_f ()
+{
+    local Tty=$(tty | sed 's,^/dev/,,')
+    _p_ttyinfo=" [${_p_color_white}${Tty}${_p_stdcolor}]"
+    _p_ttyinfo_length=$((3 + ${#Tty}))
+}
+add-zsh-hook precmd _p_ttyinfo_f
+
 _p_processinfo_f ()
 {
     local bra="("
@@ -147,7 +155,7 @@ _p_processinfo_f ()
     fi
 
     local PromptLength=$((1 + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
-                          $_p_cmdstatusinfo_length + 3))
+                          $_p_cmdstatusinfo_length + $_p_ttyinfo_length + 3))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     local PNameColor=${_p_color_white}
@@ -156,7 +164,7 @@ _p_processinfo_f ()
     if [ "${#OutputStr}" -le "$MaxOutputLength" ]
     then
         local OutputStr=$(echo "$OutputStr" | sed -E "$PrettifyingRegEx")
-        _p_processinfo=" ${bra}$PNameColor$OutputStr${_p_stdcolor}${ket}"
+        _p_processinfo=":${bra}$PNameColor$OutputStr${_p_stdcolor}${ket}"
     else
         local OutputStr="$OutputStr///"
         local MaxOutputLength=$(($MaxOutputLength - ${#_p_ellipsis}))
@@ -174,9 +182,9 @@ _p_processinfo_f ()
         then
             local OutputStr="$SkipColor${_p_ellipsis}///${OutputStr:0:-3}"
             local OutputStr=$(echo "$OutputStr" | sed -E "$PrettifyingRegEx")
-            _p_processinfo=" ${bra}$OutputStr${_p_stdcolor}$ket"
+            _p_processinfo=":${bra}$OutputStr${_p_stdcolor}$ket"
         else
-            _p_processinfo=" ${bra}$SkipColor${_p_ellipsis}${_p_stdcolor}$ket"
+            _p_processinfo=":${bra}$SkipColor${_p_ellipsis}${_p_stdcolor}$ket"
         fi
     fi
 }
@@ -401,7 +409,7 @@ _p_prompt ()
 {
     print -P "${_p_stdcolor}"
     print -P "${_p_stdcolor}${_p_separator}"
-    print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_processinfo}"
+    print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_ttyinfo}${_p_processinfo}"
     print -P "${_p_stdcolor}${_p_mid2}${_p_userhostinfo}${_p_gitinfo}${_p_pwdinfo}"
 
     _p_cmdline_f "${_p_default_prompt_text}"
