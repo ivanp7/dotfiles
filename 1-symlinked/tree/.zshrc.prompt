@@ -73,17 +73,28 @@ add-zsh-hook precmd _p_prompt_init_f
 _p_timeinfo_f ()
 {
     _p_timeinfo_length=10
-    local TimeInfoColor=${_p_color_white}
-    _p_timeinfo="[${TimeInfoColor}%D{%T}${_p_stdcolor}]"
+    local TimeColor=${_p_stdcolor}
+    _p_timeinfo="[${TimeColor}%D{%T}${_p_stdcolor}]"
 }
 add-zsh-hook precmd _p_timeinfo_f
 
 _p_cmdtimeinfo_f ()
 {
-    local CmdTimeInfoColor=${_p_color_white}
     if [ -n "$_p_timer_delta" ]
     then 
         _p_cmdtimeinfo_length=$((3 + ${#_p_timer_delta}))
+
+        if [ "$_p_timer_delta" -eq 0 ]
+        then local CmdTimeInfoColor=${_p_stdcolor}
+        elif [ "$_p_timer_delta" -lt 10 ]
+        then local CmdTimeInfoColor=${_p_color_white}
+        elif [ "$_p_timer_delta" -lt 60 ]
+        then local CmdTimeInfoColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
+        elif [ "$_p_timer_delta" -lt 600 ]
+        then local CmdTimeInfoColor=$(_p_safe_color "$(_p_color 220)" "${_p_bold}$(_p_color 3)")
+        else local CmdTimeInfoColor=$(_p_safe_color "$(_p_color 196)" "${_p_bold}$(_p_color 1)")
+        fi
+
         _p_cmdtimeinfo="[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
     else 
         _p_cmdtimeinfo_length=0
@@ -94,17 +105,17 @@ add-zsh-hook precmd _p_cmdtimeinfo_f
 
 _p_cmdstatusinfo_f ()
 {
-    local SuccessColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
+    local SuccessColor=${_p_color_white}
     local FailureColor=$(_p_safe_color "$(_p_color 196)" "${_p_bold}$(_p_color 1)")
     if [ -n "$_p_exitcode" ]
     then
         if [ "$_p_exitcode" -eq 0 ]
         then 
             _p_cmdstatusinfo_length=3
-            _p_cmdstatusinfo=" ${_p_color_white}↓${SuccessColor}0${_p_stdcolor}"
+            _p_cmdstatusinfo=" ${SuccessColor}↓0${_p_stdcolor}"
         else 
             _p_cmdstatusinfo_length=$((2 + ${#_p_exitcode}))
-            _p_cmdstatusinfo=" ${_p_color_white}↓${FailureColor}${_p_exitcode}${_p_stdcolor}"
+            _p_cmdstatusinfo=" ${FailureColor}↓${_p_exitcode}${_p_stdcolor}"
         fi
     else 
         _p_cmdstatusinfo_length=0
@@ -116,7 +127,7 @@ add-zsh-hook precmd _p_cmdstatusinfo_f
 _p_ttyinfo_f ()
 {
     local Tty=$(tty | sed 's,^/dev/,,')
-    _p_ttyinfo=" [${_p_color_white}${Tty}${_p_stdcolor}]"
+    _p_ttyinfo=" [${Tty}]"
     _p_ttyinfo_length=$((3 + ${#Tty}))
 }
 add-zsh-hook precmd _p_ttyinfo_f
@@ -348,7 +359,7 @@ _p_pwdinfo_f ()
     local DirPath=${DirPath:0:-1}
     local DirPath=$(echo "$DirPath" | sed -E "$DirColoringRegEx")
 
-    _p_pwdinfo=" [$DirColor$DirPath${_p_stdcolor}]"
+    _p_pwdinfo="${_p_2dash}[$DirColor$DirPath${_p_stdcolor}]"
 }
 add-zsh-hook precmd _p_pwdinfo_f
 
@@ -389,7 +400,10 @@ zle-line-finish ()
 {
     (( ${+terminfo[rmkx]} )) && echoti rmkx
     if [ "$(($(echo -En "$BUFFER" | sed -E 's;(.*[^\\])(\\*)$;\2;' | wc -m) % 2))" -eq 0 ]
-    then _p_cmdline_f "%D{%T}" "${_p_color_white}"; fi
+    then 
+        local TimeColor=${_p_stdcolor}
+        _p_cmdline_f "%D{%T}" "${TimeColor}"
+    fi
     zle reset-prompt
 }
 zle -N zle-line-finish
@@ -410,7 +424,7 @@ _p_prompt ()
     print -P "${_p_stdcolor}"
     print -P "${_p_stdcolor}${_p_separator}"
     print -P "${_p_stdcolor}${_p_top}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_ttyinfo}${_p_processinfo}"
-    print -P "${_p_stdcolor}${_p_mid2}${_p_userhostinfo}${_p_gitinfo}${_p_pwdinfo}"
+    print -P "${_p_stdcolor}${_p_mid2}${_p_userhostinfo}${_p_pwdinfo}${_p_gitinfo}"
 
     _p_cmdline_f "${_p_default_prompt_text}"
 }
