@@ -82,8 +82,6 @@ _p_cmdtimeinfo_f ()
 {
     if [ -n "$_p_timer_delta" ]
     then 
-        _p_cmdtimeinfo_length=$((3 + ${#_p_timer_delta}))
-
         if [ "$_p_timer_delta" -eq 0 ]
         then local CmdTimeInfoColor=${_p_stdcolor}
         elif [ "$_p_timer_delta" -lt 10 ]
@@ -95,7 +93,23 @@ _p_cmdtimeinfo_f ()
         else local CmdTimeInfoColor=$(_p_safe_color "$(_p_color 196)" "${_p_bold}$(_p_color 1)")
         fi
 
-        _p_cmdtimeinfo="[${CmdTimeInfoColor}${_p_timer_delta}s${_p_stdcolor}]"
+        local delta_minutes="$((${_p_timer_delta} / 60))"
+        local delta_hours="$((${delta_minutes} / 60))"
+        local delta_days="$((${delta_hours} / 24))"
+
+        local seconds="$((${_p_timer_delta} % 60))s"
+        if [ "$delta_minutes" -gt 0 ]
+        then local minutes="$((${delta_minutes} % 60))m"
+        fi
+        if [ "$delta_hours" -gt 0 ]
+        then local hours="$((${delta_hours} % 24))h"
+        fi
+        if [ "$delta_days" -gt 0 ]
+        then local days="${delta_days}d"
+        fi
+
+        _p_cmdtimeinfo_length=$((2 + ${#days} + ${#hours} + ${#minutes} + ${#seconds}))
+        _p_cmdtimeinfo="[${CmdTimeInfoColor}${days}${hours}${minutes}${seconds}${_p_stdcolor}]"
     else 
         _p_cmdtimeinfo_length=0
         _p_cmdtimeinfo=""
