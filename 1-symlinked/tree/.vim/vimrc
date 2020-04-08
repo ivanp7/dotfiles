@@ -125,10 +125,11 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 
 " Color theme and highlighting
 Plug 'jaxbot/semantic-highlight.vim'
+Plug 'ivanp7/lisp-semantic-highlight.vim'
 
 Plug 'itchyny/lightline.vim'
 Plug 'edkolev/tmuxline.vim'
-Plug 'smancill/darkglass'
+Plug 'fxn/vim-monochrome'
 Plug 'raymond-w-ko/vim-niji'
 Plug 'Yggdroot/indentLine'
 
@@ -224,7 +225,7 @@ let g:lightline = {
 
 " Vim color scheme ********************
 
-colorscheme darkglass
+colorscheme monochrome
 
 " indentLine **************************
 
@@ -246,6 +247,9 @@ nmap <Leader>!  <Plug>MarkSearchGroup1Prev
 
 " #############################################################################
 " S-expressions and Lisp
+
+" tweak syntax
+autocmd FileType lisp syntax clear lispBQList
 
 " Vim-Sexp ****************************
 
