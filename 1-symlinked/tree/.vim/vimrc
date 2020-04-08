@@ -32,7 +32,7 @@ set cursorline            " Find the current line quickly.
 set wrapscan              " Searches wrap around end-of-file.
 set report      =0        " Always report changed lines.
 set synmaxcol   =400      " Only highlight the first 400 columns.
-set colorcolumn =80
+" set colorcolumn =80
 
 set hlsearch
 
@@ -124,13 +124,15 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 " Plug 'tmux-plugins/vim-tmux-focus-events'
 
 " Color theme and highlighting
-Plug 'guns/xterm-color-table.vim'
+Plug 'jaxbot/semantic-highlight.vim'
 
 Plug 'itchyny/lightline.vim'
 Plug 'edkolev/tmuxline.vim'
 Plug 'smancill/darkglass'
 Plug 'raymond-w-ko/vim-niji'
 Plug 'Yggdroot/indentLine'
+
+Plug 'guns/xterm-color-table.vim'
 
 Plug 'inkarkat/vim-ingo-library'
 Plug 'inkarkat/vim-mark'
@@ -165,6 +167,7 @@ nmap <F8> :TagbarToggle<CR>
 " Vim-tmux navigator
 
 " Disable tmux navigator when zooming the Vim pane
+"
 let g:tmux_navigator_disable_when_zoomed = 1
 
 " #############################################################################
@@ -172,17 +175,29 @@ let g:tmux_navigator_disable_when_zoomed = 1
 
 " CSApprox ****************************
 
+" Enable true color 启用终端24位色
+if exists('+termguicolors') && ($TERM != 'linux') && ($TERM != 'yaft-256color')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+      set termguicolors
+      endif
+
 " tweak color scheme
 let g:CSApprox_hook_post = [
-            \ 'highlight LineNr            ctermfg=gray',
-            \ 'highlight CursorLineNR      cterm=bold ctermfg=red',
-            \ 'highlight CursorLine        cterm=NONE ctermbg=234',
-            \ 'highlight MatchParen        ctermbg=1',
-            \ 'highlight ColorColumn       ctermbg=232',
+            \ 'highlight CursorLine        guibg=#444444 cterm=NONE ctermbg=234',
+            \ 'highlight CursorLineNR      guifg=#ee3333 cterm=bold ctermfg=red',
+            \ 'highlight LineNr            guifg=#999999 ctermfg=gray',
+            \ 'highlight MatchParen        guifg=#ffffff guibg=#ff0000 ctermbg=1',
+            \ 'highlight ColorColumn       guibg=#111111 ctermbg=232',
             \]
 
 " #############################################################################
 " Color theme and highlighting
+
+" Semantic highlight
+"
+let g:semanticEnableFileTypes = ['c', 'cpp', 'java', 'javascript', 'python', 'vim']
+let g:semanticTermColors = range(1, 14)
 
 " Vim-lightline
 
@@ -209,15 +224,12 @@ let g:lightline = {
 
 " Vim color scheme ********************
 
-" termguicolors should not be set under any circumstances, 
-" it conflicts with CSApprox:
-" set termguicolors
-
 colorscheme darkglass
 
 " indentLine **************************
 
-let g:indentLine_setColors = 0
+let g:indentLine_color_gui = '#888888'
+let g:indentLine_color_term = 242
 
 " Vim-mark ****************************
 
