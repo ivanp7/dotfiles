@@ -80,40 +80,49 @@ add-zsh-hook precmd _p_timeinfo_f
 
 _p_cmdtimeinfo_f ()
 {
-    if [ -n "$_p_timer_delta" ]
+    if [ -z "$_p_timer_delta" ]
     then 
-        if [ "$_p_timer_delta" -eq 0 ]
-        then local CmdTimeInfoColor=${_p_stdcolor}
-        elif [ "$_p_timer_delta" -lt 10 ]
-        then local CmdTimeInfoColor=${_p_color_white}
-        elif [ "$_p_timer_delta" -lt 60 ]
-        then local CmdTimeInfoColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
-        elif [ "$_p_timer_delta" -lt 600 ]
-        then local CmdTimeInfoColor=$(_p_safe_color "$(_p_color 220)" "${_p_bold}$(_p_color 3)")
-        else local CmdTimeInfoColor=$(_p_safe_color "$(_p_color 196)" "${_p_bold}$(_p_color 1)")
-        fi
-
-        local delta_minutes="$((${_p_timer_delta} / 60))"
-        local delta_hours="$((${delta_minutes} / 60))"
-        local delta_days="$((${delta_hours} / 24))"
-
-        local seconds="$((${_p_timer_delta} % 60))s"
-        if [ "$delta_minutes" -gt 0 ]
-        then local minutes="$((${delta_minutes} % 60))m"
-        fi
-        if [ "$delta_hours" -gt 0 ]
-        then local hours="$((${delta_hours} % 24))h"
-        fi
-        if [ "$delta_days" -gt 0 ]
-        then local days="${delta_days}d"
-        fi
-
-        _p_cmdtimeinfo_length=$((2 + ${#days} + ${#hours} + ${#minutes} + ${#seconds}))
-        _p_cmdtimeinfo="[${CmdTimeInfoColor}${days}${hours}${minutes}${seconds}${_p_stdcolor}]"
-    else 
         _p_cmdtimeinfo_length=0
         _p_cmdtimeinfo=""
     fi
+
+    if [ "$_p_timer_delta" -eq 0 ]
+    then 
+        _p_cmdtimeinfo_length=4
+        _p_cmdtimeinfo="[0s]"
+        return
+    fi
+
+    local SecondsColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
+    local MinutesColor=$(_p_safe_color "$(_p_color 220)" "${_p_bold}$(_p_color 3)")
+    local HoursColor=$(_p_safe_color "$(_p_color 196)" "${_p_bold}$(_p_color 1)")
+    local DaysColor=${_p_color_white}
+
+    local delta_minutes="$((${_p_timer_delta} / 60))"
+    local delta_hours="$((${delta_minutes} / 60))"
+    local delta_days="$((${delta_hours} / 24))"
+
+    local seconds_nocolor="$((${_p_timer_delta} % 60))s"
+    local seconds="${SecondsColor}${seconds_nocolor}"
+    if [ "$delta_minutes" -gt 0 ]
+    then 
+        local minutes_nocolor="$((${delta_minutes} % 60))m"
+        local minutes="${MinutesColor}${minutes_nocolor}"
+    fi
+    if [ "$delta_hours" -gt 0 ]
+    then 
+        local hours_nocolor="$((${delta_hours} % 24))h"
+        local hours="${HoursColor}${hours_nocolor}"
+    fi
+    if [ "$delta_days" -gt 0 ]
+    then 
+        local days_nocolor="${delta_days}d"
+        local days="${DaysColor}${days_nocolor}"
+    fi
+
+    _p_cmdtimeinfo_length=$((2 + ${#days_nocolor} + ${#hours_nocolor} + 
+    ${#minutes_nocolor} + ${#seconds_nocolor}))
+    _p_cmdtimeinfo="[${days}${hours}${minutes}${seconds}${_p_stdcolor}]"
 }
 add-zsh-hook precmd _p_cmdtimeinfo_f
 
@@ -176,7 +185,9 @@ _p_processinfo_f ()
     #s/---/${ket}${_p_rightarrow}${bra}/g; 
 
     if [ -z "$OutputStr" ]
-    then unset _p_processinfo; return
+    then 
+        unset _p_processinfo
+        return
     fi
 
     local PromptLength=$((1 + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
