@@ -84,6 +84,7 @@ _p_cmdtimeinfo_f ()
     then 
         _p_cmdtimeinfo_length=0
         _p_cmdtimeinfo=""
+        return
     fi
 
     if [ "$_p_timer_delta" -eq 0 ]
