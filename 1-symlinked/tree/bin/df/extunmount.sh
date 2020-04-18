@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd /dev
+
 EXCLUSIONS="\(/\|/boot\|/home\)$"
 
 DEVICE="$1"

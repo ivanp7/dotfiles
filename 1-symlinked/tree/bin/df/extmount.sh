@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd /dev
+
 DEVICE="$1"
 
 if [ -z "$DEVICE" ]
