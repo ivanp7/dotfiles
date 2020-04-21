@@ -19,3 +19,6 @@ then export DEFAULT_FONT=$(cat "$HOME/.default_font")
 else export DEFAULT_FONT="xos4 Terminus:size=10"
 fi
 
+# fixes for things
+export GNUMAKEFLAGS=--no-print-directory
+
