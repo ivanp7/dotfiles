@@ -94,10 +94,10 @@ _p_cmdtimeinfo_f ()
         return
     fi
 
-    local SecondsColor=$(_p_safe_color "$(_p_color 76)" "${_p_bold}$(_p_color 2)")
+    local SecondsColor=${_p_color_white}
     local MinutesColor=$(_p_safe_color "$(_p_color 220)" "${_p_bold}$(_p_color 3)")
     local HoursColor=$(_p_safe_color "$(_p_color 196)" "${_p_bold}$(_p_color 1)")
-    local DaysColor=${_p_color_white}
+    local DaysColor=$(_p_safe_color "$(_p_color 165)" "${_p_bold}$(_p_color 5)")
 
     local delta_minutes="$((${_p_timer_delta} / 60))"
     local delta_hours="$((${delta_minutes} / 60))"
