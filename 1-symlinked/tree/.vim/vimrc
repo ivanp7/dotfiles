@@ -50,7 +50,7 @@ let g:matchparen_timeout = 50
 let g:matchparen_insert_timeout = 50
 
 " let &colorcolumn="80,82,84,86,88,".join(range(90,400),",")
-let &colorcolumn="80,90,100"
+let &colorcolumn="80,100"
 
 set clipboard^=unnamedplus
 
