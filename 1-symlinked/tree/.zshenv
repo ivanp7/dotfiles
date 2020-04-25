@@ -1,6 +1,6 @@
 # PATH
 typeset -U path
-path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/.roswell/bin)
+path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/bin/local $HOME/.roswell/bin)
 
 # default applications
 export EDITOR=/usr/bin/vim
