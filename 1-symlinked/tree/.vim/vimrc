@@ -249,6 +249,7 @@ nmap <Leader>!  <Plug>MarkSearchGroup1Prev
 " S-expressions and Lisp
 
 " tweak syntax
+autocmd FileType lisp syntax clear lispAtomList
 autocmd FileType lisp syntax clear lispBQList
 
 " Vim-Sexp ****************************
