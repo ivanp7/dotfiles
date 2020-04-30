@@ -142,7 +142,7 @@ cmd bulk_rename !{{
         $EDITOR $commands_file
 
         for cmd in $(cat $commands_file)
-        do $SHELL -c "$cmd"
+        do $SHELL -c "$cmd; true"
         done
         rm $commands_file
     fi
