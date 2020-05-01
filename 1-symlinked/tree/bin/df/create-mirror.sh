@@ -11,5 +11,5 @@ SOURCE_DIR="$(realpath "$1")"
 TARGET_DIR="$2"
 
 mkdir -p "$TARGET_DIR"
-cp -rsP -t "$TARGET_DIR" "$SOURCE_DIR"
+cp -rsPT "$SOURCE_DIR" "$TARGET_DIR"
 
