@@ -158,6 +158,32 @@ cmd smart_rename ${{
 map r smart_rename
 map R $vidir $fs
 
+cmd link %{{
+    mode=""
+    files=""
+    lf -remote 'load' | while read file
+    do
+        if [ -z "$mode" ]
+        then mode="$file"
+        elif [ -n "$file" ]
+        then
+            files="yes"
+
+            if [ "$mode" = "copy" ]; then
+                ln -sr $file -t .
+            elif [ "$mode" = "move" ]; then
+                ln $file -t .
+            fi
+        fi
+    done
+
+    if [ -z "$files" ]; then
+        lf -remote "send $id echo no files to link"
+        exit 0
+    fi
+}}
+map P link
+
 # pasting done right
 # cmd paste !{{
 #     send="while read -r line; do lf -remote \"send $id echo \$line\"; done && lf -remote 'send reload'"
