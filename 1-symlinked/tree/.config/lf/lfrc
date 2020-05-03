@@ -1,5 +1,5 @@
 # interpreter for shell commands (needs to be POSIX compatible)
-set shell sh
+set shell zsh
 
 # set '-eu' options for shell commands
 # These options are used to have safer shell commands. Option '-e' is used to
@@ -60,7 +60,7 @@ cmd touch %touch "$(echo "$@")"
 map ] push ::touch<space>
 
 # edit files
-map e $$EDITOR $fx
+map e $$EDITOR ${(f)fx}
 
 # read link
 map al %readlink $f
@@ -98,9 +98,9 @@ cmd open ${{
             ;;
         *)
             case $(file --mime-type $f -b) in
-                text/*) $EDITOR $fx;;
-                image/*) $VIEWER $fx &;;
-                application/pdf) $PDFVIEWER $fx &;;
+                text/*) $EDITOR ${(f)fx};;
+                image/*) $VIEWER ${(f)fx} &;;
+                application/pdf) $PDFVIEWER ${(f)fx} &;;
                 *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
             esac
     esac
@@ -156,7 +156,7 @@ cmd smart_rename ${{
 }}
 
 map r smart_rename
-map R $vidir $fs
+map R $vidir ${(f)fs}
 
 cmd link %{{
     mode=""
@@ -203,7 +203,7 @@ map P link
 # }}
 
 # move current file or selected files to trash folder
-cmd trash %trash-put $fx
+cmd trash %trash-put ${(f)fx}
 
 # define a custom 'delete' command
 # cmd delete ${{
@@ -236,7 +236,7 @@ cmd extract ${{
 cmd tar ${{
     set -f
     mkdir $1
-    cp -r $fx $1
+    cp -r ${(f)fx} $1
     tar czf $1.tar.gz $1
     rm -rf $1
 }}
@@ -245,7 +245,7 @@ cmd tar ${{
 cmd zip ${{
     set -f
     mkdir $1
-    cp -r $fx $1
+    cp -r ${(f)fx} $1
     zip -r $1.zip $1
     rm -rf $1
 }}
