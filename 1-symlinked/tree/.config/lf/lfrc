@@ -48,8 +48,8 @@ set relativenumber
 # map <enter> shell
 
 # execute current file (must be executable)
-map x !$f
-map X &$f
+map x !"$f"
+map X &"$f"
 
 # create directory
 cmd mkdir %mkdir "$(echo "$@")"
@@ -63,22 +63,22 @@ map ] push ::touch<space>
 map e $$EDITOR ${(f)fx}
 
 # read link
-map al %readlink $f
+map al %readlink "$f"
 
 # display owner & group
-map ao %stat -c %U:%G $f
+map ao %stat -c %U:%G "$f"
 
 # copy path
 map Ypx $echo -n "$f" | xclip -i -selection clipboard
-map Ydx $echo -n "$(dirname $f)" | xclip -i -selection clipboard
-map Ynx $echo -n "$(basename $f)" | xclip -i -selection clipboard
+map Ydx $echo -n "$(dirname "$f")" | xclip -i -selection clipboard
+map Ynx $echo -n "$(basename "$f")" | xclip -i -selection clipboard
 map Ypt $tmux set-buffer -- "$f"
-map Ydt $tmux set-buffer -- "$(dirname $f)"
-map Ynt $tmux set-buffer -- "$(basename $f)"
+map Ydt $tmux set-buffer -- "$(dirname "$f")"
+map Ynt $tmux set-buffer -- "$(basename "$f")"
 
 # dedicated keys for file opener actions
-map o &mimeopen $f
-map O $mimeopen --ask $f
+map o &mimeopen "$f"
+map O $mimeopen --ask "$f"
 
 # define a custom 'open' command
 # This command is called when current file is not a directory. You may want to
@@ -97,11 +97,11 @@ cmd open ${{
             lf -remote "send $id reload"
             ;;
         *)
-            case $(file --mime-type $f -b) in
+            case $(file --mime-type "$f" -b) in
                 text/*) $EDITOR ${(f)fx};;
                 image/*) $VIEWER ${(f)fx} &;;
                 application/pdf) $PDFVIEWER ${(f)fx} &;;
-                *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
+                *) for f in ${(f)fx}; do setsid $OPENER "$f" > /dev/null 2> /dev/null & done;;
             esac
     esac
 }}
@@ -120,14 +120,14 @@ map b back_toggle
 cmd bulk_rename !{{
     original_names_file=$(mktemp)
     changed_names_file=$(mktemp)
-    for file in $fs
+    for file in ${(f)fs}
     do 
         echo "$file" >> $original_names_file
         echo "$file" >> $changed_names_file
     done
     $EDITOR $changed_names_file
 
-    NAME_FIX='s/\\/\\\\/g; s/ /\\ /g; s/\$/\\\$/g'
+    NAME_FIX="s/'/'\\\\''/g; s/^/'/; s/\$/'/"
     sed -i "$NAME_FIX" $original_names_file
     sed -i "$NAME_FIX" $changed_names_file
 
@@ -158,7 +158,7 @@ cmd smart_rename ${{
 map r smart_rename
 map R $vidir ${(f)fs}
 
-cmd link %{{
+cmd paste %{{
     mode=""
     files=""
     lf -remote 'load' | while read file
@@ -170,9 +170,51 @@ cmd link %{{
             files="yes"
 
             if [ "$mode" = "copy" ]; then
-                ln -sr $file -t .
+                target_name="$(basename "$file")"
+                if [ "$(dirname "$file")" = "$PWD" ]; then
+                    if [ ! -d "$file" ] || [ -L "$file" ] || [ ! -e "$target_name.copy" ]; then
+                        target_name="$target_name.copy"
+                    fi
+                fi
+
+                cp --backup=numbered -aT "$file" "$target_name"
             elif [ "$mode" = "move" ]; then
-                ln $file -t .
+                if [ "$(dirname "$file")" != "$PWD" ]; then
+                    mv --backup=numbered -t . "$file"
+                fi
+            fi
+        fi
+    done
+
+    if [ -z "$files" ]; then
+        lf -remote "send $id echo no files to paste"
+        exit 0
+    elif [ "$mode" = "move" ]; then
+        lf -remote "send clear"
+    fi
+}}
+map p paste
+
+cmd link %{{
+    mode=""
+    files=""
+    lf -remote 'load' | while read file
+    do
+        if [ -z "$mode" ]
+        then mode="$file"
+        elif [ -n "$file" ]
+        then
+            files="yes"
+
+            target_name="$(basename "$file")"
+            if [ "$(dirname "$file")" = "$PWD" ]; then
+                target_name="$target_name.link"
+            fi
+
+            if [ "$mode" = "copy" ]; then
+                ln -s "$@" -T "$file" "$target_name"
+            elif [ "$mode" = "move" ]; then
+                ln "$@" -T "$file" "$target_name"
             fi
         fi
     done
@@ -182,25 +224,8 @@ cmd link %{{
         exit 0
     fi
 }}
-map P link
-
-# pasting done right
-# cmd paste !{{
-#     send="while read -r line; do lf -remote \"send $id echo \$line\"; done && lf -remote 'send reload'"
-#     load=$(lf -remote 'load')
-#     mode=$(echo "$load" | sed -n '1p')
-#     list=$(echo "$load" | sed '1d')
-#     s='' && [ ! -w . ] && s='sudo'
-#     case "$mode" in
-#         copy) cmd='cp-p';; move) cmd='mv-p';;
-#     esac
-#     cmd="$cmd --new-line"
-#     for f in $list; do
-#         $s sh -c "$cmd --backup=numbered \"$f\" . | $send &"
-#     done
-#     lf -remote 'send load'
-#     lf -remote 'send clear'
-# }}
+map PP link
+map Pp link -r
 
 # move current file or selected files to trash folder
 cmd trash %trash-put ${(f)fx}
@@ -222,31 +247,31 @@ map <delete> delete
 # (xkcd link: https://xkcd.com/1168/)
 cmd extract ${{
     set -f
-    case $f in
-        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $f;;
-        *.tar.gz|*.tgz) tar xzvf $f;;
-        *.tar.xz|*.txz) tar xJvf $f;;
-        *.zip) unzip $f;;
-        *.rar) unrar x $f;;
-        *.7z) 7z x $f;;
+    case "$f" in
+        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf "$f" ;;
+        *.tar.gz|*.tgz) tar xzvf "$f" ;;
+        *.tar.xz|*.txz) tar xJvf "$f" ;;
+        *.zip) unzip "$f" ;;
+        *.rar) unrar x "$f" ;;
+        *.7z) 7z x "$f" ;;
     esac
 }}
 
 # compress current file or selected files with tar and gunzip
 cmd tar ${{
     set -f
-    mkdir $1
-    cp -r ${(f)fx} $1
-    tar czf $1.tar.gz $1
-    rm -rf $1
+    mkdir "$1"
+    cp -a ${(f)fx} "$1"
+    tar czf "$1.tar.gz" "$1"
+    rm -rf "$1"
 }}
 
 # compress current file or selected files with zip
 cmd zip ${{
     set -f
-    mkdir $1
-    cp -r ${(f)fx} $1
-    zip -r $1.zip $1
-    rm -rf $1
+    mkdir "$1"
+    cp -a ${(f)fx} "$1"
+    zip -r "$1.zip" "$1"
+    rm -rf "$1"
 }}
 
