@@ -1,0 +1,204 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (setf *load-verbose* nil *load-print* nil
+        *compile-verbose* nil *compile-print* nil)
+  (ros:ensure-asdf)
+  #+quicklisp
+  (ql:quickload '(:alexandria :split-sequence) :silent t))
+
+(defmacro run (command &rest args)
+  `(nth-value 0 (uiop:run-program ,command :ignore-error-status t 
+                                  :input :interactive
+                                  :output '(:string :stripped t) 
+                                  :error-output :interactive . ,args)))
+
+(defmacro in-directory (path &body body)
+  (alexandria:with-gensyms (cwd)
+    `(let ((,cwd (uiop:getcwd)))
+       (uiop:chdir ,path)
+       (let ((result (multiple-value-list (progn . ,body))))
+         (uiop:chdir ,cwd)
+         (values-list result)))))
+
+(defun merge-namestrings (subpath base)
+  (let ((base (if (string= base ".") "" base)))
+    (namestring (merge-pathnames subpath 
+                                 (uiop:ensure-directory-pathname base)))))
+
+(defun list-files (path &rest types)
+  (in-directory path
+    (let ((result 
+            (split-sequence:split-sequence
+              #\Linefeed
+              (run 
+                (let ((type-options 
+                        (nbutlast 
+                          (mapcan (lambda (k)
+                                    (list "-type" 
+                                          (string-downcase (symbol-name k))
+                                          "-o"))
+                                  types)))) 
+                  `("find" "." "-mindepth" "1" "-maxdepth" "1" 
+                    . ,type-options)))
+              :remove-empty-subseqs t)))
+      (map-into result (lambda (file) 
+                         (merge-namestrings (subseq file 2) path))
+                result))))
+
+(defun traverse-mirror (mirror-dir file-table dir-table link-reader-fn)
+  (setf (gethash mirror-dir dir-table) t)
+  (let ((subdirs (list-files mirror-dir :d))
+        (links (list-files mirror-dir :l)))
+    (dolist (link links)
+      (alexandria:when-let ((link-value 
+                              (funcall link-reader-fn link mirror-dir))) 
+        (push link (gethash link-value file-table))))
+    (dolist (subdir subdirs)
+      (traverse-mirror subdir file-table dir-table link-reader-fn))))
+
+(defun read-link (link mirror-dir original-root)
+  (let ((link-value (run `("readlink" ,link))))
+    (when (string/= link-value "")
+      (let* ((link-value (in-directory mirror-dir
+                           (run `("realpath" ,link-value))))
+             (short-link-value 
+               (namestring (uiop:enough-pathname link-value original-root))))
+        (when (string/= link-value short-link-value)
+          short-link-value)))))
+
+(defun generate-unique-name ()
+  (run `("cat" "/proc/sys/kernel/random/uuid")))
+
+(defun make-test-command (file)
+  (list :test file))
+
+(defun make-mkdir-command (dir)
+  (list :mkdir dir))
+
+(defun make-remove-command (file)
+  (list :rm file))
+
+(defun make-move-command (src dest)
+  (list :mv src dest))
+
+(defun make-copy-command (src dest)
+  (list :cp src dest))
+
+(defun generate-script (original-root mirror-root)
+  (when (string/= original-root mirror-root) 
+    (let ((temp-table (make-hash-table :test 'equal))
+          (file-table (make-hash-table :test 'equal))
+          (dep-file-table (make-hash-table :test 'equal))
+          (dir-table (make-hash-table :test 'equal)))
+      (in-directory mirror-root
+        (traverse-mirror "." file-table dir-table 
+                         (alexandria:rcurry #'read-link original-root)))
+      (alexandria:maphash-keys
+        (lambda (file)
+          (let ((linked-parent-directory
+                  (loop :for dirpath := (uiop:pathname-directory-pathname file)
+                        :then (uiop:pathname-parent-directory-pathname dirpath)
+                        :for dirstr := (namestring dirpath)
+                        :while (string/= dirstr "")
+                        :for dir := (subseq dirstr 0 (1- (length dirstr)))
+                        :when (gethash dir file-table) :return dir))) 
+            (if linked-parent-directory
+              (setf (gethash file dep-file-table) linked-parent-directory)
+              (setf (gethash file temp-table) 
+                    (concatenate 'string (substitute #\~ #\/ file 
+                                                     :test #'char=) "~~~" 
+                                 (generate-unique-name))))))
+        file-table)
+      (let ((new-directories 
+              (sort (delete "." (alexandria:hash-table-keys dir-table)
+                            :test #'string= :count 1) #'< :key #'length))
+            (deprecated-files 
+              (nset-difference
+                (nset-difference 
+                  (in-directory original-root (list-files "." :d :f :l))
+                  (alexandria:hash-table-values temp-table) :test #'string=)
+                (alexandria:hash-table-keys temp-table) :test #'string=)))
+        (let (test-commands initial-move-commands remove-commands 
+              mkdir-commands copy-commands move-commands)
+          (maphash (lambda (file temp-place)
+                     (push (make-test-command file) test-commands)
+                     (push (make-move-command file temp-place) 
+                           initial-move-commands))
+                   temp-table)
+          (setf remove-commands 
+                (mapcar #'make-remove-command deprecated-files))
+          (setf mkdir-commands 
+                (mapcar #'make-mkdir-command new-directories))
+          (maphash 
+            (lambda (file temp-place)
+              (let ((destinations (gethash file file-table))) 
+                (setf copy-commands
+                      (nconc 
+                        (mapcar (alexandria:curry #'make-copy-command
+                                                  temp-place)
+                                (rest destinations))
+                        copy-commands))
+                (setf move-commands
+                      (nconc (list (make-move-command 
+                                     temp-place (first destinations)))
+                             move-commands))))
+            temp-table)
+          (maphash
+            (flet ((substitute-parent (full old new)
+                     (concatenate 'string new (subseq full (length old))))) 
+              (lambda (file parent-directory)
+                (let ((destinations (gethash file file-table)))
+                  (setf copy-commands
+                        (nconc
+                          (mapcar (alexandria:curry 
+                                    #'make-copy-command
+                                    (substitute-parent 
+                                      file parent-directory
+                                      (gethash parent-directory
+                                               temp-table)))
+                                  destinations)
+                          copy-commands)))))
+            dep-file-table)
+          (append test-commands initial-move-commands remove-commands 
+                  mkdir-commands copy-commands move-commands))))))
+
+(defun print-script (commands)
+  (format t "#!/bin/sh~%")
+  (labels ((concat (&rest args) (apply #'concatenate 'string args))
+           (protect (name)
+             (concat "'./" 
+                     (reduce 
+                       (lambda (s1 s2) (concat s1 "'\\''" s2))
+                       (split-sequence:split-sequence #\' name :test #'char=))
+                     "'"))) 
+    (dolist (command commands)
+      (format t "~A && ~%" 
+              (case (first command)
+                (:test (concat "test -e " (protect (second command))))
+                (:mkdir (concat "mkdir -v " (protect (second command))))
+                (:rm (concat "rm -rv " (protect (second command))))
+                (:mv (concat "mv -nTv " (protect (second command)) " " 
+                             (protect (third command))))
+                (:cp (concat "cp -anTv " (protect (second command)) " " 
+                             (protect (third command))))))))
+  (format t "true || { echo 'Error occured, aborting.'; exit 1; }~%"))
+
+(defun main (&rest argv)
+  (handler-case
+      (progn
+        (when (/= 2 (length argv))
+          (error "incorrect number of arguments provided"))
+        (let ((original-root 
+                (or (namestring (truename (nth 0 argv))) 
+                    (error "no original directory tree path specified")))
+              (mirror-root 
+                (or (namestring (truename (nth 1 argv)))
+                    (error "no mirror directory tree path specified"))))
+          (print-script (generate-script original-root mirror-root))))
+      (t (msg) (format *error-output* "Error: ~A~%" msg) 1)))
+
+;;; vim: set ft=lisp lisp:
