@@ -49,26 +49,27 @@ exec ros -Q -- $0 "$@"
                          (merge-namestrings (subseq file 2) path))
                 result))))
 
-(defun traverse-mirror (mirror-dir file-table dir-table link-reader-fn)
-  (setf (gethash mirror-dir dir-table) t)
-  (let ((subdirs (list-files mirror-dir :d))
-        (links (list-files mirror-dir :l)))
+(defun real-path (path)
+  (run `("realpath" ,path)))
+
+(defun traverse-pattern (pattern-dir file-table dir-table link-reader-fn)
+  (setf (gethash pattern-dir dir-table) t)
+  (let ((subdirs (list-files pattern-dir :d))
+        (links (list-files pattern-dir :l)))
     (dolist (link links)
-      (alexandria:when-let ((link-value 
-                              (funcall link-reader-fn link mirror-dir))) 
+      (alexandria:when-let ((link-value (funcall link-reader-fn link))) 
         (push link (gethash link-value file-table))))
     (dolist (subdir subdirs)
-      (traverse-mirror subdir file-table dir-table link-reader-fn))))
+      (traverse-pattern subdir file-table dir-table link-reader-fn))))
 
-(defun read-link (link mirror-dir original-root)
-  (let ((link-value (run `("readlink" ,link))))
-    (when (string/= link-value "")
-      (let* ((link-value (in-directory mirror-dir
-                           (run `("realpath" ,link-value))))
-             (short-link-value 
-               (namestring (uiop:enough-pathname link-value original-root))))
-        (when (string/= link-value short-link-value)
-          short-link-value)))))
+(defun read-link (link original-root)
+  (let* ((link-value (real-path link))
+         (short-link-value 
+           (enough-namestring link-value 
+                              (namestring (uiop:ensure-directory-pathname 
+                                            original-root)))))
+    (when (string/= link-value short-link-value)
+      short-link-value)))
 
 (defun generate-unique-name ()
   (run `("cat" "/proc/sys/kernel/random/uuid")))
@@ -88,14 +89,14 @@ exec ros -Q -- $0 "$@"
 (defun make-copy-command (src dest)
   (list :cp src dest))
 
-(defun generate-script (original-root mirror-root)
-  (when (string/= original-root mirror-root) 
+(defun generate-script (original-root pattern-root)
+  (when (string/= original-root pattern-root) 
     (let ((temp-table (make-hash-table :test 'equal))
           (file-table (make-hash-table :test 'equal))
           (dep-file-table (make-hash-table :test 'equal))
           (dir-table (make-hash-table :test 'equal)))
-      (in-directory mirror-root
-        (traverse-mirror "." file-table dir-table 
+      (in-directory pattern-root
+        (traverse-pattern "." file-table dir-table 
                          (alexandria:rcurry #'read-link original-root)))
       (alexandria:maphash-keys
         (lambda (file)
@@ -109,8 +110,8 @@ exec ros -Q -- $0 "$@"
             (if linked-parent-directory
               (setf (gethash file dep-file-table) linked-parent-directory)
               (setf (gethash file temp-table) 
-                    (concatenate 'string (substitute #\~ #\/ file 
-                                                     :test #'char=) "~~~" 
+                    (concatenate 'string (substitute #\@ #\/ file 
+                                                     :test #'char=) "..." 
                                  (generate-unique-name))))))
         file-table)
       (let ((new-directories 
@@ -175,30 +176,27 @@ exec ros -Q -- $0 "$@"
                        (lambda (s1 s2) (concat s1 "'\\''" s2))
                        (split-sequence:split-sequence #\' name :test #'char=))
                      "'"))) 
-    (dolist (command commands)
-      (format t "~A && ~%" 
-              (case (first command)
-                (:test (concat "test -e " (protect (second command))))
-                (:mkdir (concat "mkdir -v " (protect (second command))))
-                (:rm (concat "rm -rv " (protect (second command))))
-                (:mv (concat "mv -nTv " (protect (second command)) " " 
-                             (protect (third command))))
-                (:cp (concat "cp -anTv " (protect (second command)) " " 
-                             (protect (third command))))))))
-  (format t "true || { echo 'Error occured, aborting.'; exit 1; }~%"))
+    (let ((c 0)) 
+      (dolist (command commands)
+        (format t "{ c=~A; ~A; } && ~%" (incf c)
+                (ecase (first command)
+                  (:test (concat "test -e " (protect (second command))))
+                  (:mkdir (concat "mkdir -v " (protect (second command))))
+                  (:rm (concat "rm -rv " (protect (second command))))
+                  (:mv (concat "mv -nTv " (protect (second command)) " " 
+                               (protect (third command))))
+                  (:cp (concat "cp -anTv " (protect (second command)) " " 
+                               (protect (third command)))))))))
+  (format t "true || { echo \"~A\"; exit 1; }~%"
+          "Error occured at c=$c, aborting."))
 
 (defun main (&rest argv)
   (handler-case
-      (progn
-        (when (/= 2 (length argv))
-          (error "incorrect number of arguments provided"))
-        (let ((original-root 
-                (or (namestring (truename (nth 0 argv))) 
-                    (error "no original directory tree path specified")))
-              (mirror-root 
-                (or (namestring (truename (nth 1 argv)))
-                    (error "no mirror directory tree path specified"))))
-          (print-script (generate-script original-root mirror-root))))
+      (if (alexandria:sequence-of-length-p argv 2)
+        (let ((original-root (real-path (first argv)))
+              (pattern-root (real-path (second argv))))
+          (print-script (generate-script original-root pattern-root)))
+        (error "expecting 2 parameters -- original and pattern directories"))
       (t (msg) (format *error-output* "Error: ~A~%" msg) 1)))
 
 ;;; vim: set ft=lisp lisp:
