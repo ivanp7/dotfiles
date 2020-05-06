@@ -52,7 +52,9 @@ map <esc> $true
 
 # execute current file (must be executable)
 map x !"$f"
+map -x push !"$f"<space>
 map X &"$f"
+map -X push &"$f"<space>
 
 # create directory
 cmd mkdir %mkdir "$(echo "$@")"; lf -remote "send $id reload"
