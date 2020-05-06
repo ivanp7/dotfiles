@@ -47,16 +47,21 @@ set relativenumber
 # use enter for shell commands
 # map <enter> shell
 
+# do nothing; interrupt input
+map <esc> $true
+
 # execute current file (must be executable)
 map x !"$f"
 map X &"$f"
 
 # create directory
-cmd mkdir %mkdir "$(echo "$@")"
+cmd mkdir %mkdir "$(echo "$@")"; lf -remote "send $id reload"
 map [ push ::mkdir<space>
 
+# touch
+map tt %touch ${(f)fx}; lf -remote "send $id reload"
 # create file
-cmd touch %touch "$(echo "$@")"
+cmd touch %touch "$(echo "$@")"; lf -remote "send $id reload"
 map ] push ::touch<space>
 
 # edit files
@@ -67,6 +72,65 @@ map al %readlink "$f"
 
 # display owner & group
 map ao %stat -c %U:%G "$f"
+
+# calculate used space
+map au %du -ch ${(f)fx} | tail -n 1
+
+# set permissions (a+-rwxXst)
+map t+r %chmod +r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t-r %chmod -r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t+w %chmod +w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t-w %chmod -w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t+x %chmod +x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t-x %chmod -x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t+X %chmod +X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t-X %chmod -X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t+s %chmod +s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t-s %chmod -s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t+t %chmod +t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t-t %chmod -t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+
+# set permissions (u+-rwxXst)
+map tu+r %chmod u+r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu-r %chmod u-r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu+w %chmod u+w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu-w %chmod u-w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu+x %chmod u+x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu-x %chmod u-x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu+X %chmod u+X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu-X %chmod u-X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu+s %chmod u+s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu-s %chmod u-s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu+t %chmod u+t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu-t %chmod u-t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+
+# set permissions (g+-rwxXst)
+map tg+r %chmod g+r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg-r %chmod g-r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg+w %chmod g+w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg-w %chmod g-w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg+x %chmod g+x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg-x %chmod g-x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg+X %chmod g+X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg-X %chmod g-X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg+s %chmod g+s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg-s %chmod g-s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg+t %chmod g+t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg-t %chmod g-t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+
+# set permissions (o+-rwxXst)
+map to+r %chmod o+r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to-r %chmod o-r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to+w %chmod o+w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to-w %chmod o-w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to+x %chmod o+x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to-x %chmod o-x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to+X %chmod o+X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to-X %chmod o-X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to+s %chmod o+s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to-s %chmod o-s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to+t %chmod o+t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to-t %chmod o-t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
 
 # copy path
 map Ypx $echo -n "$f" | xclip -i -selection clipboard
@@ -85,6 +149,7 @@ map O $mimeopen --ask "$f"
 # use either file extensions and/or mime types here. Below uses an editor for
 # text files and a file opener for the rest.
 cmd open ${{
+    set -f
     case "$f" in
         *.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.iso)
             mntdir="$f-archivemount"
@@ -110,8 +175,18 @@ cmd open ${{
 map V push ::glob-select<space>
 map U push ::glob-unselect<space>
 
-cmd back_toggle :toggle; up; up
-map b back_toggle
+cmd moveless_toggle %{{
+    lf -remote "send $id toggle"
+    lf -remote "send $id select \"$(echo "$f")\""
+}}
+cmd back_toggle %{{
+    lf -remote "send $id toggle"
+    lf -remote "send $id select \"$(echo "$f")\""
+    lf -remote "send $id up"
+}}
+map <space> moveless_toggle
+map b toggle
+map B back_toggle
 
 # define a custom 'rename' command without prompt for overwrite
 # cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
@@ -153,10 +228,12 @@ cmd smart_rename ${{
     then lf -remote "send $id rename"
     else lf -remote "send $id bulk_rename"
     fi
+
+    lf -remote "send $id reload"
 }}
 
 map r smart_rename
-map R $vidir ${(f)fs}
+map R %vidir ${(f)fs}; lf -remote "send $id reload"
 
 cmd paste %{{
     mode=""
@@ -190,10 +267,23 @@ cmd paste %{{
         lf -remote "send $id echo no files to paste"
         exit 0
     elif [ "$mode" = "move" ]; then
+        lf -remote "send load"
         lf -remote "send clear"
+        lf -remote "send $id reload"
     fi
 }}
 map p paste
+
+cmd rsync !{{
+    load=$(lf -remote 'load')
+    mode=$(echo "$load" | sed -n '1p')
+    list=$(echo "$load" | sed '1d')
+    if [ $mode = 'copy' ]; then
+        rsync -avP ${(f)list} .
+        lf -remote "send $id reload"
+    fi
+}}
+map -p rsync
 
 cmd link %{{
     mode=""
@@ -222,26 +312,30 @@ cmd link %{{
     if [ -z "$files" ]; then
         lf -remote "send $id echo no files to link"
         exit 0
+    else
+        lf -remote "send $id reload"
     fi
 }}
 map PP link
 map Pp link -r
 
+cmd smart_delete ${{
+    echo
+    echo "$fx"
+    echo -n "delete? [y/N] "
+    read ans
+    if [ "$ans" = "y" ]
+    then 
+        lf -remote "send clear"
+        rm -r ${(f)fx}
+        lf -remote "send $id reload"
+    fi
+}}
+map <delete> smart_delete
+
 # move current file or selected files to trash folder
-cmd trash %trash-put ${(f)fx}
-
-# define a custom 'delete' command
-# cmd delete ${{
-#     set -f
-#     printf "$fx\n"
-#     printf "delete?[y/n]"
-#     read ans
-#     [ $ans = "y" ] && rm -rf $fx
-# }}
-
-# use '<delete>' key for either 'trash' or 'delete' command
+cmd trash %trash-put ${(f)fx}; lf -remote "send $id reload"
 map <bs2> trash
-map <delete> delete
 
 # extract the current file with the right command
 # (xkcd link: https://xkcd.com/1168/)
@@ -255,6 +349,8 @@ cmd extract ${{
         *.rar) unrar x "$f" ;;
         *.7z) 7z x "$f" ;;
     esac
+
+    lf -remote "send $id reload"
 }}
 
 # compress current file or selected files with tar and gunzip
@@ -264,6 +360,8 @@ cmd tar ${{
     cp -a ${(f)fx} "$1"
     tar czf "$1.tar.gz" "$1"
     rm -rf "$1"
+
+    lf -remote "send $id reload"
 }}
 
 # compress current file or selected files with zip
@@ -273,5 +371,10 @@ cmd zip ${{
     cp -a ${(f)fx} "$1"
     zip -r "$1.zip" "$1"
     rm -rf "$1"
+
+    lf -remote "send $id reload"
 }}
+
+# put lf into background
+map <c-z> $kill -STOP $PPID
 
