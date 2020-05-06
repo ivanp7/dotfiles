@@ -182,7 +182,8 @@ exec ros -Q -- $0 "$@"
                 (ecase (first command)
                   (:test (concat "test -e " (protect (second command))))
                   (:mkdir (concat "mkdir -v " (protect (second command))))
-                  (:rm (concat "rm -rv " (protect (second command))))
+                  (:rm (concat "test ! -e " (protect (second command)) 
+                               " || rm -rv " (protect (second command))))
                   (:mv (concat "mv -nTv " (protect (second command)) " " 
                                (protect (third command))))
                   (:cp (concat "cp -anTv " (protect (second command)) " " 
