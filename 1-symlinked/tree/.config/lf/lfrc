@@ -153,8 +153,8 @@ map O $mimeopen --ask "$f"
 cmd open ${{
     set -f
     case "$f" in
-        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.iso)
-            mntdir="$f-archivemount"
+        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.iso)
+            mntdir="$f-archive-mount"
             [ ! -d "$mntdir" ] && {
                 mkdir -p "$mntdir"
                 archivemount "$f" "$mntdir"
@@ -329,7 +329,7 @@ cmd smart_delete ${{
     if [ "$ans" = "y" ]
     then 
         lf -remote "send clear"
-        rm -r ${(f)fx}
+        rm -rf ${(f)fx}
         lf -remote "send $id reload"
     fi
 }}
@@ -343,36 +343,78 @@ map <bs2> trash
 # (xkcd link: https://xkcd.com/1168/)
 cmd extract ${{
     set -f
+
+    prepare_dir ()
+    {
+        contents_dir="$f-archive-contents"
+        mkdir "$contents_dir"
+        cd "$contents_dir"
+    }
+
     case "$f" in
-        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf "$f" ;;
-        *.tar.gz|*.tgz) tar xzvf "$f" ;;
-        *.tar.xz|*.txz) tar xJvf "$f" ;;
-        *.zip) unzip "$f" ;;
-        *.rar) unrar x "$f" ;;
-        *.7z) 7z x "$f" ;;
+        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) prepare_dir; tar xjvf "$f" ;;
+        *.tar.gz|*.tgz) prepare_dir; tar xzvf "$f" ;;
+        *.tar.xz|*.txz) prepare_dir; tar xJvf "$f" ;;
+        *.zip) prepare_dir; unzip "$f" ;;
+        *.rar) prepare_dir; unrar x "$f" ;;
+        *.7z) prepare_dir; 7z x "$f" ;;
     esac
 
     lf -remote "send $id reload"
 }}
 
+# list archive contents
+cmd list !{{
+    set -f
+    case "$f" in
+        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar tjvf "$f" ;;
+        *.tar.gz|*.tgz) tar tzvf "$f" ;;
+        *.tar.xz|*.txz) tar tJvf "$f" ;;
+        *.zip) unzip -l "$f" ;;
+        *.rar) unrar l "$f" ;;
+        *.7z) 7z l "$f" ;;
+    esac
+}}
+
 # compress current file or selected files with tar and gunzip
 cmd tar ${{
-    set -f
-    mkdir "$1"
-    cp -a ${(f)fx} "$1"
-    tar czf "$1.tar.gz" "$1"
-    rm -rf "$1"
+    tmpdir=$(mktemp -d -p .)
+    cp -a ${(f)fx} $tmpdir/
+
+    cd $tmpdir
+    tar cJf "$1.tar.xz" ./*
+    mv "$1.tar.xz" ../
+    cd ..
+    rm -rf $tmpdir
 
     lf -remote "send $id reload"
 }}
 
 # compress current file or selected files with zip
 cmd zip ${{
-    set -f
-    mkdir "$1"
-    cp -a ${(f)fx} "$1"
-    zip -r "$1.zip" "$1"
-    rm -rf "$1"
+    tmpdir=$(mktemp -d -p .)
+    cp -a ${(f)fx} $tmpdir/
+
+    cd $tmpdir
+    zip -r "$1.zip" ./*
+    mv "$1.zip" ../
+    cd ..
+    rm -rf $tmpdir
+
+    lf -remote "send $id reload"
+}}
+
+# compress current file or selected files with 7z
+cmd 7z ${{
+    tmpdir=$(mktemp -d -p .)
+    cp -a ${(f)fx} $tmpdir/
+
+    cd $tmpdir
+    7z a "$1.7z" ./*
+    ls
+    mv "$1.7z" ../
+    cd ..
+    rm -rf $tmpdir
 
     lf -remote "send $id reload"
 }}
