@@ -145,6 +145,23 @@ map Ypt $tmux set-buffer -- "$f"
 map Ydt $tmux set-buffer -- "$(dirname "$f")"
 map Ynt $tmux set-buffer -- "$(basename "$f")"
 
+# preview
+cmd preview ${{
+    set -f
+    if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
+    case $mime_type in
+        "") ;;
+        image/*|video/*)
+            preview.sh "$f"
+            ;;
+        application/zip|application/x-zip-compressed|application/vnd.rar|application/x-7z-compressed|application/x-bzip|application/x-bzip2|application/gzip|application/x-xz|application/x-iso9660-image)
+            lf -remote "send $id list"
+            ;;
+        *) less "$f"
+    esac
+}}
+map i preview
+
 # dedicated keys for file opener actions
 # map o &mimeopen "$f"
 # map O $mimeopen --ask "$f"
@@ -161,7 +178,9 @@ map o opener
 # text files and a file opener for the rest.
 cmd open ${{
     set -f
-    case $(file --mime-type "$f" -b) in
+    if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
+    case $mime_type in
+        "") ;;
         image/*) 
             setsid $VIEWER ${(f)fx} > /dev/null 2>&1 & 
             ;;
@@ -378,7 +397,9 @@ cmd extract ${{
     }
 
     for file in ${(f)fx}; do
-        case $(file --mime-type "$file" -b) in
+        if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
+        case $mime_type in
+            "") ;;
             application/zip|application/x-zip-compressed)
                 prepare_dir "$file"; unzip "$file" ;;
             application/vnd.rar)
@@ -399,7 +420,9 @@ cmd extract ${{
 
 # list archive contents
 cmd list !{{
-    case $(file --mime-type "$f" -b) in
+    if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
+    case $mime_type in
+        "") ;;
         application/zip|application/x-zip-compressed)
             unzip -l "$f" ;;
         application/vnd.rar)
@@ -414,7 +437,6 @@ cmd list !{{
             tar tJvf "$f" ;;
     esac
 }}
-map Ia list
 
 # compress current file or selected files with tar and gunzip
 cmd tar ${{
