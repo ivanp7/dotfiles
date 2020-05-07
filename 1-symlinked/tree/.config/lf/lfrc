@@ -75,6 +75,9 @@ map al %readlink "$f"
 # display owner & group
 map ao %stat -c %U:%G "$f"
 
+# show MIME type
+map am %file --mime-type "$f" -b
+
 # calculate used space
 map au %du -ch ${(f)fx} | tail -n 1
 
@@ -143,8 +146,14 @@ map Ydt $tmux set-buffer -- "$(dirname "$f")"
 map Ynt $tmux set-buffer -- "$(basename "$f")"
 
 # dedicated keys for file opener actions
-map o &mimeopen "$f"
-map O $mimeopen --ask "$f"
+# map o &mimeopen "$f"
+# map O $mimeopen --ask "$f"
+cmd opener ${{
+    for file in ${(f)fx}; do 
+        setsid $OPENER "$file" > /dev/null 2>&1 &
+    done
+}}
+map o opener
 
 # define a custom 'open' command
 # This command is called when current file is not a directory. You may want to
@@ -152,24 +161,41 @@ map O $mimeopen --ask "$f"
 # text files and a file opener for the rest.
 cmd open ${{
     set -f
-    case "$f" in
-        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2|*.tar.gz|*.tgz|*.tar.xz|*.txz|*.zip|*.rar|*.7z|*.iso)
-            mntdir="$f-archive-mount"
-            [ ! -d "$mntdir" ] && {
-                mkdir -p "$mntdir"
-                archivemount "$f" "$mntdir"
-                echo "$mntdir" >> "/tmp/__lf_archivemount_$id"
-            }
-            lf -remote "send $id cd \"$mntdir\""
+    case $(file --mime-type "$f" -b) in
+        image/*) 
+            setsid $VIEWER ${(f)fx} > /dev/null 2>&1 & 
+            ;;
+        video/*|audio/*) 
+            setsid $PLAYER ${(f)fx} > /dev/null 2>&1 & 
+            ;;
+        application/pdf) 
+            setsid $PDFVIEWER ${(f)fx} > /dev/null 2>&1 & 
+            ;;
+        text/html) 
+            for file in ${(f)fx}; do 
+                setsid $BROWSER "$file" > /dev/null 2>&1 & 
+            done
+            ;;
+        application/zip|application/x-zip-compressed|application/vnd.rar|application/x-7z-compressed|application/x-bzip|application/x-bzip2|application/gzip|application/x-xz|application/x-iso9660-image)
+            postfix="-archive-mount"
+            first_file=""
+            for file in ${(f)fx}; do
+                if [ -z "$first_file" ]; then
+                    first_file="$file"
+                fi
+                mntdir="$file$postfix"
+                [ ! -d "$mntdir" ] && {
+                    mkdir -p "$mntdir"
+                    archivemount "$f" "$mntdir"
+                    echo "$mntdir" >> "/tmp/__lf_archivemount_$id"
+                }
+            done
+            file="$(echo "$first_file$postfix" | sed 's/\"/\\\"/g')"
+            lf -remote "send $id cd \"$file\""
             lf -remote "send $id reload"
             ;;
-        *)
-            case $(file --mime-type "$f" -b) in
-                text/*) $EDITOR ${(f)fx};;
-                image/*) $VIEWER ${(f)fx} &;;
-                application/pdf) $PDFVIEWER ${(f)fx} &;;
-                *) for f in ${(f)fx}; do setsid $OPENER "$f" > /dev/null 2> /dev/null & done;;
-            esac
+
+        *) $EDITOR ${(f)fx} ;;
     esac
 }}
 
@@ -179,11 +205,13 @@ map U push ::glob-unselect<space>
 
 cmd moveless_toggle %{{
     lf -remote "send $id toggle"
-    lf -remote "send $id select \"$(echo "$f")\""
+    file="$(echo "$f" | sed 's/\"/\\\"/g')"
+    lf -remote "send $id select \"$file\""
 }}
 cmd back_toggle %{{
     lf -remote "send $id toggle"
-    lf -remote "send $id select \"$(echo "$f")\""
+    file="$(echo "$f" | sed 's/\"/\\\"/g')"
+    lf -remote "send $id select \"$file\""
     lf -remote "send $id up"
 }}
 map <space> moveless_toggle
@@ -342,39 +370,51 @@ map <bs2> trash
 # extract the current file with the right command
 # (xkcd link: https://xkcd.com/1168/)
 cmd extract ${{
-    set -f
-
     prepare_dir ()
     {
-        contents_dir="$f-archive-contents"
+        contents_dir="$1-archive-contents"
         mkdir "$contents_dir"
         cd "$contents_dir"
     }
 
-    case "$f" in
-        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) prepare_dir; tar xjvf "$f" ;;
-        *.tar.gz|*.tgz) prepare_dir; tar xzvf "$f" ;;
-        *.tar.xz|*.txz) prepare_dir; tar xJvf "$f" ;;
-        *.zip) prepare_dir; unzip "$f" ;;
-        *.rar) prepare_dir; unrar x "$f" ;;
-        *.7z) prepare_dir; 7z x "$f" ;;
-    esac
+    for file in ${(f)fx}; do
+        case $(file --mime-type "$file" -b) in
+            application/zip|application/x-zip-compressed)
+                prepare_dir "$file"; unzip "$file" ;;
+            application/vnd.rar)
+                prepare_dir "$file"; unrar x "$file" ;;
+            application/x-7z-compressed|application/x-iso9660-image)
+                prepare_dir "$file"; 7z x "$file" ;;
+            application/x-bzip|application/x-bzip2)
+                prepare_dir "$file"; tar xjvf "$file" ;;
+            application/gzip)
+                prepare_dir "$file"; tar xzvf "$file" ;;
+            application/x-xz)
+                prepare_dir "$file"; tar xJvf "$file" ;;
+        esac
+    done
 
     lf -remote "send $id reload"
 }}
 
 # list archive contents
 cmd list !{{
-    set -f
-    case "$f" in
-        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar tjvf "$f" ;;
-        *.tar.gz|*.tgz) tar tzvf "$f" ;;
-        *.tar.xz|*.txz) tar tJvf "$f" ;;
-        *.zip) unzip -l "$f" ;;
-        *.rar) unrar l "$f" ;;
-        *.7z) 7z l "$f" ;;
+    case $(file --mime-type "$f" -b) in
+        application/zip|application/x-zip-compressed)
+            unzip -l "$f" ;;
+        application/vnd.rar)
+            unrar l "$f" ;;
+        application/x-7z-compressed|application/x-iso9660-image)
+            7z l "$f" ;;
+        application/x-bzip|application/x-bzip2)
+            tar tjvf "$f" ;;
+        application/gzip)
+            tar tzvf "$f" ;;
+        application/x-xz)
+            tar tJvf "$f" ;;
     esac
 }}
+map Ia list
 
 # compress current file or selected files with tar and gunzip
 cmd tar ${{
