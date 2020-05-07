@@ -1,5 +1,6 @@
 # This is Git's per-user configuration file.
 [core]
+    pager = less
     editor = vim
     excludesfile = ~/.gitignore_global
 
