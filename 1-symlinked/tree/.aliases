@@ -12,7 +12,7 @@ alias egrep='egrep --color=auto '
 
 alias diff='diff --color=auto '
 
-alias less='/usr/share/vim/vim82/macros/less.sh '
+alias less="$PAGER "
 
 alias lf='lfcd '
 alias d='dirs -v | head'

@@ -157,7 +157,7 @@ cmd preview ${{
         application/zip|application/x-zip-compressed|application/vnd.rar|application/x-7z-compressed|application/x-bzip|application/x-bzip2|application/gzip|application/x-xz|application/x-iso9660-image)
             lf -remote "send $id list"
             ;;
-        *) less "$f"
+        *) $PAGER "$f"
     esac
 }}
 map i preview

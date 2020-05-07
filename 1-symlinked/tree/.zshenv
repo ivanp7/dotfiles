@@ -3,6 +3,8 @@ typeset -U path
 path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/bin/local $HOME/.roswell/bin)
 
 # default applications
+
+export PAGER=/usr/share/vim/vim82/macros/less.sh
 export EDITOR=/usr/bin/vim
 export VISUAL=$EDITOR
 export FILE=lfcd
