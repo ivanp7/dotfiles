@@ -164,12 +164,16 @@ cmd preview ${{
             case $(echo $mime_type | tail -c +13) in
                 pdf) 
                     pdftotext -layout "$f" - | $PAGER ;;
+                x-tar)
+                    tar tvf "$f" | $PAGER ;;
                 x-bzip|x-bzip2)
                     tar tjvf "$f" | $PAGER ;;
                 gzip)
                     tar tzvf "$f" | $PAGER ;;
                 x-xz)
                     tar tJvf "$f" | $PAGER ;;
+                zstd)
+                    tar tvf "$f" --zstd | $PAGER ;;
                 zip|x-zip-compressed)
                     unzip -l "$f" | $PAGER ;;
                 x-7z-compressed|x-iso9660-image)
@@ -423,18 +427,22 @@ cmd extract ${{
         if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
         case $mime_type in
             "") ;;
-            application/zip|application/x-zip-compressed)
-                prepare_dir "$file"; unzip "$file" ;;
-            application/vnd.rar)
-                prepare_dir "$file"; unrar x "$file" ;;
-            application/x-7z-compressed|application/x-iso9660-image)
-                prepare_dir "$file"; 7z x "$file" ;;
+            application/x-tar)
+                prepare_dir "$file"; tar xvf "$file" ;;
             application/x-bzip|application/x-bzip2)
                 prepare_dir "$file"; tar xjvf "$file" ;;
             application/gzip)
                 prepare_dir "$file"; tar xzvf "$file" ;;
             application/x-xz)
                 prepare_dir "$file"; tar xJvf "$file" ;;
+            application/zstd)
+                prepare_dir "$file"; tar xvf "$file" --zstd ;;
+            application/zip|application/x-zip-compressed)
+                prepare_dir "$file"; unzip "$file" ;;
+            application/x-7z-compressed|application/x-iso9660-image)
+                prepare_dir "$file"; 7z x "$file" ;;
+            application/vnd.rar)
+                prepare_dir "$file"; unrar x "$file" ;;
         esac
     done
 
@@ -447,8 +455,47 @@ cmd tar ${{
     cp -a ${(f)fx} $tmpdir/
 
     cd $tmpdir
+    tar cf "$1.tar" ./*
+    mv "$1.tar" ../
+    cd ..
+    rm -rf $tmpdir
+
+    lf -remote "send $id reload"
+}}
+
+cmd gz ${{
+    tmpdir=$(mktemp -d -p .)
+    cp -a ${(f)fx} $tmpdir/
+
+    cd $tmpdir
+    tar czf "$1.tar.gz" ./*
+    mv "$1.tar.gz" ../
+    cd ..
+    rm -rf $tmpdir
+
+    lf -remote "send $id reload"
+}}
+
+cmd xz ${{
+    tmpdir=$(mktemp -d -p .)
+    cp -a ${(f)fx} $tmpdir/
+
+    cd $tmpdir
     tar cJf "$1.tar.xz" ./*
     mv "$1.tar.xz" ../
+    cd ..
+    rm -rf $tmpdir
+
+    lf -remote "send $id reload"
+}}
+
+cmd zstd ${{
+    tmpdir=$(mktemp -d -p .)
+    cp -a ${(f)fx} $tmpdir/
+
+    cd $tmpdir
+    tar cf "$1.tar.zst" --zstd ./*
+    mv "$1.tar.zst" ../
     cd ..
     rm -rf $tmpdir
 
@@ -476,7 +523,6 @@ cmd 7z ${{
 
     cd $tmpdir
     7z a "$1.7z" ./*
-    ls
     mv "$1.7z" ../
     cd ..
     rm -rf $tmpdir
