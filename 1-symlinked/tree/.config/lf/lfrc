@@ -76,7 +76,12 @@ map al %readlink "$f"
 map ao %stat -c %U:%G "$f"
 
 # show MIME type
+cmd link_mime %{{
+    if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
+    echo $mime_type
+}}
 map am %file --mime-type "$f" -b
+map aM link_mime
 
 # calculate used space
 map au %du -ch ${(f)fx} | tail -n 1
