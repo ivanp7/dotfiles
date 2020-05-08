@@ -151,6 +151,9 @@ cmd preview ${{
     if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
     case $mime_type in
         "") ;;
+        inode/directory)
+            tree -ad -L 3 -I ".git" -n "$f" | sed 's/ / /g' | $PAGER
+            ;;
         image/*|video/*)
             preview.sh "$f"
             ;;
