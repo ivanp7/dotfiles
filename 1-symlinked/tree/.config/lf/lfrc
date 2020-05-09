@@ -165,7 +165,9 @@ cmd preview ${{
         inode/directory)
             tree -ad -L 3 -I ".git" -n "$f" | sed 's/ / /g' | $PAGER ;;
         image/*|video/*)
-            preview.sh "$f" ;;
+            preview.sh "$f"
+            read -sk
+            ;;
         application/*)
             case $(echo $mime_type | tail -c +13) in
                 pdf) 
