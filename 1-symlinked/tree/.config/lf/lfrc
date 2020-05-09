@@ -77,7 +77,7 @@ map ao %stat -c %U:%G "$f"
 
 # show MIME type
 cmd link_mime %{{
-    if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
+    mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
     echo $mime_type
 }}
 map am %file --mime-type "$f" -b
@@ -86,61 +86,67 @@ map aM link_mime
 # calculate used space
 map au %du -ch ${(f)fx} | tail -n 1
 
+cmd setperm %{{
+    chmod $1 ${(f)fx}
+    lf -remote "send $id reload"
+    stat -c %A "$f"
+}}
+
 # set permissions (a+-rwxXst)
-map t+r %chmod +r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t-r %chmod -r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t+w %chmod +w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t-w %chmod -w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t+x %chmod +x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t-x %chmod -x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t+X %chmod +X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t-X %chmod -X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t+s %chmod +s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t-s %chmod -s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t+t %chmod +t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map t-t %chmod -t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map t+r setperm +r
+map t-r setperm -r
+map t+w setperm +w
+map t-w setperm -w
+map t+x setperm +x
+map t-x setperm -x
+map t+X setperm +X
+map t-X setperm -X
+map t+s setperm +s
+map t-s setperm -s
+map t+t setperm +t
+map t-t setperm -t
 
 # set permissions (u+-rwxXst)
-map tu+r %chmod u+r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu-r %chmod u-r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu+w %chmod u+w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu-w %chmod u-w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu+x %chmod u+x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu-x %chmod u-x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu+X %chmod u+X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu-X %chmod u-X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu+s %chmod u+s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu-s %chmod u-s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu+t %chmod u+t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tu-t %chmod u-t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tu+r setperm u+r
+map tu-r setperm u-r
+map tu+w setperm u+w
+map tu-w setperm u-w
+map tu+x setperm u+x
+map tu-x setperm u-x
+map tu+X setperm u+X
+map tu-X setperm u-X
+map tu+s setperm u+s
+map tu-s setperm u-s
+map tu+t setperm u+t
+map tu-t setperm u-t
 
 # set permissions (g+-rwxXst)
-map tg+r %chmod g+r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg-r %chmod g-r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg+w %chmod g+w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg-w %chmod g-w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg+x %chmod g+x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg-x %chmod g-x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg+X %chmod g+X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg-X %chmod g-X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg+s %chmod g+s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg-s %chmod g-s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg+t %chmod g+t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map tg-t %chmod g-t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map tg+r setperm g+r
+map tg-r setperm g-r
+map tg+w setperm g+w
+map tg-w setperm g-w
+map tg+x setperm g+x
+map tg-x setperm g-x
+map tg+X setperm g+X
+map tg-X setperm g-X
+map tg+s setperm g+s
+map tg-s setperm g-s
+map tg+t setperm g+t
+map tg-t setperm g-t
 
 # set permissions (o+-rwxXst)
-map to+r %chmod o+r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to-r %chmod o-r ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to+w %chmod o+w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to-w %chmod o-w ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to+x %chmod o+x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to-x %chmod o-x ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to+X %chmod o+X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to-X %chmod o-X ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to+s %chmod o+s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to-s %chmod o-s ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to+t %chmod o+t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
-map to-t %chmod o-t ${(f)fx}; lf -remote "send $id reload"; stat -c %A "$f"
+map to+r setperm o+r
+map to-r setperm o-r
+map to+w setperm o+w
+map to-w setperm o-w
+map to+x setperm o+x
+map to-x setperm o-x
+map to+X setperm o+X
+map to-X setperm o-X
+map to+s setperm o+s
+map to-s setperm o-s
+map to+t setperm o+t
+map to-t setperm o-t
 
 # copy path
 map Ypx $echo -n "$f" | xclip -i -selection clipboard
@@ -153,7 +159,7 @@ map Ynt $tmux set-buffer -- "$(basename "$f")"
 # preview
 cmd preview ${{
     set -f
-    if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
+    mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
     case $mime_type in
         "") ;;
         inode/directory)
@@ -205,7 +211,7 @@ map o opener
 # text files and a file opener for the rest.
 cmd open ${{
     set -f
-    if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
+    mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
     case $mime_type in
         "") ;;
         image/*)
@@ -264,10 +270,7 @@ map <space> moveless_toggle
 map b toggle
 map B back_toggle
 
-# define a custom 'rename' command without prompt for overwrite
-# cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
-# map r push :rename<space>
-
+# smart rename
 cmd bulk_rename !{{
     original_names_file=$(mktemp)
     changed_names_file=$(mktemp)
@@ -311,6 +314,7 @@ cmd smart_rename ${{
 map r smart_rename
 map R %vidir ${(f)fs}; lf -remote "send $id reload"
 
+# pasting done right
 cmd paste %{{
     mode=""
     files=""
@@ -361,6 +365,7 @@ cmd rsync !{{
 }}
 map -p rsync
 
+# links
 cmd link %{{
     mode=""
     files=""
@@ -395,6 +400,7 @@ cmd link %{{
 map PP link
 map Pp link -r
 
+# delete files & directories
 cmd smart_delete ${{
     echo
     echo "$fx"
@@ -413,121 +419,46 @@ map <delete> smart_delete
 cmd trash %trash-put ${(f)fx}; lf -remote "send $id reload"
 map <bs2> trash
 
-# extract the current file with the right command
-# (xkcd link: https://xkcd.com/1168/)
+# extract the current file or selected files with the right command
 cmd extract ${{
-    prepare_dir ()
-    {
-        contents_dir="$1-archive-contents"
-        mkdir "$contents_dir"
-        cd "$contents_dir"
-    }
-
-    for file in ${(f)fx}; do
-        if ! mime_type=$(file --mime-type "$f" -bLE); then mime_type=""; fi
-        case $mime_type in
-            "") ;;
-            application/x-tar)
-                prepare_dir "$file"; tar xvf "$file" ;;
-            application/x-bzip|application/x-bzip2)
-                prepare_dir "$file"; tar xjvf "$file" ;;
-            application/gzip)
-                prepare_dir "$file"; tar xzvf "$file" ;;
-            application/x-xz)
-                prepare_dir "$file"; tar xJvf "$file" ;;
-            application/zstd)
-                prepare_dir "$file"; tar xvf "$file" --zstd ;;
-            application/zip|application/x-zip-compressed)
-                prepare_dir "$file"; unzip "$file" ;;
-            application/x-7z-compressed|application/x-iso9660-image)
-                prepare_dir "$file"; 7z x "$file" ;;
-            application/vnd.rar)
-                prepare_dir "$file"; unrar x "$file" ;;
-        esac
-    done
-
+    extract.sh ${(f)fx}
     lf -remote "send $id reload"
 }}
 
-# compress current file or selected files with tar and gunzip
-cmd tar ${{
-    tmpdir=$(mktemp -d -p .)
-    cp -a ${(f)fx} $tmpdir/
-
-    cd $tmpdir
-    tar cf "$1.tar" ./*
-    mv "$1.tar" ../
-    cd ..
-    rm -rf $tmpdir
-
+# compress current file or selected files
+cmd compress ${{
+    compress.sh $1 "$2" ${(f)fx}
     lf -remote "send $id reload"
+}}
+
+cmd tar ${{
+    file="$(echo "$1" | sed 's/\"/\\\"/g')"
+    lf -remote "send $id compress tar \"$file\""
 }}
 
 cmd gz ${{
-    tmpdir=$(mktemp -d -p .)
-    cp -a ${(f)fx} $tmpdir/
-
-    cd $tmpdir
-    tar czf "$1.tar.gz" ./*
-    mv "$1.tar.gz" ../
-    cd ..
-    rm -rf $tmpdir
-
-    lf -remote "send $id reload"
+    file="$(echo "$1" | sed 's/\"/\\\"/g')"
+    lf -remote "send $id compress gz \"$file\""
 }}
 
 cmd xz ${{
-    tmpdir=$(mktemp -d -p .)
-    cp -a ${(f)fx} $tmpdir/
-
-    cd $tmpdir
-    tar cJf "$1.tar.xz" ./*
-    mv "$1.tar.xz" ../
-    cd ..
-    rm -rf $tmpdir
-
-    lf -remote "send $id reload"
+    file="$(echo "$1" | sed 's/\"/\\\"/g')"
+    lf -remote "send $id compress xz \"$file\""
 }}
 
 cmd zstd ${{
-    tmpdir=$(mktemp -d -p .)
-    cp -a ${(f)fx} $tmpdir/
-
-    cd $tmpdir
-    tar cf "$1.tar.zst" --zstd ./*
-    mv "$1.tar.zst" ../
-    cd ..
-    rm -rf $tmpdir
-
-    lf -remote "send $id reload"
+    file="$(echo "$1" | sed 's/\"/\\\"/g')"
+    lf -remote "send $id compress zstd \"$file\""
 }}
 
-# compress current file or selected files with zip
 cmd zip ${{
-    tmpdir=$(mktemp -d -p .)
-    cp -a ${(f)fx} $tmpdir/
-
-    cd $tmpdir
-    zip -r "$1.zip" ./*
-    mv "$1.zip" ../
-    cd ..
-    rm -rf $tmpdir
-
-    lf -remote "send $id reload"
+    file="$(echo "$1" | sed 's/\"/\\\"/g')"
+    lf -remote "send $id compress zip \"$file\""
 }}
 
-# compress current file or selected files with 7z
 cmd 7z ${{
-    tmpdir=$(mktemp -d -p .)
-    cp -a ${(f)fx} $tmpdir/
-
-    cd $tmpdir
-    7z a "$1.7z" ./*
-    mv "$1.7z" ../
-    cd ..
-    rm -rf $tmpdir
-
-    lf -remote "send $id reload"
+    file="$(echo "$1" | sed 's/\"/\\\"/g')"
+    lf -remote "send $id compress 7z \"$file\""
 }}
 
 # put lf into background
