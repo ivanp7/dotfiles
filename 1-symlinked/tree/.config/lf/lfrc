@@ -190,6 +190,7 @@ cmd preview ${{
                     unrar l "$f" | $PAGER ;;
                 x-cpio)
                     bsdcpio -i -t -I "$f" | $PAGER ;;
+                *) $PAGER "$f"
             esac
             ;;
         *) $PAGER "$f"
@@ -247,9 +248,10 @@ cmd open ${{
                     lf -remote "send $id cd \"$file\""
                     lf -remote "send $id reload"
                     ;;
+                *) $EDITOR ${(f)fx}
             esac
             ;;
-        *) $EDITOR ${(f)fx} ;;
+        *) $EDITOR ${(f)fx}
     esac
 }}
 

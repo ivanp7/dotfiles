@@ -6,30 +6,39 @@ POSTFIX="-archive-contents"
 for file in "$@"
 do
     mime_type=$(file --mime-type "$file" -bLE) || mime_type=""
-    [ -z "$mime_type" ] && continue
+    case $mime_type in
+        application/*)
+            case $(echo $mime_type | tail -c +13) in
+                x-tar|x-bzip|x-bzip2|gzip|x-xz|zstd|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|vnd.rar) ;;
+                *) continue
+            esac
+            ;;
+        *) continue
+    esac
 
     contents_dir="$(basename "$file")$POSTFIX"
+    mkdir "$contents_dir" || continue
+    cd "$contents_dir"
     file="$(realpath "$file")"
-    mkdir "$contents_dir" &&
-    cd "$contents_dir" &&
-    case $mime_type in
-        application/x-tar)
+
+    case $(echo $mime_type | tail -c +13) in
+        x-tar)
             tar xvf "$file" ;;
-        application/x-bzip|application/x-bzip2)
+        x-bzip|x-bzip2)
             tar xvf "$file" -j ;;
-        application/gzip)
+        gzip)
             tar xvf "$file" -z ;;
-        application/x-xz)
+        x-xz)
             tar xvf "$file" -J ;;
-        application/zstd)
+        zstd)
             tar xvf "$file" --zstd ;;
-        application/zip|application/x-zip-compressed)
+        zip|x-zip-compressed)
             unzip "$file" ;;
-        application/x-7z-compressed|application/x-iso9660-image)
+        x-7z-compressed|x-iso9660-image)
             7z x "$file" ;;
-        application/vnd.rar)
+        vnd.rar)
             unrar x "$file" ;;
-    esac &&
+    esac
     cd ..
 done
 
