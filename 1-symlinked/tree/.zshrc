@@ -249,6 +249,7 @@ spectrum ()
 # aliases
 alias sudo='sudo '
 . $HOME/.aliases
+[ -f "$HOME/.aliases.user" ] && . $HOME/.aliases.user
 { command -v xhost > /dev/null && xhost > /dev/null 2>&1 &&
     [ -f $HOME/.xaliases ] && . $HOME/.xaliases; } || true
 
