@@ -35,20 +35,6 @@ set relativenumber
 
 set previewer ~/.scripts/df/lf-previewer.sh
 
-# cmd recol %{{
-#     w=$(tput cols)
-#     if [ $w -le 80 ]; then
-#         lf -remote "send $id set ratios 1:2"
-#     elif [ $w -le 160 ]; then
-#         lf -remote "send $id set ratios 1:2:3"
-#     else
-#         lf -remote "send $id set ratios 1:2:3:5"
-#     fi
-# }}
-
-# use enter for shell commands
-# map <enter> shell
-
 # do nothing; interrupt input
 map <esc> $true
 
@@ -192,6 +178,8 @@ cmd preview ${{
                     unrar l "$f" | $PAGER ;;
                 x-cpio)
                     bsdcpio -i -t -I "$f" | $PAGER ;;
+                pgp|pgp-encrypted)
+                    gpg -d "$f" | $PAGER ;;
                 *) $PAGER "$f"
             esac
             ;;
@@ -427,7 +415,9 @@ map <bs2> trash
 
 # extract the current file or selected files with the right command
 cmd extract ${{
-    extract.sh ${(f)fx}
+    for file in ${(f)fx}; do
+        extract.sh "$file"
+    done
     lf -remote "send $id reload"
 }}
 
@@ -465,6 +455,24 @@ cmd zip ${{
 cmd 7z ${{
     file="$(echo "$1" | sed 's/\"/\\\"/g')"
     lf -remote "send $id compress 7z \"$file\""
+}}
+
+cmd encrypt ${{
+    for file in ${(f)fx}; do
+        echo "$file"
+        gpg "$@" --symmetric "$file"
+    done
+    lf -remote "send $id reload"
+}}
+
+cmd decrypt ${{
+    for file in ${(f)fx}; do
+        echo "$file"
+        decrypted_file="$(echo "$file" | sed -E 's/\.(gpg|asc)$//')"
+        [ "$decrypted_file" != "$file" ] || decrypted_file="$file.decrypted"
+        gpg -o "$decrypted_file" -d "$file"
+    done
+    lf -remote "send $id reload"
 }}
 
 # put lf into background
