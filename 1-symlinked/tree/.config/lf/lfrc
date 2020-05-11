@@ -57,9 +57,6 @@ map tt %touch ${(f)fx}; lf -remote "send $id reload"
 cmd touch %touch "$(echo "$@")"; lf -remote "send $id reload"
 map ] push ::touch<space>
 
-# edit files
-map e $$EDITOR ${(f)fx}
-
 # read link
 map al %readlink "$f"
 
@@ -190,6 +187,10 @@ cmd preview ${{
     esac
 }}
 map i preview
+map I $$PAGER "$f"
+
+# edit files
+map e $$EDITOR ${(f)fx}
 
 # dedicated keys for file opener actions
 # map o &mimeopen "$f"
