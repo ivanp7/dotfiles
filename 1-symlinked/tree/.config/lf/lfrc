@@ -174,7 +174,7 @@ cmd preview ${{
                     unzip -l "$f" | $PAGER ;;
                 x-7z-compressed|x-iso9660-image)
                     7z l "$f" | $PAGER ;;
-                vnd.rar)
+                x-rar|vnd.rar)
                     unrar l "$f" | $PAGER ;;
                 x-cpio)
                     bsdcpio -i -t -I "$f" | $PAGER ;;
@@ -224,7 +224,7 @@ cmd open ${{
             case $(echo $mime_type | tail -c +13) in
                 pdf)
                     setsid $PDFVIEWER ${(f)fx} > /dev/null 2>&1 & ;;
-                x-bzip|x-bzip2|gzip|x-xz|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|vnd.rar|x-cpio)
+                x-bzip|x-bzip2|gzip|x-xz|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
                     postfix="-archive-mount"
                     first_file=""
                     for file in ${(f)fx}; do
