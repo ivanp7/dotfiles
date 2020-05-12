@@ -39,7 +39,7 @@ set previewer ~/.scripts/df/lf-previewer.sh
 map gh
 
 # do nothing; interrupt input
-map <esc> $true
+map <esc> %true
 
 # execute current file (must be executable)
 map x !"$f"
