@@ -72,7 +72,7 @@ map am %file --mime-type "$f" -b
 map aM link_mime
 
 # calculate used space
-map au %du -ch ${(f)fx} | tail -n 1
+map au %du -chD ${(f)fx} | tail -n 1
 
 cmd setperm %{{
     chmod $1 ${(f)fx}
