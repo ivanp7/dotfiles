@@ -477,6 +477,9 @@ vmap <leader>Z <Esc>:%s/<c-r>=GetVisual()<cr>/<c-r>=GetVisual()<cr>/gc<left><lef
 " user interface operations mappings
 " ==============================
 
+" Close window
+nnoremap <silent> <C-Q> :q<CR>
+
 " Horizontal (column) ruler
 function! ShowColumnRuler()
     setl scrollbind scrollopt+=hor
