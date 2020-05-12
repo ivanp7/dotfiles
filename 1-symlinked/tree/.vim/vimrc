@@ -86,6 +86,11 @@ set undofile
 set undodir     =$HOME/.vim/files/undo/
 set viminfo     ='100,n$HOME/.vim/files/info/viminfo
 
+" File extension -> filetype correspondence
+augroup filetypedetect
+    au! BufRead,BufNewFile *.sexp,*.asd,*.lsp       setfiletype lisp
+augroup END
+
 " #############################################################################
 " Plug.vim plugin system
 
@@ -169,8 +174,8 @@ nmap <F8> :TagbarToggle<CR>
 " Indexer ****************************
 
 " Project root folders, used to identify ancestor path of project root directory.
-if filereadable($HOME . "/.vim_indexer")
-    let g:indexer_root_folders = readfile($HOME . "/.vim_indexer")
+if filereadable(glob('~/.vim_indexer'))
+    let g:indexer_root_folders = readfile(glob('~/.vim_indexer'))
 else
     let g:indexer_root_folders = []
 endif
@@ -192,7 +197,7 @@ let g:indexer_logs_maxsize = 100
 let g:indexer_tags_watches = ["*.lisp", "*.c", "*.h", "*.c++", "*.cpp", "*.py"]
 let g:indexer_tags_command = "ctags"
 let g:indexer_tags_options = "-R --sort=yes --c++-kinds=+p+l --fields=+iaS --extra=+q --languages=lisp,c,c++,python"
-let g:indexer_tags_savedir = "~/.vim_indexer_tags/"
+let g:indexer_tags_savedir = "~/.vim/indexer_tags/"
 let g:indexer_tags_handler_locate = ["locate"]
 let g:indexer_tags_handler_reload = ["reload", "-1"]
 let g:indexer_tags_handler_update = ["update"]
