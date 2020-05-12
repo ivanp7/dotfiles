@@ -170,7 +170,11 @@ nmap <F8> :TagbarToggle<CR>
 " Indexer ****************************
 
 " Project root folders, used to identify ancestor path of project root directory.
-let g:indexer_root_folders = readfile($HOME . "/.vim_indexer")
+if filereadable($HOME . "/.vim_indexer")
+    let g:indexer_root_folders = readfile($HOME . "/.vim_indexer")
+else
+    let g:indexer_root_folders = []
+endif
 
 " Project root markers, used to identify project root directory.
 let g:indexer_root_markers = ['.git']
