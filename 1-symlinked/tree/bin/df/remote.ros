@@ -273,11 +273,11 @@ exec ros -Q -- $0 "$@"
   (unix-opts:describe 
     :prefix 
     (format nil "~A~%~A" "remote computer handling utility"
-            "(C) Ivan Podmazov, 2019")
+            "(C) Ivan Podmazov, 2020")
     :usage-of "remote.ros"
     :suffix 
     (format nil "~A~A~%~A~A~%~%~A~%~{  ~A~^~%~}" 
-            "--ssh-opts, --sshfs-opts, --rsync-opts" 
+            "--ssh-opts, --sshfs-opts, --rsync-opts, --args" 
             " act as a option lists delimiters:"
             "options after them are passed into a corresponding program "
             "instead of remote.ros"
