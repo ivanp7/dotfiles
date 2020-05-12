@@ -113,6 +113,7 @@ Plug 'tpope/vim-capslock'
 
 Plug 'tpope/vim-eunuch'
 Plug 'majutsushi/tagbar'
+Plug 'alvan/vim-indexer'
 Plug 'ptzz/lf.vim'
 Plug 'rbgrouleff/bclose.vim'
 Plug 'qpkorr/vim-bufkill'
@@ -165,6 +166,33 @@ let g:lf_replace_netrw = 1 " open lf when vim open a directory
 " Tagbar ******************************
 
 nmap <F8> :TagbarToggle<CR>
+
+" Indexer ****************************
+
+" Project root folders, used to identify ancestor path of project root directory.
+let g:indexer_root_folders = readfile($HOME . "/.vim_indexer")
+
+" Project root markers, used to identify project root directory.
+let g:indexer_root_markers = ['.git']
+
+" JSON formatted configuration file which located in the project root directory,
+" makes you could specify different options for each project.
+let g:indexer_root_setting = 'indexer.json'
+
+" Enabled user modules.
+let g:indexer_user_modules = ['log', 'tag']
+
+" Module: log
+let g:indexer_logs_maxsize = 100
+
+" Module: tag
+let g:indexer_tags_watches = ["*.lisp", "*.c", "*.h", "*.c++", "*.cpp", "*.py"]
+let g:indexer_tags_command = "ctags"
+let g:indexer_tags_options = "-R --sort=yes --c++-kinds=+p+l --fields=+iaS --extra=+q --languages=lisp,c,c++,python"
+let g:indexer_tags_savedir = "~/.vim_indexer_tags/"
+let g:indexer_tags_handler_locate = ["locate"]
+let g:indexer_tags_handler_reload = ["reload", "-1"]
+let g:indexer_tags_handler_update = ["update"]
 
 " Vim-tmux navigator
 
