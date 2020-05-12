@@ -31,19 +31,19 @@ exec ros -Q -- $0 "$@"
    :description "show usage help"
    :long "help")
   (:name :dry-run
-   :description "does not do anything"
+   :description "don't do anything, only print commands to be executed"
    :short #\n :long "dry-run")
 
   (:name :user
-   :description "user name to login as"
+   :description "remote user name"
    :short #\u :long "user"
    :arg-parser #'identity :meta-var "USERNAME")
   (:name :host
-   :description "name of remote host with known address, port, etc."
+   :description "registered name of known remote host"
    :short #\h :long "host"
    :arg-parser #'identity :meta-var "HOSTNAME")
   (:name :lan
-   :description "try to use remote host's local address and port"
+   :description "access remote host using local address and port"
    :short #\L :long "lan")
   (:name :address
    :description "address of remote host"
@@ -237,32 +237,36 @@ exec ros -Q -- $0 "$@"
     (operations-list
       ((:url :print-url)
        (format t "~A~%" (get-url user address port)))
-      ((:status)
+      ((:status :check-status)
        (host-status address port))
       ((:ssh :cmd :command)
        (ssh user address port ssh-options (getf script-options :ssh-command)
             command-args))
-      ((:tnl :tunnel :ssh-tunnel :rntl :rtunnel :reverse-tunnel 
-        :reverse-ssh-tunnel)
-       (let ((forward-p (member op-type '(:tnl :tunnel :ssh-tunnel))))
-         (ssh user address port 
-              (list* (if forward-p "-ND" "-NR") 
-                     (getf script-options :tunnel-arg
-                           (if forward-p 
-                             *default-tunnel-argument*
-                             *default-reverse-tunnel-argument*))
-                     ssh-options))))
+      ((:tnl :tunnel :ssh-tunnel)
+       (ssh user address port (list* "-ND" 
+                                     (getf script-options :tunnel-arg 
+                                           *default-tunnel-argument*)
+                                     ssh-options)))
+      ((:rntl :rtunnel :reverse-ssh-tunnel)
+       (ssh user address port (list* "-NR" 
+                                     (getf script-options :tunnel-arg
+                                           *default-reverse-tunnel-argument*)
+                                     ssh-options)))
       ((:mnt :mount :sshfs)
        (sshfs user address port
               (getf script-options :local-path *default-local-path*)
               (getf script-options :remote-path *default-remote-path*)
               sshfs-options))
-      ((:up :upload :down :download)
-       (let ((up-p (member op-type '(:up :upload))))
-         (rsync user address port (if up-p :up :down)
-                (getf script-options :local-path *default-local-path*)
-                (getf script-options :remote-path *default-remote-path*)
-                rsync-options ssh-options)))
+      ((:up :upload)
+       (rsync user address port :up
+              (getf script-options :local-path *default-local-path*)
+              (getf script-options :remote-path *default-remote-path*)
+              rsync-options ssh-options))
+      ((:down :download)
+       (rsync user address port :down
+              (getf script-options :local-path *default-local-path*)
+              (getf script-options :remote-path *default-remote-path*)
+              rsync-options ssh-options))
       ((:remotely :run-remotely)
        (run-remotely user address port
                      (getf script-options :local-path *default-local-path*)
