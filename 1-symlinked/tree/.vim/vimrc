@@ -29,6 +29,7 @@ set splitbelow            " Open new windows below the current window.
 set splitright            " Open new windows right of the current window.
 
 set cursorline            " Find the current line quickly.
+set cursorcolumn
 set wrapscan              " Searches wrap around end-of-file.
 set report      =0        " Always report changed lines.
 set synmaxcol   =400      " Only highlight the first 400 columns.
@@ -186,6 +187,7 @@ if exists('+termguicolors') && ($TERM != 'linux') && ($TERM != 'yaft-256color')
 " tweak color scheme
 let g:CSApprox_hook_post = [
             \ 'highlight CursorLine        guibg=#444444 cterm=NONE ctermbg=234',
+            \ 'highlight CursorColumn      guibg=#444444 cterm=NONE ctermbg=234',
             \ 'highlight CursorLineNR      guifg=#ee3333 cterm=bold ctermfg=red',
             \ 'highlight LineNr            guifg=#999999 ctermfg=gray',
             \ 'highlight MatchParen        guifg=#ffffff guibg=#ff0000 ctermbg=1',
@@ -442,6 +444,38 @@ vmap <leader>Z <Esc>:%s/<c-r>=GetVisual()<cr>/<c-r>=GetVisual()<cr>/gc<left><lef
 " ==============================
 " user interface operations mappings
 " ==============================
+
+" Horizontal (column) ruler
+function! ShowColumnRuler()
+    setl scrollbind scrollopt+=hor
+    abo sp +enew
+    call setline(1,'....+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8....+....9....+....|....+....|....+....|')
+    let &l:stl="%#Normal#".repeat(' ',winwidth(0))
+    res 1
+    setl scrollbind nomod buftype=nofile winfixheight nonumber nocursorline
+    let w:column_ruler = v:true
+    wincmd p
+    let w:column_ruler_shown = v:true
+endfunction
+
+function! HideColumnRuler()
+    wincmd k
+    bdelete
+    setl scrollopt-=hor noscrollbind
+    let w:column_ruler_shown = v:false
+endfunction
+
+function! SwitchColumnRuler()
+    if !exists("w:column_ruler") || !w:column_ruler
+        if !exists("w:column_ruler_shown") || !w:column_ruler_shown
+            call ShowColumnRuler()
+        else
+            call HideColumnRuler()
+        endif
+    endif
+endfunction
+
+nnoremap <silent> <C-M> :call SwitchColumnRuler()<CR>
 
 " Resize windows
 nnoremap <silent> <C-W><C-H> :vert res -10<CR>
