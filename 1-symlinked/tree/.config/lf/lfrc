@@ -188,6 +188,7 @@ cmd preview ${{
 }}
 map i preview
 map I $$PAGER "$f"
+map -I !cat "$f"
 
 # edit files
 map e $$EDITOR ${(f)fx}
