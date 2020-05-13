@@ -243,7 +243,7 @@ _p_userhostinfo_f ()
     then
         local _p_username="${RootColor}${USER}${_p_stdcolor}"
     else
-        local username_line="$(grep "^$USER " $HOME/.zshrc.prompt.usernames 2> /dev/null)"
+        local username_line="$(grep "^$USER " $ZDOTDIR/zshrc.prompt.usernames 2> /dev/null)"
         if [ "$(tput colors)" -ge 256 ] && [ -n "$username_line" ]
         then
             local _p_username="$(echo "$username_line" | cut -d' ' -f2)${_p_stdcolor}"

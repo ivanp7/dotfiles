@@ -1,4 +1,4 @@
-HISTFILE=~/.zsh-history
+HISTFILE=$ZDOTDIR/history
 HISTSIZE=100000
 SAVEHIST=10000
 setopt appendhistory extendedglob nomatch
@@ -18,11 +18,11 @@ autoload -Uz run-help-sudo
 alias help=run-help
 
 # completion
-fpath=($fpath $HOME/.zsh/completion) 
+fpath=($fpath $ZDOTDIR/completion) 
 
 autoload -Uz compinit
 zmodload zsh/complist
-zstyle :compinstall filename "$HOME/.zshrc"
+zstyle :compinstall filename $ZDOTDIR/.zshrc
 zstyle ':completion:*' menu select
 compinit
 _comp_options+=(globdots) # Include hidden files
@@ -239,19 +239,19 @@ spectrum ()
 }
 
 # extra configuration
-[ -f "$HOME/.zshrc.user" ] && . $HOME/.zshrc.user
+[ -f "$ZDOTDIR/zshrc" ] && . $ZDOTDIR/zshrc
 
 # aliases
 alias sudo='sudo '
-. $HOME/.aliases
+. $ZDOTDIR/aliases
 { command -v xhost > /dev/null && xhost > /dev/null 2>&1 &&
-    [ -f $HOME/.xaliases ] && . $HOME/.xaliases; } || true
+    [ -f $ZDOTDIR/xaliases ] && . $ZDOTDIR/xaliases; } || true
 
 # unfreeze terminal if left frozen
 ttyctl -f
 
 # shell prompt
-. $HOME/.zshrc.prompt
+. $ZDOTDIR/zshrc.prompt
 
 # vim: set ft=zsh:
 
