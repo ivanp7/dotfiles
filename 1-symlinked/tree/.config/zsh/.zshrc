@@ -1,4 +1,9 @@
-HISTFILE=$ZDOTDIR/history
+# zsh directories
+mkdir -p $XDG_CACHE_HOME/zsh
+mkdir -p $XDG_DATA_HOME/zsh
+
+# options
+HISTFILE=$XDG_DATA_HOME/zsh/history
 HISTSIZE=100000
 SAVEHIST=10000
 setopt appendhistory extendedglob nomatch
@@ -24,7 +29,7 @@ autoload -Uz compinit
 zmodload zsh/complist
 zstyle :compinstall filename $ZDOTDIR/.zshrc
 zstyle ':completion:*' menu select
-compinit
+compinit -d $XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION
 _comp_options+=(globdots) # Include hidden files
 
 # auto prehash
