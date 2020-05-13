@@ -47,16 +47,6 @@ map -x push !"$f"<space>
 map X &setsid "$f"
 map -X push &setsid "$f"<space>
 
-# create directory
-cmd mkdir %mkdir "$(echo "$@")"; lf -remote "send $id reload"
-map [ push ::mkdir<space>
-
-# touch
-map tt %touch ${(f)fx}; lf -remote "send $id reload"
-# create file
-cmd touch %touch "$(echo "$@")"; lf -remote "send $id reload"
-map ] push ::touch<space>
-
 # read link
 map al %readlink "$f"
 
@@ -74,6 +64,17 @@ map aM link_mime
 # calculate used space
 map au %du -chD ${(f)fx} | tail -n 1
 
+# create directory
+cmd mkdir %mkdir "$(echo "$@")"; lf -remote "send $id reload"
+map td push ::mkdir<space>
+
+# touch
+map tt %touch ${(f)fx}; lf -remote "send $id reload"
+# create file
+cmd touch %touch "$(echo "$@")"; lf -remote "send $id reload"
+map tf push ::touch<space>
+
+# set permissions
 cmd setperm %{{
     chmod $1 ${(f)fx}
     lf -remote "send $id reload"
@@ -160,24 +161,8 @@ cmd preview ${{
             case $(echo $mime_type | tail -c +13) in
                 pdf) 
                     pdftotext -layout "$f" - | $PAGER ;;
-                x-tar)
-                    tar tvf "$f" | $PAGER ;;
-                x-bzip|x-bzip2)
-                    tar tjvf "$f" | $PAGER ;;
-                gzip)
-                    tar tzvf "$f" | $PAGER ;;
-                x-xz)
-                    tar tJvf "$f" | $PAGER ;;
-                zstd)
-                    tar tvf "$f" --zstd | $PAGER ;;
-                zip|x-zip-compressed)
-                    unzip -l "$f" | $PAGER ;;
-                x-7z-compressed|x-iso9660-image)
-                    7z l "$f" | $PAGER ;;
-                x-rar|vnd.rar)
-                    unrar l "$f" | $PAGER ;;
-                x-cpio)
-                    bsdcpio -i -t -I "$f" | $PAGER ;;
+                x-tar|x-bzip|x-bzip2|gzip|x-xz|zstd|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
+                    list-files.sh "$f" | $PAGER ;;
                 pgp|pgp-encrypted)
                     gpg -d "$f" | $PAGER ;;
                 *) $PAGER "$f"
@@ -193,8 +178,8 @@ map -I !cat "$f"
 # edit files
 map e $$EDITOR ${(f)fx}
 
-# recursively calculate directory sizes and manually clean
-map E $ncdu -e2 "$f"
+# edit symlink path
+map E $edit-symlink.sh "$f"
 
 # dedicated keys for file opener actions
 # map o &mimeopen "$f"
@@ -228,7 +213,7 @@ cmd open ${{
             case $(echo $mime_type | tail -c +13) in
                 pdf)
                     setsid $PDFVIEWER ${(f)fx} > /dev/null 2>&1 & ;;
-                x-bzip|x-bzip2|gzip|x-xz|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
+                x-tar|x-bzip|x-bzip2|gzip|x-xz|zstd|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
                     postfix="-archive-mount"
                     first_file=""
                     for file in ${(f)fx}; do
@@ -252,6 +237,19 @@ cmd open ${{
         *) $EDITOR ${(f)fx}
     esac
 }}
+
+# alternative 'open' operation
+cmd alt_open ${{
+    set -f
+    mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
+    case $mime_type in
+        "") ;;
+        inode/directory)
+            ncdu -e2 "$f"
+            ;;
+    esac
+}}
+map L alt_open
 
 # glob select&unselect
 map V push ::glob-select<space>
