@@ -193,6 +193,9 @@ map -I !cat "$f"
 # edit files
 map e $$EDITOR ${(f)fx}
 
+# recursively calculate directory sizes and manually clean
+map E $ncdu -e2 "$f"
+
 # dedicated keys for file opener actions
 # map o &mimeopen "$f"
 # map O $mimeopen --ask "$f"

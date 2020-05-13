@@ -2,6 +2,14 @@
 typeset -U path
 path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/bin/local $HOME/.roswell/bin)
 
+# XDG Base Directory
+XDG_CONFIG_HOME=$HOME/.config
+XDG_CACHE_HOME=$HOME/.cache
+XDG_DATA_HOME=$HOME/.local/share
+
+XDG_DATA_DIRS=/usr/local/share:/usr/share
+XDG_CONFIG_DIRS=/etc/xdg
+
 # default applications
 
 export PAGER=/usr/share/vim/vim82/macros/less.sh
