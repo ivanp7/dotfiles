@@ -137,6 +137,17 @@ map to-s setperm o-s
 map to+t setperm o+t
 map to-t setperm o-t
 
+# unmount mounted archives
+cmd unmount %umount ${(f)fx}; lf -remote "send $id reload"
+cmd unmount_rmdir %{{
+    for dir in ${(f)fx}; do
+        umount "$dir" && rmdir "$dir"
+    done
+    lf -remote "send $id reload"
+}}
+map tm unmount
+map tM unmount_rmdir
+
 # copy path
 map Ypx $echo -n "$f" | xclip -i -selection clipboard
 map Ydx $echo -n "$(dirname "$f")" | xclip -i -selection clipboard
@@ -181,16 +192,6 @@ map e $$EDITOR ${(f)fx}
 # edit symlink path
 map E $edit-symlink.sh "$f"
 
-# dedicated keys for file opener actions
-# map o &mimeopen "$f"
-# map O $mimeopen --ask "$f"
-cmd opener ${{
-    for file in ${(f)fx}; do 
-        setsid $OPENER "$file" > /dev/null 2>&1 &
-    done
-}}
-map o opener
-
 # define a custom 'open' command
 # This command is called when current file is not a directory. You may want to
 # use either file extensions and/or mime types here. Below uses an editor for
@@ -221,13 +222,12 @@ cmd open ${{
                             first_file="$file"
                         fi
                         mntdir="$file$postfix"
-                        [ ! -d "$mntdir" ] && {
+                        mountpoint -q "$mntdir" || {
                             mkdir -p "$mntdir"
-                            archivemount "$f" "$mntdir"
-                            echo "$mntdir" >> "/tmp/__lf_archivemount_$id"
+                            archivemount "$file" "$mntdir"
                         }
                     done
-                    file="$(echo "$first_file$postfix" | sed 's/\"/\\\"/g')"
+                    file="$(echo "$first_file$postfix" | sed 's/"/\\"/g')"
                     lf -remote "send $id cd \"$file\""
                     lf -remote "send $id reload"
                     ;;
@@ -251,18 +251,28 @@ cmd alt_open ${{
 }}
 map L alt_open
 
+# dedicated keys for file opener actions
+# map o &mimeopen "$f"
+# map O $mimeopen --ask "$f"
+cmd opener ${{
+    for file in ${(f)fx}; do 
+        setsid $OPENER "$file" > /dev/null 2>&1 &
+    done
+}}
+map o opener
+
 # glob select&unselect
 map V push ::glob-select<space>
 map U push ::glob-unselect<space>
 
 cmd moveless_toggle %{{
     lf -remote "send $id toggle"
-    file="$(echo "$f" | sed 's/\"/\\\"/g')"
+    file="$(echo "$f" | sed 's/"/\\"/g')"
     lf -remote "send $id select \"$file\""
 }}
 cmd back_toggle %{{
     lf -remote "send $id toggle"
-    file="$(echo "$f" | sed 's/\"/\\\"/g')"
+    file="$(echo "$f" | sed 's/"/\\"/g')"
     lf -remote "send $id select \"$file\""
     lf -remote "send $id up"
 }}
@@ -416,7 +426,18 @@ cmd smart_delete ${{
 map <delete> smart_delete
 
 # move current file or selected files to trash folder
-cmd trash %trash-put ${(f)fx}; lf -remote "send $id reload"
+cmd trash ${{
+    echo
+    echo "$fx"
+    echo -n "trash? [y/N] "
+    read ans
+    if [ "$ans" = "y" ]
+    then 
+        lf -remote "send clear"
+        trash-put ${(f)fx}
+        lf -remote "send $id reload"
+    fi
+}}
 map <bs2> trash
 
 # extract the current file or selected files with the right command
@@ -429,38 +450,38 @@ cmd extract ${{
 
 # compress current file or selected files
 cmd compress ${{
-    compress.sh $1 "$2" ${(f)fx}
+    compress.sh $1 "$(echo "${@:2}")" ${(f)fx}
     lf -remote "send $id reload"
 }}
 
 cmd tar ${{
-    file="$(echo "$1" | sed 's/\"/\\\"/g')"
-    lf -remote "send $id compress tar \"$file\""
+    compress.sh tar "$(echo "$@")" ${(f)fx}
+    lf -remote "send $id reload"
 }}
 
 cmd gz ${{
-    file="$(echo "$1" | sed 's/\"/\\\"/g')"
-    lf -remote "send $id compress gz \"$file\""
+    compress.sh gz "$(echo "$@")" ${(f)fx}
+    lf -remote "send $id reload"
 }}
 
 cmd xz ${{
-    file="$(echo "$1" | sed 's/\"/\\\"/g')"
-    lf -remote "send $id compress xz \"$file\""
+    compress.sh xz "$(echo "$@")" ${(f)fx}
+    lf -remote "send $id reload"
 }}
 
 cmd zstd ${{
-    file="$(echo "$1" | sed 's/\"/\\\"/g')"
-    lf -remote "send $id compress zstd \"$file\""
+    compress.sh zstd "$(echo "$@")" ${(f)fx}
+    lf -remote "send $id reload"
 }}
 
 cmd zip ${{
-    file="$(echo "$1" | sed 's/\"/\\\"/g')"
-    lf -remote "send $id compress zip \"$file\""
+    compress.sh zip "$(echo "$@")" ${(f)fx}
+    lf -remote "send $id reload"
 }}
 
 cmd 7z ${{
-    file="$(echo "$1" | sed 's/\"/\\\"/g')"
-    lf -remote "send $id compress 7z \"$file\""
+    compress.sh 7z "$(echo "$@")" ${(f)fx}
+    lf -remote "send $id reload"
 }}
 
 cmd encrypt ${{
