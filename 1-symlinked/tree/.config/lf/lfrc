@@ -55,6 +55,9 @@ map txs push !sudo<space>"$f"<space>
 map tXu push &setsid<space>"$f"<space>
 map tXs push $sudo<space>-b<space>"$f"<space><space>2<gt><space>/dev/null<left><left><left><left><left><left><left><left><left><left><left><left><left>
 
+# process tree
+map ap %$HOME/.scripts/df/pstree.sh
+
 # read link
 map al %readlink "$f"
 
