@@ -1,8 +1,8 @@
 #!/bin/sh
 
-mkdir -p $HOME/.vim/swap
-mkdir -p $HOME/.vim/files/backup
-mkdir -p $HOME/.vim/files/info
-mkdir -p $HOME/.vim/files/swap
-mkdir -p $HOME/.vim/files/undo
+mkdir -p $HOME/.cache/vim/plugged
+mkdir -p $HOME/.cache/vim/undo
+mkdir -p $HOME/.cache/vim/swap
+mkdir -p $HOME/.cache/vim/backup
+mkdir -p $HOME/.cache/vim/view
 

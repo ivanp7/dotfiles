@@ -77,14 +77,17 @@ set belloff=all
 " Put all temporary files under the same directory.
 " https://github.com/mhinz/vim-galore#handling-backup-swap-undo-and-viminfo-files
 set backup
-set backupdir   =$HOME/.vim/files/backup/
 set backupext   =-vimbackup
 set backupskip  =
-set directory   =$HOME/.vim/files/swap/
 set updatecount =100
 set undofile
-set undodir     =$HOME/.vim/files/undo/
-set viminfo     ='100,n$HOME/.vim/files/info/viminfo
+
+set undodir=$XDG_CACHE_HOME/vim/undo
+set directory=$XDG_CACHE_HOME/vim/swap
+set backupdir=$XDG_CACHE_HOME/vim/backup
+set viewdir=$XDG_CACHE_HOME/vim/view
+set viminfo+='1000,n$XDG_CACHE_HOME/vim/info
+set runtimepath=$XDG_CONFIG_HOME/vim,$XDG_CONFIG_HOME/vim/after,$VIMRUNTIME,$VIM
 
 " File extension -> filetype correspondence
 augroup filetypedetect
@@ -95,14 +98,14 @@ augroup END
 " Plug.vim plugin system
 
 " Autoload plug.vim
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+if empty($XDG_CONFIG_HOME . "/vim/autoload/plug.vim")
+  silent !curl -fLo $XDG_CONFIG_HOME/vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Specify a directory for plugins
-call plug#begin('~/.vim/plugged')
+call plug#begin($XDG_CACHE_HOME . "/vim/plugged")
 
 " Basic things
 Plug 'tpope/vim-sensible'
@@ -174,8 +177,8 @@ nmap <F8> :TagbarToggle<CR>
 " Indexer ****************************
 
 " Project root folders, used to identify ancestor path of project root directory.
-if filereadable(glob('~/.vim_indexer'))
-    let g:indexer_root_folders = readfile(glob('~/.vim_indexer'))
+if filereadable($XDG_CONFIG_HOME . "/vim_indexer")
+    let g:indexer_root_folders = readfile($XDG_CONFIG_HOME . "/vim_indexer")
 else
     let g:indexer_root_folders = []
 endif
@@ -197,7 +200,7 @@ let g:indexer_logs_maxsize = 100
 let g:indexer_tags_watches = ["*.lisp", "*.c", "*.h", "*.c++", "*.cpp", "*.py"]
 let g:indexer_tags_command = "ctags"
 let g:indexer_tags_options = "-R --sort=yes --c++-kinds=+p+l --fields=+iaS --extra=+q --languages=lisp,c,c++,python"
-let g:indexer_tags_savedir = "~/.vim/indexer_tags/"
+let g:indexer_tags_savedir = $XDG_CACHE_HOME . "/vim/indexer_tags/"
 let g:indexer_tags_handler_locate = ["locate"]
 let g:indexer_tags_handler_reload = ["reload", "-1"]
 let g:indexer_tags_handler_update = ["update"]
@@ -237,6 +240,8 @@ let g:CSApprox_hook_post = [
 "
 let g:semanticEnableFileTypes = ['c', 'cpp', 'java', 'javascript', 'python', 'vim']
 let g:semanticTermColors = range(1, 14)
+
+let g:semanticPersistCacheLocation = $XDG_CACHE_HOME . "/vim/semantic-highlight-cache"
 
 " Vim-lightline
 

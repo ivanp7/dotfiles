@@ -1,5 +1,3 @@
 .scripts/df
-.tmux/plugins
-.vim/plugged
 bin/df
 wallpapers/default_pictures

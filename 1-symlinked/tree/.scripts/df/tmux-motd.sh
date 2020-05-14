@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ -x "$HOME/.tmux-motd.sh" ] && $HOME/.tmux-motd.sh
+[ -x "$XDG_CONFIG_HOME/tmux/motd.sh" ] && $XDG_CONFIG_HOME/tmux/motd.sh
 echo
 echo
 echo

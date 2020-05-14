@@ -4,12 +4,12 @@ path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/bin/local $HOME/.roswell/bin)
 
 # XDG Base Directory
 
-XDG_CONFIG_HOME=$HOME/.config
-XDG_CACHE_HOME=$HOME/.cache
-XDG_DATA_HOME=$HOME/.local/share
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.local/share
 
-XDG_DATA_DIRS=/usr/local/share:/usr/share
-XDG_CONFIG_DIRS=/etc/xdg
+export XDG_DATA_DIRS=/usr/local/share:/usr/share
+export XDG_CONFIG_DIRS=/etc/xdg
 
 # default applications
 
@@ -29,6 +29,22 @@ if [ -r "$XDG_CONFIG_HOME/default_font" ]
 then export DEFAULT_FONT=$(cat "$XDG_CONFIG_HOME/default_font")
 else export DEFAULT_FONT="xos4 Terminus:size=10"
 fi
+
+# directories of applications
+
+export GNUPGHOME=$XDG_DATA_HOME/gnupg
+
+export VIMINIT='if !has("nvim") | let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC | endif'
+
+export TASKDATA=$HOME/.task
+export TASKRC=$TASKDATA/config
+
+export OCTAVE_SITE_INITFILE=$XDG_CONFIG_HOME/octave/octaverc
+export OCTAVE_HISTFILE=$XDG_DATA_HOME/octave/history
+
+export SCREENRC=$XDG_CONFIG_HOME/screen/screenrc
+
+export LESSHISTFILE=$XDG_CACHE_HOME/less/history
 
 # fixes for things
 export GNUMAKEFLAGS=--no-print-directory

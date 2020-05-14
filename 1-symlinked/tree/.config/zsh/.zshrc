@@ -256,7 +256,7 @@ alias sudo='sudo '
 ttyctl -f
 
 # shell prompt
-. $ZDOTDIR/zshrc.prompt
+. $ZDOTDIR/prompt
 
 # vim: set ft=zsh:
 

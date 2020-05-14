@@ -38,6 +38,9 @@ set previewer ~/.scripts/df/lf-previewer.sh
 # unmap default mappings
 map gh
 
+# vim-style quit
+cmd q quit
+
 # do nothing; interrupt input
 map <esc> %true
 

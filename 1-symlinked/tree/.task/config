@@ -8,10 +8,9 @@
 #   variable=      -- By specifying no value, this means no default
 #   #variable=foo  -- By commenting out the line, or deleting it, this uses the default
 
-# Use the command 'task show' to see all defaults and overrides
+verbose=blank,footnote,label,new-id,new-uuid,affected,edit,special,project,sync,unwait,recur
 
-# Files
-data.location=~/.task
+# Use the command 'task show' to see all defaults and overrides
 
 # Color theme (uncomment one to use)
 #include /usr/share/doc/task/rc/light-16.theme

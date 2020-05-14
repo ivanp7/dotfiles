@@ -6,8 +6,8 @@ WALLPAPER="$(find -L $HOME/wallpapers/ -type f -o -type l |
     done | shuf -n 1)"
 
 if [ -n "$WALLPAPER" ]
-then screen -c $HOME/.screenrc_noui yaft_wall "$WALLPAPER";
-else screen -c $HOME/.screenrc_noui yaft;
+then screen -c $XDG_CONFIG_HOME/screen/screenrc_noui yaft_wall "$WALLPAPER";
+else screen -c $XDG_CONFIG_HOME/screen/screenrc_noui yaft;
 fi
 
 clear
