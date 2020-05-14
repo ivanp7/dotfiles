@@ -1,6 +1,8 @@
 # PATH
-typeset -U path
-path+=($HOME/bin/df $HOME/bin/xdf $HOME/bin $HOME/bin/local $HOME/.roswell/bin)
+export HOMEPATH="$(
+    find -L $HOME/bin -path "*/.*" -prune -o -type d -print |
+    tr '\n' ':' | head -c -1)"
+export PATH="$(echo "$(echo "$PATH" | sed "s@$HOME/bin[^:]*@@g"):$HOMEPATH" | sed 's/:\+/:/g')"
 
 # XDG Base Directory
 
