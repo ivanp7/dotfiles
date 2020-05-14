@@ -1,0 +1,36 @@
+# editing & organizing & calculation
+
+export VIMINIT='if !has("nvim") | let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC | endif'
+export LESSHISTFILE=$XDG_CACHE_HOME/less/history
+
+export TASKDATA=$HOME/.task
+export TASKRC=$TASKDATA/config
+
+export OCTAVE_SITE_INITFILE=$XDG_CONFIG_HOME/octave/octaverc
+export OCTAVE_HISTFILE=$XDG_DATA_HOME/octave/history
+
+export SCREENRC=$XDG_CONFIG_HOME/screen/screenrc
+
+# security
+
+export GNUPGHOME=$XDG_DATA_HOME/gnupg
+
+# utilities 
+
+export WGETRC=$XDG_CONFIG_HOME/wgetrc
+
+# GTK
+
+export GTK_RC_FILES=$XDG_CONFIG_HOME/gtk-1.0/gtkrc
+export GTK2_RC_FILES=$XDG_CONFIG_HOME/gtk-2.0/gtkrc
+
+# languages
+
+export GOPATH=$XDG_DATA_HOME/go
+export _JAVA_OPTIONS=-Djava.util.prefs.userRoot=$XDG_CONFIG_HOME/java
+
+# custom
+
+[ -x "$XDG_CONFIG_HOME/zsh/extra-cleanup" ] && . $XDG_CONFIG_HOME/zsh/extra-cleanup
+
+# vim: set ft=zsh:
