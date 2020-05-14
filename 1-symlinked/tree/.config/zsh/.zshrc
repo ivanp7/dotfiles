@@ -244,7 +244,7 @@ spectrum ()
 }
 
 # extra configuration
-[ -f "$ZDOTDIR/zshrc" ] && . $ZDOTDIR/zshrc
+[ -f "$ZDOTDIR/config" ] && . $ZDOTDIR/config
 
 # aliases
 alias sudo='sudo '
