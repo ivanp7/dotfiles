@@ -50,6 +50,8 @@ export WGETRC=$XDG_CONFIG_HOME/wgetrc
 
 export LESSHISTFILE=$XDG_CACHE_HOME/less/history
 
+export GOPATH=$XDG_DATA_HOME/go
+
 # X11
 
 export XINITRC=$XDG_CONFIG_HOME/X11/xinitrc
