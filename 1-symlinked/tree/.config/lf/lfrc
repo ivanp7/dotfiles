@@ -46,9 +46,14 @@ map <esc> %true
 
 # execute current file (must be executable)
 map x !"$f"
-map -x push !"$f"<space>
 map X &setsid "$f"
-map -X push &setsid "$f"<space>
+map -x !sudo "$f"
+map -X $sudo -b "$f" 2> /dev/null
+
+map txu push !"$f"<space>
+map txs push !sudo<space>"$f"<space>
+map tXu push &setsid<space>"$f"<space>
+map tXs push $sudo<space>-b<space>"$f"<space><space>2<gt><space>/dev/null<left><left><left><left><left><left><left><left><left><left><left><left><left>
 
 # read link
 map al %readlink "$f"
