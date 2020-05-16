@@ -1,7 +1,7 @@
 # editing & organizing & calculation
 
 export VIMINIT='if !has("nvim") | let $MYVIMRC="$XDG_CONFIG_HOME/vim/vimrc" | source $MYVIMRC | endif'
-export LESSHISTFILE=$XDG_CACHE_HOME/less/history
+export LESSHISTFILE=$XDG_CACHE_HOME/less-history
 
 export TASKDATA=$HOME/.task
 export TASKRC=$TASKDATA/config
