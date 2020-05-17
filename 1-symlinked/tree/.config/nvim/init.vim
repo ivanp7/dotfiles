@@ -77,6 +77,9 @@ nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 nnoremap <silent> <C-S> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 inoremap <silent> <C-S> <C-O>:let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 
+" Lose terminal focus
+tnoremap <silent> <C-\><C-\> <C-\><C-N>
+
 " ==============================
 " movement mappings
 " ==============================
