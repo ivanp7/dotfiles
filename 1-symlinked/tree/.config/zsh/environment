@@ -15,8 +15,8 @@ export XDG_CONFIG_DIRS=/etc/xdg
 
 # default applications
 
-export PAGER=/usr/share/vim/vim82/macros/less.sh
-export EDITOR=/usr/bin/vim
+export PAGER=/usr/share/nvim/runtime/macros/less.sh
+export EDITOR=/usr/bin/nvim
 export VISUAL=$EDITOR
 export FILE=lfcd
 

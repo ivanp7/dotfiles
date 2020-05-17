@@ -1,19 +1,23 @@
 # This is Git's per-user configuration file.
 [core]
     pager = less
-    editor = vim
+    editor = nvim
 
 [diff]
-    tool = vimdiff
+    tool = nvim
 [difftool]
     prompt = false
     trustExitCode = true
 [alias]
     dif = difftool
+[difftool "nvim"]
+    cmd = nvim -d "$LOCAL" "$REMOTE" -c 'wincmd w'
 
 [merge]
-    tool = vimdiff
+    tool = nvim
 [mergetool]
     prompt = false
     trustExitCode = true
+[mergetool "nvim"]
+    cmd = nvim -d "$BASE" "$LOCAL" "$REMOTE" "$MERGED" -c 'wincmd w' -c 'wincmd J'
 

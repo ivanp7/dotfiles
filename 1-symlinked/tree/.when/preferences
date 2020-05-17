@@ -1,4 +1,4 @@
 future = 31
-editor = vim
+editor = nvim
 ampm = 0
 
