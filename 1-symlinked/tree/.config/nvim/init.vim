@@ -44,6 +44,7 @@ set spelllang=en_us,ru_yo
 set timeoutlen=3000
 
 set backup
+set backupdir   -=.
 set backupext    =-vimbackup
 set updatecount =100
 set undofile
