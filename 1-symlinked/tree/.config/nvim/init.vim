@@ -376,6 +376,13 @@ let g:semanticLispPersistCacheLocation = $XDG_CACHE_HOME . "/nvim/semantic-lisp-
 
 " ******************** vim-tmux navigator ********************
 
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> <C-M-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <C-M-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <C-M-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <C-M-l> :TmuxNavigateRight<cr>
+
 " Disable tmux navigator when zooming the Vim pane
 let g:tmux_navigator_disable_when_zoomed = 1
 
