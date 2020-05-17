@@ -1,6 +1,6 @@
 #!/bin/sh
 
-pstree -ls $$ | head -n 1 | sed "
+pstree -ls $$ | head -n 1 | sed -E "
     s/-.-/---/g; 
     s/systemd//;
     s/---login//;
@@ -16,9 +16,9 @@ pstree -ls $$ | head -n 1 | sed "
     s/---x-desktop\.sh//g;
     s/---dropdown-termin//g;
     s/^---//;
-    s/sshd---sshd/ssh/;
+    s/sshd(---sshd)*/ssh/;
     s/tmux: server/tmux/;
-    s/screen---screen/screen/;
+    s/screen(---screen)*/screen/;
     s/y-desktop\.sh---screen---yaft/yaft/;
 "
 
