@@ -31,8 +31,6 @@ export BROWSER=/usr/bin/surf
 export XINITRC=$XDG_CONFIG_HOME/X11/xinitrc
 export XSERVERRC=$XDG_CONFIG_HOME/X11/xserverrc
 
-[ -n "${XDG_RUNTIME_DIR+1}" ] && export XAUTHORITY=$XDG_RUNTIME_DIR/Xauthority
-
 . $XDG_CONFIG_HOME/zsh/cleanup
 
 # default font
