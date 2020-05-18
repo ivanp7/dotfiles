@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CONF_DIR=$(realpath $(dirname $0))
+CONF_DIR="$(realpath "$(dirname "$0")")"
 UNINST_SCRIPT=$1
 
 install()
@@ -12,15 +12,25 @@ install()
     [ -n "$UNINST_SCRIPT" ] && echo 'delete_copied_file "'"$HOME/$1"'"' >> $UNINST_SCRIPT
 }
 
+add_directory_instruction ()
+{
+    [ -n "$UNINST_SCRIPT" ] && echo 'delete_empty_directory "'"$HOME/$1"'"' >> $UNINST_SCRIPT
+}
+
 [ -n "$UNINST_SCRIPT" ] &&
 echo '
 delete_copied_file ()
 {
-    [ -f "$1" ] && rm "$1"
-    delete_empty_directory_of "$1"
+    [ -f "$1" ] && rm -f "$1"
 }
 ' >> $UNINST_SCRIPT
 
-for file in $(cd $CONF_DIR/tree; find . -type f | sed 's,^\./,,')
+for file in $(cd "$CONF_DIR/tree"; find . -type f | sort | sed 's,^\./,,')
 do install $file; done
+
+[ -n "$UNINST_SCRIPT" ] && echo >> $UNINST_SCRIPT
+
+for dir in $(cd "$CONF_DIR/tree"; find . -type f | xargs -r dirname | 
+    sort | uniq | sed '/^\.$/d; s,^\./,,')
+do add_directory_instruction "$dir"; done
 

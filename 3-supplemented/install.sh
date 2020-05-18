@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CONF_DIR=$(realpath $(dirname $0))
+CONF_DIR="$(realpath "$(dirname "$0")")"
 
 install()
 {
@@ -12,6 +12,6 @@ install()
     fi
 }
 
-for file in $(cd $CONF_DIR/tree; find . -type f | sed 's,^\./,,')
+for file in $(cd "$CONF_DIR/tree"; find . -type f | sort | sed 's,^\./,,')
 do install $file; done
 
