@@ -33,4 +33,4 @@ alias pwd_='printf "%q\n" "$(pwd)"'
 alias yaft=''
 alias yaft_wall=''
 
-# vim: set ft=zsh:
+# vim: ft=zsh:

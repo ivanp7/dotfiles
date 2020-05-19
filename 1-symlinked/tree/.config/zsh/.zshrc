@@ -258,5 +258,5 @@ ttyctl -f
 # shell prompt
 . $ZDOTDIR/prompt
 
-# vim: set ft=zsh:
+# vim: ft=zsh:
 

@@ -433,5 +433,5 @@ _p_prompt ()
 }
 add-zsh-hook precmd _p_prompt
 
-# vim: set ft=zsh:
+# vim: ft=zsh:
 

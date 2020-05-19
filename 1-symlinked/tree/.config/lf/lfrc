@@ -1,3 +1,5 @@
+# Options {{{
+
 # interpreter for shell commands (needs to be POSIX compatible)
 set shell zsh
 
@@ -35,25 +37,58 @@ set relativenumber
 
 set previewer ~/.scripts/df/lf-previewer.sh
 
-# unmap default mappings
+# }}} 
+# Unmapped keys {{{
+
 map gh
 
-# vim-style quit
-cmd q quit
+# }}}
+# Uncathegorized actions {{{
 
 # do nothing; interrupt input
 map <esc> %true
 
-# execute current file (must be executable)
-map x !"$f"
-map X &setsid "$f"
-map -x !sudo "$f"
-map -X $sudo -b "$f" 2> /dev/null
+# put lf into background
+map <c-z> $kill -STOP $PPID
 
-map txu push !"$f"<space>
-map txs push !sudo<space>"$f"<space>
-map tXu push &setsid<space>"$f"<space>
-map tXs push $sudo<space>-b<space>"$f"<space><space>2<gt><space>/dev/null<left><left><left><left><left><left><left><left><left><left><left><left><left>
+# vim-style quit
+cmd q quit
+
+# }}}
+# Visual operations {{{
+
+# glob select&unselect
+map V push ::glob-select<space>
+map U push ::glob-unselect<space>
+
+cmd moveless_toggle %{{
+    lf -remote "send $id toggle"
+    file="$(echo "$f" | sed 's/"/\\"/g')"
+    lf -remote "send $id select \"$file\""
+}}
+cmd back_toggle %{{
+    lf -remote "send $id toggle"
+    file="$(echo "$f" | sed 's/"/\\"/g')"
+    lf -remote "send $id select \"$file\""
+    lf -remote "send $id up"
+}}
+map <space> moveless_toggle
+map b toggle
+map B back_toggle
+
+# }}}
+# Clipboard operations {{{
+
+# copy path
+map Ypx $echo -n "$f" | xclip -i -selection clipboard
+map Ydx $echo -n "$(dirname "$f")" | xclip -i -selection clipboard
+map Ynx $echo -n "$(basename "$f")" | xclip -i -selection clipboard
+map Ypt $tmux set-buffer -- "$f"
+map Ydt $tmux set-buffer -- "$(dirname "$f")"
+map Ynt $tmux set-buffer -- "$(basename "$f")"
+
+# }}}
+# Quick info ('a' keys) {{{
 
 # process tree
 map ap %$HOME/.scripts/df/pstree.sh
@@ -74,6 +109,9 @@ map aM link_mime
 
 # calculate used space
 map au %du -chD ${(f)fx} | tail -n 1
+
+# }}}
+# Quick action ('t' keys) {{{
 
 # create directory
 cmd mkdir %mkdir "$(echo "$@")"; lf -remote "send $id reload"
@@ -159,13 +197,8 @@ cmd unmount_rmdir %{{
 map tm unmount
 map tM unmount_rmdir
 
-# copy path
-map Ypx $echo -n "$f" | xclip -i -selection clipboard
-map Ydx $echo -n "$(dirname "$f")" | xclip -i -selection clipboard
-map Ynx $echo -n "$(basename "$f")" | xclip -i -selection clipboard
-map Ypt $tmux set-buffer -- "$f"
-map Ydt $tmux set-buffer -- "$(dirname "$f")"
-map Ynt $tmux set-buffer -- "$(basename "$f")"
+# }}}
+# Previewing & editing {{{
 
 # preview
 cmd preview ${{
@@ -202,6 +235,23 @@ map e $$EDITOR ${(f)fx}
 
 # edit symlink path
 map E $edit-symlink.sh "$f"
+
+# }}}
+# Execution {{{
+
+# execute current file (must be executable)
+map x !"$f"
+map X &setsid "$f"
+map -x !sudo "$f"
+map -X $sudo -b "$f" 2> /dev/null
+
+map txu push !"$f"<space>
+map txs push !sudo<space>"$f"<space>
+map tXu push &setsid<space>"$f"<space>
+map tXs push $sudo<space>-b<space>"$f"<space><space>2<gt><space>/dev/null<left><left><left><left><left><left><left><left><left><left><left><left><left>
+
+# }}}
+# Opening {{{
 
 # define a custom 'open' command
 # This command is called when current file is not a directory. You may want to
@@ -272,24 +322,8 @@ cmd opener ${{
 }}
 map o opener
 
-# glob select&unselect
-map V push ::glob-select<space>
-map U push ::glob-unselect<space>
-
-cmd moveless_toggle %{{
-    lf -remote "send $id toggle"
-    file="$(echo "$f" | sed 's/"/\\"/g')"
-    lf -remote "send $id select \"$file\""
-}}
-cmd back_toggle %{{
-    lf -remote "send $id toggle"
-    file="$(echo "$f" | sed 's/"/\\"/g')"
-    lf -remote "send $id select \"$file\""
-    lf -remote "send $id up"
-}}
-map <space> moveless_toggle
-map b toggle
-map B back_toggle
+# }}}
+# Renaming {{{
 
 # smart rename
 cmd bulk_rename !{{
@@ -334,6 +368,9 @@ cmd smart_rename ${{
 
 map r smart_rename
 map R %vidir ${(f)fs}; lf -remote "send $id reload"
+
+# }}}
+# Copy-pasting & linking {{{
 
 # pasting done right
 cmd paste %{{
@@ -421,6 +458,9 @@ cmd link %{{
 map PP link
 map Pp link -r
 
+# }}}
+# Deleting & trashing {{{
+
 # delete files & directories
 cmd smart_delete ${{
     echo
@@ -450,6 +490,9 @@ cmd trash ${{
     fi
 }}
 map <bs2> trash
+
+# }}}
+# Compression {{{
 
 # extract the current file or selected files with the right command
 cmd extract ${{
@@ -495,6 +538,9 @@ cmd 7z ${{
     lf -remote "send $id reload"
 }}
 
+# }}}
+# Encryption {{{
+
 cmd encrypt ${{
     for file in ${(f)fx}; do
         echo "$file"
@@ -513,6 +559,6 @@ cmd decrypt ${{
     lf -remote "send $id reload"
 }}
 
-# put lf into background
-map <c-z> $kill -STOP $PPID
+# }}}
 
+# vim: foldmethod=marker:

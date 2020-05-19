@@ -43,4 +43,4 @@ fi
 
 export GNUMAKEFLAGS=--no-print-directory
 
-# vim: set ft=zsh:
+# vim: ft=zsh:

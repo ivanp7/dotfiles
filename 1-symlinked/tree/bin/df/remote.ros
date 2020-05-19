@@ -356,4 +356,4 @@ exec ros -Q -- $0 "$@"
                       (error "unknown operation requested")))))))))
     (t (msg) (format *error-output* "Error: ~A~%" msg) 1)))
 
-;;; vim: set ft=lisp lisp:
+;;; vim: ft=lisp:

@@ -200,4 +200,4 @@ exec ros -Q -- $0 "$@"
         (error "expecting 2 parameters -- original and pattern directories"))
       (t (msg) (format *error-output* "Error: ~A~%" msg) 1)))
 
-;;; vim: set ft=lisp lisp:
+;;; vim: ft=lisp:

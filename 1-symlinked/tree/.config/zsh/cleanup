@@ -33,4 +33,4 @@ export CARGO_HOME=$XDG_DATA_HOME/cargo
 
 [ -x "$XDG_CONFIG_HOME/zsh/extra-cleanup" ] && . $XDG_CONFIG_HOME/zsh/extra-cleanup
 
-# vim: set ft=zsh:
+# vim: ft=zsh:
