@@ -1,3 +1,5 @@
+# Auxilliary constants & functions {{{
+
 _p_bold="%B"
 _p_stopbold="%b"
 
@@ -36,7 +38,8 @@ _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
 _p_default_prompt_text="/bin/zsh"
 
-###############################################################################
+# }}}
+# Initialization {{{
 
 _p_preexec ()
 {
@@ -68,7 +71,9 @@ _p_prompt_init_f ()
 }
 add-zsh-hook precmd _p_prompt_init_f
 
-###############################################################################
+# }}}
+# First line {{{
+# Last command stop time {{{
 
 _p_timeinfo_f ()
 {
@@ -77,6 +82,9 @@ _p_timeinfo_f ()
     _p_timeinfo="[${TimeColor}%D{%T}${_p_stdcolor}]"
 }
 add-zsh-hook precmd _p_timeinfo_f
+
+# }}}
+# Last command duration {{{
 
 _p_cmdtimeinfo_f ()
 {
@@ -127,6 +135,9 @@ _p_cmdtimeinfo_f ()
 }
 add-zsh-hook precmd _p_cmdtimeinfo_f
 
+# }}}
+# Last command status {{{
+
 _p_cmdstatusinfo_f ()
 {
     local SuccessColor=${_p_color_white}
@@ -148,6 +159,9 @@ _p_cmdstatusinfo_f ()
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
 
+# }}}
+# Terminal device {{{
+
 _p_ttyinfo_f ()
 {
     local Tty=$(tty | sed 's,^/dev/,,')
@@ -155,6 +169,9 @@ _p_ttyinfo_f ()
     _p_ttyinfo_length=$((3 + ${#Tty}))
 }
 add-zsh-hook precmd _p_ttyinfo_f
+
+# }}}
+# Process chain {{{
 
 _p_processinfo_f ()
 {
@@ -204,7 +221,10 @@ _p_processinfo_f ()
 }
 add-zsh-hook precmd _p_processinfo_f
 
-###############################################################################
+# }}}
+# }}}
+# Second line {{{
+# User@host {{{
 
 _p_userhostinfo_f ()
 {
@@ -231,6 +251,9 @@ _p_userhostinfo_f ()
     _p_userhostinfo="${_p_2dash}[${_p_username}@${HostColor}${HOST}${_p_stdcolor}]"
 }
 add-zsh-hook precmd _p_userhostinfo_f
+
+# }}}
+# git info {{{
 
 _p_gitinfo_f ()
 {
@@ -324,6 +347,9 @@ _p_gitinfo_f ()
 }
 add-zsh-hook precmd _p_gitinfo_f
 
+# }}}
+# Current directory {{{
+
 _p_pwdinfo_f ()
 {
     local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
@@ -366,7 +392,9 @@ _p_pwdinfo_f ()
 }
 add-zsh-hook precmd _p_pwdinfo_f
 
-###############################################################################
+# }}}
+# }}}
+# Third line {{{
 
 _p_cmdline_f ()
 {
@@ -420,7 +448,8 @@ TRAPINT ()
     return $(( 128 + $1 ))
 } 
 
-###############################################################################
+# }}}
+# Prompt itself {{{
 
 _p_prompt ()
 {
@@ -433,5 +462,6 @@ _p_prompt ()
 }
 add-zsh-hook precmd _p_prompt
 
-# vim: ft=zsh:
+# }}}
 
+# vim: ft=zsh: foldmethod=marker:

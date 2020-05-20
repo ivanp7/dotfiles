@@ -1,5 +1,4 @@
-" #############################################################################
-" General settings
+" options {{{
 
 set expandtab             " Use spaces instead of tabs.
 set tabstop     =4        " Tab key indents by 4 spaces.
@@ -52,8 +51,8 @@ set undofile
 set viewdir=$XDG_CACHE_HOME/nvim/view
 set shada+='1000,n$XDG_CACHE_HOME/nvim/info
 
-" #############################################################################
-" Custom key mappings
+" }}}
+" custom mappings {{{
 
 " Reload vimrc
 map <F5> :source $MYVIMRC<CR>
@@ -80,9 +79,8 @@ inoremap <silent> <C-S> <C-O>:let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 " Lose terminal focus
 tnoremap <silent> <C-\><C-\> <C-\><C-N>
 
-" ==============================
-" movement mappings
-" ==============================
+" }}}
+" movement mappings {{{
 
 " Map the cursor keys for precision scrolling by visual lines
 imap <up> <C-O>gk
@@ -104,9 +102,8 @@ noremap! <C-E>		<End>
 " forward one character
 noremap! <C-F>		<Right>
 
-" ==============================
-" copy-paste mappings
-" ==============================
+" }}}
+" copy-paste mappings {{{
 
 noremap Y y$
 
@@ -120,9 +117,8 @@ map <leader>C "_C
 map <leader>s "_s
 map <leader>S "_S
 
-" ==============================
-" indentation mappings
-" ==============================
+" }}}
+" indentation mappings {{{
 
 " Visual mode blockwise indent
 vmap > >gv
@@ -131,9 +127,8 @@ vmap < <gv
 " Ident the whole buffer
 map <F7> mzgg=G`z
 
-" ==============================
-" search&replace mappings
-" ==============================
+" }}}
+" search&replace mappings {{{
 
 " Escape special characters in a string for exact matching.
 " This is useful to copying strings from the file to the search tool
@@ -175,9 +170,8 @@ vmap <leader>v <Esc>/<c-r>=GetVisual()<cr>
 vmap <leader>z <Esc>:%s/<c-r>=GetVisual()<cr>//gc<left><left><left>
 vmap <leader>Z <Esc>:%s/<c-r>=GetVisual()<cr>/<c-r>=GetVisual()<cr>/gc<left><left><left>
 
-" ==============================
-" user interface operations mappings
-" ==============================
+" }}}
+" user interface operations mappings {{{
 
 " Close window
 nnoremap <silent> <C-Q> :q<CR>
@@ -252,8 +246,8 @@ nnoremap <silent> gB :call SwitchToNextBuffer(-1)<CR>
 command! CCI let @" = @+
 command! CCO let @+ = @" | let @* = @"
 
-" #############################################################################
-" Plug.vim plugins
+" }}}
+" plug.vim {{{
 
 call plug#begin($XDG_CACHE_HOME . '/nvim/plugged')
 
@@ -266,13 +260,6 @@ Plug 'tpope/vim-capslock'
 Plug 'tpope/vim-eunuch'
 Plug 'farmergreg/vim-lastplace'
 
-" Interface enhancement
-Plug 'qpkorr/vim-bufkill'
-Plug 'rbgrouleff/bclose.vim'
-
-Plug 'ptzz/lf.vim'
-Plug 'majutsushi/tagbar'
-
 " Appearance
 Plug 'fxn/vim-monochrome'
 Plug 'itchyny/lightline.vim'
@@ -282,6 +269,13 @@ Plug 'Yggdroot/indentLine'
 " Syntax highlighting
 Plug 'jaxbot/semantic-highlight.vim'
 Plug 'ivanp7/lisp-semantic-highlight.vim'
+
+" Interface enhancement
+Plug 'qpkorr/vim-bufkill'
+Plug 'rbgrouleff/bclose.vim'
+
+Plug 'ptzz/lf.vim'
+Plug 'majutsushi/tagbar'
 
 " tmux
 Plug 'christoomey/vim-tmux-navigator'
@@ -295,16 +289,8 @@ Plug 'vlime/vlime', {'rtp': 'vim/'}
 
 call plug#end()
 
-" #############################################################################
-" Plugins customization
-
-" ********************* lf.vim **************************
-
-let g:lf_replace_netrw = 1 " open lf when vim open a directory
-
-" ********************* tagbar ******************************
-
-nmap <F8> :TagbarToggle<CR>
+" }}}
+" appearance {{{
 
 " ******************** vim-lightline **************************
 
@@ -367,12 +353,27 @@ let g:terminal_color_15 = '#ffffff' " white
 let g:indentLine_char = '·'
 let g:indentLine_color_gui = '#888888'
 
-" ******************** Semantic highlight ******************
-"
+" }}}
+" syntax highlighting {{{
+
 let g:semanticEnableFileTypes = ['c', 'cpp', 'java', 'javascript', 'python', 'vim']
 let g:semanticPersistCacheLocation = $XDG_CACHE_HOME . "/nvim/semantic-highlight-cache"
 
 let g:semanticLispPersistCacheLocation = $XDG_CACHE_HOME . "/nvim/semantic-lisp-highlight-cache"
+
+" }}}
+" interface enhancement {{{
+
+" ********************* lf.vim **************************
+
+let g:lf_replace_netrw = 1 " open lf when vim open a directory
+
+" ********************* tagbar ******************************
+
+nmap <F8> :TagbarToggle<CR>
+
+" }}}
+" tmux integration {{{
 
 " ******************** vim-tmux navigator ********************
 
@@ -386,7 +387,8 @@ nnoremap <silent> <C-M-l> :TmuxNavigateRight<cr>
 " Disable tmux navigator when zooming the Vim pane
 let g:tmux_navigator_disable_when_zoomed = 1
 
-" ******************** S-expressions and Lisp ***********************
+" }}}
+" s-expressions and Lisp {{{
 
 " tweak syntax
 autocmd FileType lisp syntax clear lispAtom
@@ -459,3 +461,6 @@ function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
                 \ "--eval", a:vlime_eval]
 endfunction
 
+" }}}
+
+" vim: foldmethod=marker:

@@ -1,3 +1,5 @@
+# Options & initialization {{{
+
 # zsh directories
 mkdir -p $XDG_CACHE_HOME/zsh
 mkdir -p $XDG_DATA_HOME/zsh
@@ -47,7 +49,18 @@ rehash_precmd ()
 
 add-zsh-hook -Uz precmd rehash_precmd
 
-# keys
+# syntax highlighting
+. /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# "command not found"
+. /usr/share/doc/pkgfile/command-not-found.zsh
+
+# disable ctrl+s/ctrl+q
+stty -ixon -ixoff
+
+# }}}
+# Keys {{{
+
 bindkey -v
 
 autoload edit-command-line
@@ -112,14 +125,8 @@ if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
     add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
 fi
 
-# syntax highlighting
-. /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# "command not found"
-. /usr/share/doc/pkgfile/command-not-found.zsh
-
-# disable ctrl+s/ctrl+q
-stty -ixon -ixoff
+# }}}
+# man {{{
 
 # man
 man () 
@@ -134,6 +141,9 @@ man ()
     LESS_TERMCAP_ue=$(printf "\e[0m") \
     man -P "less -Q" "$@"
 }
+
+# }}}
+# lf {{{
 
 # lf
 cdlf ()
@@ -160,6 +170,8 @@ lfcd ()
     fi
 }
 
+# }}}
+# tmux {{{
 
 tx ()
 {
@@ -174,6 +186,9 @@ txclip ()
 {
     tmux set-buffer "$(cat)"
 }
+
+# }}}
+# colors {{{
 
 # color grid
 colorgrid ()
@@ -243,8 +258,8 @@ spectrum ()
     }'
 }
 
-# extra configuration
-[ -f "$ZDOTDIR/config" ] && . $ZDOTDIR/config
+# }}}
+# Aliases & extra configuration {{{
 
 # aliases
 alias sudo='sudo '
@@ -252,11 +267,18 @@ alias sudo='sudo '
 { command -v xhost > /dev/null && xhost > /dev/null 2>&1 &&
     [ -f $ZDOTDIR/xaliases ] && . $ZDOTDIR/xaliases; } || true
 
+# extra configuration
+[ -f "$ZDOTDIR/config" ] && . $ZDOTDIR/config
+
+# }}}
+# Prompt {{{
+
 # unfreeze terminal if left frozen
 ttyctl -f
 
 # shell prompt
 . $ZDOTDIR/prompt
 
-# vim: ft=zsh:
+# }}}
 
+# vim: ft=zsh: foldmethod=marker:

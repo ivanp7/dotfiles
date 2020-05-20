@@ -1,4 +1,4 @@
-########## invalidate defaults ##########
+# invalidate defaults {{{
 
 keymap K NULL
 keymap J NULL
@@ -148,8 +148,8 @@ keymap C-z NULL
 keymap ZZ NULL
 keymap ZQ NULL
 
-
-########## command ##########
+# }}}
+# command {{{
 
 keymap :: COMMAND
 keymap :H HELP
@@ -158,14 +158,16 @@ keymap :d DOWNLOAD_LIST
 
 keymap C-l REDRAW
 
-########## history navigation ##########
+# }}}
+# history navigation {{{
 
 keymap L NEXT
 keymap H PREV
 keymap :p SELECT_MENU
 keymap :h HISTORY
 
-########## scrolling ##########
+# }}}
+# scrolling {{{
 
 keymap C-e UP
 keymap C-y DOWN
@@ -179,7 +181,8 @@ keymap C-u PREV_PAGE
 keymap gg BEGIN
 keymap G END
 
-########## cursor ##########
+# }}}
+# cursor {{{
 
 keymap h MOVE_LEFT
 keymap l MOVE_RIGHT
@@ -199,30 +202,35 @@ keymap $ LINE_END
 keymap w NEXT_WORD
 keymap b PREV_WORD
 
-########## cursor history ##########
+# }}}
+# cursor history {{{
 
 keymap C-r REDO
 keymap u UNDO
 
-########## navigation ##########
+# }}}
+# navigation {{{
 
 keymap C-f MOVE_LIST_MENU
 
 keymap C-n NEXT_LINK
 keymap C-p PREV_LINK
 
-# reload
+# }}}
+# reload {{{
 
 keymap r RELOAD
 
-# save/load 
+# }}}
+# save/load {{{
 
 keymap :w SAVE
 keymap :W PRINT
 keymap :o GOTO
 keymap :e LOAD
 
-# jump
+# }}}
+# jump {{{
 
 keymap ESC-C-j SUBMIT
 #keymap C-] TAB_LINK
@@ -230,7 +238,8 @@ keymap TAB TAB_LINK
 keymap C-j GOTO_LINK
 keymap f LIST_MENU
 
-########## info ##########
+# }}}
+# info {{{
 
 keymap :l PEEK_LINK
 keymap y PEEK
@@ -238,19 +247,22 @@ keymap gC-g INFO
 keymap C-g LINE_INFO
 keymap gf VIEW
 
-########## search ##########
+# }}}
+# search {{{
 
 keymap / ISEARCH
 keymap ? ISEARCH_BACK
 keymap n SEARCH_NEXT
 keymap N SEARCH_PREV
 
-########## bookmarks ##########
+# }}}
+# bookmarks {{{
 
 keymap a ADD_BOOKMARK
 keymap :b VIEW_BOOKMARK
 
-########## tab ##########
+# }}}
+# tab {{{
 
 keymap x CLOSE_TAB
 keymap t NEW_TAB
@@ -268,10 +280,14 @@ keymap T TAB_MENU
 keymap o GOTO
 keymap O TAB_GOTO
 
-########## quit ##########
+# }}}
+# quit {{{
 
 keymap ZZ EXIT
 keymap C-Q EXIT
 keymap ZQ QUIT
 keymap :q QUIT
 
+# }}}
+
+# vim: foldmethod=marker:
