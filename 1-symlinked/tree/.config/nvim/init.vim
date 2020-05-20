@@ -19,6 +19,8 @@ set report      =0        " Always report changed lines.
 set wrapscan              " Searches wrap around end-of-file.
 set noshowmode
 
+set inccommand  =nosplit
+
 set synmaxcol   =400      " Only highlight the first 400 columns.
 set colorcolumn =80,100
 
@@ -37,7 +39,7 @@ set clipboard+=unnamedplus
 
 set keymap=russian-jcukenwin
 set iminsert=0
-set imsearch=0
+set imsearch=-1
 set spelllang=en_us,ru_yo
 
 set timeoutlen=3000
