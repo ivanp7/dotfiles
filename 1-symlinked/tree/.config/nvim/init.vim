@@ -326,6 +326,7 @@ highlight CursorLineNR      guifg=#ee3333
 highlight LineNr            guifg=#999999
 highlight MatchParen        guifg=#ffffff guibg=#ff0000
 highlight ColorColumn       guibg=#111111
+highlight IncSearch         guifg=#990000 guibg=#ffffff
 
 " terminal colors
 
