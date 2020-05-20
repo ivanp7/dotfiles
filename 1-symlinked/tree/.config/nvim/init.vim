@@ -39,7 +39,6 @@ set clipboard+=unnamedplus
 
 set keymap=russian-jcukenwin
 set iminsert=0
-set imsearch=-1
 set spelllang=en_us,ru_yo
 
 set timeoutlen=3000
