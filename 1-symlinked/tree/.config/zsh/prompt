@@ -451,6 +451,7 @@ zle-line-finish ()
         _p_cmdline_f "%D{%T}" "${TimeColor}"
     fi
     zle reset-prompt
+    _p_cursor_block
 }
 zle -N zle-line-finish
 
