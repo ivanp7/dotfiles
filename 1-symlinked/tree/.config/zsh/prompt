@@ -408,12 +408,26 @@ _p_cmdline_f ()
     PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${_p_bot}[$2$1${_p_stdcolor}]${PromptCharacter}"
 }
 
+_p_cursor_block ()
+{
+    echo -ne '\e[1 q'
+}
+
+_p_cursor_beam ()
+{
+    echo -ne '\e[5 q'
+}
+
 zle-keymap-select ()
 {
     CommandModeIndicatorColor=$(_p_safe_color "$(_p_color 15 1)" "${_p_bold}$(_p_color 7 1)")
     if [ "$KEYMAP" = "vicmd" ]
-    then _p_cmdline_f "${_p_default_prompt_text}" "${CommandModeIndicatorColor}"
-    else _p_cmdline_f "${_p_default_prompt_text}"
+    then 
+        _p_cmdline_f "${_p_default_prompt_text}" "${CommandModeIndicatorColor}"
+        _p_cursor_block
+    else 
+        _p_cmdline_f "${_p_default_prompt_text}"
+        _p_cursor_beam
     fi
     zle reset-prompt
 }
@@ -424,6 +438,7 @@ zle-line-init ()
     (( ${+terminfo[smkx]} )) && echoti smkx
     _p_cmdline_f "${_p_default_prompt_text}"
     zle reset-prompt
+    _p_cursor_beam
 }
 zle -N zle-line-init
 
