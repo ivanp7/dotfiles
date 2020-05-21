@@ -420,7 +420,7 @@ _p_cursor_beam ()
 
 zle-keymap-select ()
 {
-    CommandModeIndicatorColor=$(_p_safe_color "$(_p_color 15 1)" "${_p_bold}$(_p_color 7 1)")
+    CommandModeIndicatorColor=$(_p_safe_color "$(_p_color 0 8)" "$(_p_color 0 7)")
     if [ "$KEYMAP" = "vicmd" ]
     then 
         _p_cmdline_f "${_p_default_prompt_text}" "${CommandModeIndicatorColor}"
