@@ -54,6 +54,10 @@ map <c-z> $kill -STOP $PPID
 # vim-style quit
 cmd q quit
 
+# elevate priviledges
+map =w $sudo -s
+map == $sudo lf
+
 # }}}
 # Visual operations {{{
 
@@ -228,10 +232,13 @@ cmd preview ${{
 }}
 map i preview
 map I $$PAGER "$f"
+map =I $sudo $PAGER "$f"
 map -I !cat "$f"
+map =-I !sudo cat "$f"
 
 # edit files
 map e $$EDITOR ${(f)fx}
+map =e $sudo -e ${(f)fx}
 
 # edit symlink path
 map E $edit-symlink.sh "$f"
@@ -242,13 +249,10 @@ map E $edit-symlink.sh "$f"
 # execute current file (must be executable)
 map x !"$f"
 map X &setsid "$f"
-map -x !sudo "$f"
-map -X $sudo -b "$f" 2> /dev/null
+map =x !sudo -E "$f"
 
-map txu push !"$f"<space>
-map txs push !sudo<space>"$f"<space>
-map tXu push &setsid<space>"$f"<space>
-map tXs push $sudo<space>-b<space>"$f"<space><space>2<gt><space>/dev/null<left><left><left><left><left><left><left><left><left><left><left><left><left>
+map tx push !"$f"<space>
+map tX push &setsid<space>"$f"<space>
 
 # }}}
 # Opening {{{
