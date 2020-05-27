@@ -21,6 +21,7 @@ delete_empty_directory ()
 
 for category in $(find "$CONF_DIR" -mindepth 1 -maxdepth 1 -type d \! -name ".git" | sort)
 do 
+    echo "> Installing '$(basename $category)'..."
     $category/install.sh $UNINST_SCRIPT
     echo >> $UNINST_SCRIPT
 done
