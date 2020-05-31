@@ -1,10 +1,9 @@
+case $(tty) in
+    /dev/tty*) clear ;;
+esac
+
 . $HOME/.scripts/df/ssh-add.sh
 
-sleep 1
-clear
-
-echo
-echo
+printf "\n\n\n\n"
 neofetch
-echo
 
