@@ -371,7 +371,7 @@ cmd smart_rename ${{
 }}
 
 map r smart_rename
-map R %vidir ${(f)fs}; lf -remote "send $id reload"
+map R $vidir ${(f)fs}; lf -remote "send $id reload"
 
 # }}}
 # Copy-pasting & linking {{{
