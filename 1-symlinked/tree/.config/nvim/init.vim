@@ -198,7 +198,7 @@ function! HideColumnRuler()
 endfunction
 
 function! SwitchColumnRuler()
-    if !exists("w:column_ruler") || !w:column_ruler
+    if !exists("w:column_ruler")
         if !exists("w:column_ruler_shown") || !w:column_ruler_shown
             call ShowColumnRuler()
         else
@@ -208,6 +208,59 @@ function! SwitchColumnRuler()
 endfunction
 
 nnoremap <silent> <C-T> :call SwitchColumnRuler()<CR>
+
+function! ShowDiffOrig(orientation)
+    if a:orientation == 'h' |
+        lefta vsp
+    elseif a:orientation == 'j'
+        sp
+    elseif a:orientation == 'k'
+        abo sp
+    else
+        vsp
+    endif
+
+    enew
+    silent r #
+    0d_
+    setl nomod buftype=nofile
+    diffthis
+    let w:diff_original = v:true
+    wincmd p
+    diffthis
+    let w:diff_original_orient = a:orientation
+endfunction
+
+function! HideDiffOrig()
+    if w:diff_original_orient == 'h' |
+        wincmd h
+    elseif w:diff_original_orient == 'j'
+        wincmd j
+    elseif w:diff_original_orient == 'k'
+        wincmd k
+    else
+        wincmd l
+    endif
+
+    bdelete
+    diffoff
+    unlet w:diff_original_orient
+endfunction
+
+function! SwitchDiffOrig(orientation)
+    if !exists("w:diff_original")
+        if !exists("w:diff_original_orient")
+            call ShowDiffOrig(a:orientation)
+        else
+            call HideDiffOrig()
+        endif
+    endif
+endfunction
+
+nnoremap <silent> <leader>ih :call SwitchDiffOrig('h')<CR>
+nnoremap <silent> <leader>ij :call SwitchDiffOrig('j')<CR>
+nnoremap <silent> <leader>ik :call SwitchDiffOrig('k')<CR>
+nnoremap <silent> <leader>il :call SwitchDiffOrig('l')<CR>
 
 " Resize windows
 nnoremap <silent> <C-W><C-H> :vert res -10<CR>
