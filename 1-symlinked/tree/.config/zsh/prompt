@@ -34,18 +34,21 @@ _p_section="§"
 
 _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
-_p_default_prompt_text="/bin/zsh"
+_p_default_prompt_text=">>>>>>>>"
 
 # }}}
 # Initialization {{{
-# Terminal device {{{
-_p_ttyinfo_f ()
+# Shell info {{{
+_p_shellinfo_f ()
 {
-    local Tty=$(tty | sed 's,^/dev/,,')
-    _p_ttyinfo=" ${Tty} ${_p_dot}${_p_dot}${_p_dot}"
-    _p_ttyinfo_length=$((5 + ${#Tty}))
+    local Date=$(date +'%F %a')
+    local Tty=$(tty | sed 's@^/dev/@@')
+    local Dimensions="[${COLUMNS}x${LINES}]x$(tput colors)"
+    local Sep="${_p_dot}${_p_dot}${_p_dot}"
+    _p_shellinfo=" $Date $Sep $Tty @ $TERM $Dimensions $Sep"
+    _p_shellinfo_length=${#_p_shellinfo}
 }
-add-zsh-hook precmd _p_ttyinfo_f
+add-zsh-hook precmd _p_shellinfo_f
 # }}}
 
 _p_preexec ()
@@ -74,8 +77,13 @@ _p_prompt_init_f ()
         unset _p_exitcode
     fi
 
-    _p_separator="$(dd if=/dev/zero bs=1 count=$(($COLUMNS-$_p_ttyinfo_length)) status=none | 
-        sed "s/./${_p_dot}/g")${_p_ttyinfo}"
+    if [ "$COLUMNS" -gt "$((2 * $_p_shellinfo_length))" ]
+    then
+        _p_separator="$(dd if=/dev/zero bs=1 count=$(($COLUMNS-$_p_shellinfo_length)) status=none | 
+            sed "s/./${_p_dot}/g")${_p_shellinfo}"
+    else
+        _p_separator="$(dd if=/dev/zero bs=1 count=$COLUMNS status=none | sed "s/./${_p_dot}/g")"
+    fi
 }
 add-zsh-hook precmd _p_prompt_init_f
 
