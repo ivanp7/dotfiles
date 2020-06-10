@@ -240,21 +240,22 @@ _p_userhostinfo_f ()
 
     local RootColor=$(_p_safe_color "$(_p_color 15 196)" "${_p_bold}$(_p_color 7 1)")
     local UserColor=$(_p_safe_color "$(_p_color 40)" "${_p_bold}$(_p_color 2)")
+    [ "$(id -u)" -eq 0 ] && UserColor=$RootColor
     local HostColor=$(_p_safe_color "$(_p_color 39)" "${_p_bold}$(_p_color 4)")
 
-    if [ "$(id -u)" -eq 0 ]
+    local _p_username="${UserColor}${USER}${_p_stdcolor}"
+    local _p_hostname="${HostColor}${HOST}${_p_stdcolor}"
+
+    if [ "$(tput colors)" -ge 256 ]
     then
-        local _p_username="${RootColor}${USER}${_p_stdcolor}"
-    else
         local username_line="$(grep -s "^$USER " $ZDOTDIR/prompt.usernames)"
-        if [ "$(tput colors)" -ge 256 ] && [ -n "$username_line" ]
-        then
-            local _p_username="$(echo "$username_line" | cut -d' ' -f2)${_p_stdcolor}"
-        else
-            local _p_username="${UserColor}${USER}${_p_stdcolor}"
-        fi
+        local hostname_line="$(grep -s "^$HOST " $ZDOTDIR/prompt.hostnames)"
+
+        [ -n "$username_line" ] && local _p_username="$(echo "$username_line" | cut -d' ' -f2)${_p_stdcolor}"
+        [ -n "$hostname_line" ] && local _p_hostname="$(echo "$hostname_line" | cut -d' ' -f2)${_p_stdcolor}"
     fi
-    _p_userhostinfo="  ${_p_username}@${HostColor}${HOST}${_p_stdcolor}"
+
+    _p_userhostinfo="  ${_p_username}@${_p_hostname}"
 }
 add-zsh-hook precmd _p_userhostinfo_f
 
