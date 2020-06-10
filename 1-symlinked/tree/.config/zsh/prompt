@@ -21,6 +21,7 @@ _p_cmdcolor=${_p_color_white}
 _p_dot="·"
 _p_dash="─"
 _p_2dash="═"
+_p_aeq="≈"
 _p_rightarrow="→"
 _p_top="┌"
 _p_mid0="│"
@@ -113,8 +114,8 @@ _p_cmdtimeinfo_f ()
 
     if [ "$_p_timer_delta" -eq 0 ]
     then 
-        _p_cmdtimeinfo_length=4
-        _p_cmdtimeinfo=" ~0s"
+        _p_cmdtimeinfo_length=0
+        _p_cmdtimeinfo=""
         return
     fi
 
@@ -147,7 +148,7 @@ _p_cmdtimeinfo_f ()
 
     _p_cmdtimeinfo_length=$((2 + ${#days_nocolor} + ${#hours_nocolor} + 
     ${#minutes_nocolor} + ${#seconds_nocolor}))
-    _p_cmdtimeinfo=" ~${days}${hours}${minutes}${seconds}${_p_stdcolor}"
+    _p_cmdtimeinfo=" ${_p_aeq}${days}${hours}${minutes}${seconds}${_p_stdcolor}"
 }
 add-zsh-hook precmd _p_cmdtimeinfo_f
 
@@ -245,7 +246,7 @@ _p_userhostinfo_f ()
     then
         local _p_username="${RootColor}${USER}${_p_stdcolor}"
     else
-        local username_line="$(grep "^$USER " $ZDOTDIR/prompt.usernames 2> /dev/null)"
+        local username_line="$(grep -s "^$USER " $ZDOTDIR/prompt.usernames)"
         if [ "$(tput colors)" -ge 256 ] && [ -n "$username_line" ]
         then
             local _p_username="$(echo "$username_line" | cut -d' ' -f2)${_p_stdcolor}"
