@@ -264,7 +264,7 @@ add-zsh-hook precmd _p_userhostinfo_f
 
 _p_gitinfo_f ()
 {
-    local LocationColor=$(_p_safe_color "$(_p_color 165)" "${_p_bold}$(_p_color 5)")
+    local LocationColor=$(_p_safe_color "$(_p_color 228)" "${_p_bold}$(_p_color 3)")
 
     # Exit if not inside a Git repository
     if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1
