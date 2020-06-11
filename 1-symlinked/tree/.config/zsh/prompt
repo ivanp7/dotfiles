@@ -36,7 +36,12 @@ _p_section="§"
 
 _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
-_p_default_prompt_text=">>>>>>>>"
+if [ "$_p_colors" -ge 256 ]
+then
+    _p_default_prompt_text="%F{234}>%F{237}>%F{240}>%F{243}>%F{246}>%F{249}>%F{252}>%F{255}>"
+else
+    _p_default_prompt_text=">>>>>>>>"
+fi
 
 # }}}
 # Initialization {{{
@@ -196,7 +201,7 @@ _p_processinfo_f ()
                           $_p_cmdstatusinfo_length + 3))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
-    local PNameColor=${_p_color_white}
+    local PNameColor=$(_p_safe_color "$(_p_color 252)" "$(_p_color 7)")
     local PrettifyingRegEx='s@///@'"${_p_stdcolor}$ket${_p_rightarrow}$bra$PNameColor"'@g'
 
     if [ "${#OutputStr}" -le "$MaxOutputLength" ]
@@ -442,7 +447,7 @@ _p_cursor_beam ()
 
 zle-keymap-select ()
 {
-    CommandModeIndicatorColor=$(_p_color 0 7)
+    CommandModeIndicatorColor=$(_p_safe_color "$(_p_color 0 8)" "$(_p_color 0 7)")
     if [ "$KEYMAP" = "vicmd" ]
     then 
         _p_cmdline_f "${_p_default_prompt_text}" "${CommandModeIndicatorColor}"
