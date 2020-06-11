@@ -1,5 +1,6 @@
 # Auxilliary constants & functions {{{
 
+_p_colors=$(tput colors)
 _p_bold="%B"
 _p_stopbold="%b"
 
@@ -10,7 +11,7 @@ _p_color ()
 
 _p_safe_color ()
 {
-    if [ $(tput colors) -gt 8 ]; then echo "$1"; else echo "$2"; fi
+    if [ "$_p_colors" -ge 256 ]; then echo "$1"; else echo "$2"; fi
 }
 
 _p_color_white=$(_p_safe_color "$(_p_color 15)" "${_p_bold}$(_p_color 7)")%k
@@ -44,7 +45,7 @@ _p_shellinfo_f ()
 {
     local Date=$(date +'%F %a')
     local Tty=$(tty | sed 's@^/dev/@@')
-    local Dimensions="[${COLUMNS}x${LINES}]x$(tput colors)"
+    local Dimensions="[${COLUMNS}x${LINES}]x$_p_colors"
     local Sep="${_p_dot}${_p_dot}${_p_dot}"
     _p_shellinfo=" $Date $Sep $Tty @ $TERM $Dimensions $Sep"
     _p_shellinfo_length=${#_p_shellinfo}
@@ -246,7 +247,7 @@ _p_userhostinfo_f ()
     local _p_username="${UserColor}${USER}${_p_stdcolor}"
     local _p_hostname="${HostColor}${HOST}${_p_stdcolor}"
 
-    if [ "$(tput colors)" -ge 256 ]
+    if [ "$_p_colors" -ge 256 ]
     then
         local username_line="$(grep -s "^$USER " $ZDOTDIR/prompt.usernames)"
         local hostname_line="$(grep -s "^$HOST " $ZDOTDIR/prompt.hostnames)"
@@ -394,6 +395,20 @@ _p_pwdinfo_f ()
 
     local DirPath=${DirPath:0:-1}
     local DirPath=$(echo "$DirPath" | sed -E "$DirColoringRegEx")
+
+    if [ "$_p_colors" -ge 256 ]
+    then
+        local current_color=258
+        while echo "$DirPath" | grep -q "$DirColor"
+        do
+            local real_current_color=$current_color
+            [ "$current_color" -gt 255 ] && local real_current_color=255
+            [ "$current_color" -lt 240 ] && local real_current_color=240
+
+            local DirPath=$(echo "$DirPath" | sed "s/\\(.*\\)$DirColor/\\1$(_p_color $real_current_color)/")
+            local current_color=$(($current_color - 3))
+        done
+    fi
 
     _p_pwdinfo=" $DirColor$DirPath${_p_stdcolor}"
 }
