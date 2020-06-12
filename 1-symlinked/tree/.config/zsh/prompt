@@ -33,6 +33,7 @@ _p_uparrow="↑"
 _p_downarrow="↓"
 _p_updownarrow="↕"
 _p_section="§"
+_p_pilcrow="¶"
 
 _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
@@ -356,7 +357,7 @@ _p_gitinfo_f ()
     GIT_INFO+=( "${LocationColor}$GIT_LOCATION${_p_stdcolor}" )
     [ "${#DIVERGENCES[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
     [ "${#FLAGS[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)FLAGS}" )
-    _p_gitinfo=" ${_p_section} ${(j: :)GIT_INFO}"
+    _p_gitinfo=" ${_p_pilcrow} ${(j: :)GIT_INFO}"
 }
 add-zsh-hook precmd _p_gitinfo_f
 
@@ -365,7 +366,7 @@ add-zsh-hook precmd _p_gitinfo_f
 
 _p_pwdinfo_f ()
 {
-    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 1))
+    local PromptLength=$((1 + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     if [ "$(($_p_gitinfo_length * 2))" -ge "$MaxOutputLength" ]
@@ -415,7 +416,7 @@ _p_pwdinfo_f ()
         done
     fi
 
-    _p_pwdinfo=" $DirColor$DirPath${_p_stdcolor}"
+    _p_pwdinfo=" ${_p_section} $DirColor$DirPath${_p_stdcolor}"
 }
 add-zsh-hook precmd _p_pwdinfo_f
 
