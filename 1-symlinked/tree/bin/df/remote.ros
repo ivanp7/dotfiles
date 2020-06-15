@@ -327,22 +327,28 @@ exec ros -Q -- $0 "$@"
 
               (let ((address (get-address options))
                     (port (get-port options))
-                    woken-up)
+                    wake-up)
                 (when (and (getf options :wakeup)
                            (not (zerop (host-status address port))))
                   (let ((mac-address (get-mac-address options))
                         (wakeup-port (get-wakeup-port options)))
                     (wake-up-remote mac-address wakeup-port 
                                     (unless (getf options :lan) address))
-                    (setf woken-up t)))
+                    (setf wake-up t)))
 
                 (alexandria:when-let ((op-type (getf options :operation)))
                   (let ((user (get-user-name options)))
-                    (when woken-up
+                    (when wake-up
                       (let ((wakeup-delay (get-wakeup-delay options)))
                         (format *error-output* 
                                 "Waiting for ~A seconds...~%" wakeup-delay)
-                        (sleep (parse-integer wakeup-delay))))
+                        (dotimes (i (parse-integer wakeup-delay))
+                          (format *error-output* "~A~A" #\return i)
+                          (force-output *error-output*)
+                          (sleep 1))
+                        (format *error-output* 
+                                "~ARemote host must be awake now.~%"
+                                #\return)))
                     (alexandria:if-let 
                         ((return-code
                            (loop :for op :in *operations*
