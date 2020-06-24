@@ -24,7 +24,7 @@ export TERMINAL=/usr/bin/st
 export VIEWER=/usr/bin/sxiv
 export PLAYER=/usr/bin/mpv
 export PDFVIEWER=/usr/bin/zathura
-export BROWSER=/usr/bin/surf
+export BROWSER=$HOME/bin/xdf/tabbed-surf.sh
 
 # cleanup
 

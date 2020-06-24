@@ -258,14 +258,11 @@ cmd open ${{
     case $mime_type in
         "") ;;
         image/*)
-            setsid $VIEWER ${(f)fx} > /dev/null 2>&1 & ;;
+            $VIEWER ${(f)fx} ;;
         video/*|audio/*)
-            setsid $PLAYER ${(f)fx} > /dev/null 2>&1 & ;;
+            $PLAYER ${(f)fx} ;;
         text/html)
-            for file in ${(f)fx}; do 
-                setsid $BROWSER "$file" > /dev/null 2>&1 & 
-            done
-            ;;
+            $BROWSER ${(f)fx} ;;
         application/*)
             case $(echo $mime_type | tail -c +13) in
                 pdf)
@@ -300,9 +297,12 @@ cmd alt_open ${{
     mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
     case $mime_type in
         "") ;;
-        inode/directory)
-            ncdu -e2 "$f"
-            ;;
+        inode/directory) 
+            ncdu -e2 "$f" ;;
+        image/*)
+            setsid $VIEWER ${(f)fx} > /dev/null 2>&1 & ;;
+        video/*|audio/*)
+            setsid $PLAYER ${(f)fx} > /dev/null 2>&1 & ;;
     esac
 }}
 map L alt_open
