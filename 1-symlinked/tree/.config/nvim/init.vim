@@ -436,8 +436,23 @@ function! AutoHideBufferDiffWinEnter()
     let g:buffer_diff_auto = v:false
 endfunction
 
+function! UpdateBufferDiff()
+    let g:buffer_diff_auto = v:true
+    if exists("w:buffer_diff")
+        call win_gotoid(w:buffer_diff)
+        diffoff
+        normal gg"_dG
+        silent r #
+        0d_
+        diffthis
+        call win_gotoid(w:buffer_diff_window)
+    endif
+    let g:buffer_diff_auto = v:false
+endfunction
+
 autocmd WinLeave * call AutoHideBufferDiffWinLeave()
 autocmd WinEnter * call AutoHideBufferDiffWinEnter()
+autocmd BufWritePost * silent call UpdateBufferDiff()
 
 function! SwitchBufferDiff(direction)
     if !exists("w:buffer_diff") && !exists("w:buffer_diff_window")
