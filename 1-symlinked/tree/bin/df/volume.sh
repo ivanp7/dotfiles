@@ -43,9 +43,11 @@ case $1 in
         ;;
     up) amixer -q -M sset Master 3%+ ;;
     down) amixer -q -M sset Master 3%- ;;
+    calibrate)
+        amixer -q -M sset Speaker 100% 2> /dev/null
+        amixer -q -M sset Headphone 100% 2> /dev/null
+        ;;
     *) amixer -q -M sset Master $1%
 esac
 
-amixer -q -M sset Speaker 100% 2> /dev/null
-amixer -q -M sset Headphone 100% 2> /dev/null
 
