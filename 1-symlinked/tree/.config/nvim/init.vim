@@ -497,6 +497,7 @@ Plug 'qpkorr/vim-bufkill'
 Plug 'rbgrouleff/bclose.vim'
 
 Plug 'ptzz/lf.vim'
+Plug 'junegunn/fzf.vim'
 Plug 'majutsushi/tagbar'
 
 " tmux
