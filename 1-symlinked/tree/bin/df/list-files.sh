@@ -15,22 +15,22 @@ esac
 
 case $(echo $mime_type | tail -c +13) in
     x-tar)
-        tar tvf "$f" ;;
+        tar tvf "$FILE" ;;
     x-bzip|x-bzip2)
-        tar tvf "$f" -j ;;
+        tar tvf "$FILE" -j ;;
     gzip)
-        tar tvf "$f" -z ;;
+        tar tvf "$FILE" -z ;;
     x-xz)
-        tar tvf "$f" -J ;;
+        tar tvf "$FILE" -J ;;
     zstd)
-        tar tvf "$f" --zstd ;;
+        tar tvf "$FILE" --zstd ;;
     zip|x-zip-compressed)
-        unzip -l "$f" ;;
+        unzip -l "$FILE" ;;
     x-7z-compressed|x-iso9660-image)
-        7z l "$f" ;;
+        7z l "$FILE" ;;
     x-rar|vnd.rar)
-        unrar l "$f" ;;
+        unrar l "$FILE" ;;
     x-cpio)
-        bsdcpio -i -t -I "$f" ;;
+        bsdcpio -i -t -I "$FILE" ;;
 esac
 
