@@ -39,7 +39,7 @@ _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
 if [ "$_p_colors" -ge 256 ]
 then
-    _p_default_prompt_text="%F{234}>%F{237}>%F{240}>%F{243}>%F{246}>%F{249}>%F{252}>%F{255}>"
+    _p_default_prompt_text="%F{240}>>>>>>>>"
 else
     _p_default_prompt_text=">>>>>>>>"
 fi
