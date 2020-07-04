@@ -115,9 +115,8 @@ exec ros -Q -- $0 "$@"
 
 (defun host-known-p (hostname)
   (uiop/filesystem:directory-exists-p
-    (merge-pathnames (concatenate 'string ".password-store/computers/"
-                                  hostname) 
-                     (user-homedir-pathname))))
+    (concatenate 'string 
+                 (uiop:getenv "PASSWORD_STORE_DIR") "/computers/" hostname)))
 
 (defun get-user-name (options)
   (let ((username (getf options :user)))

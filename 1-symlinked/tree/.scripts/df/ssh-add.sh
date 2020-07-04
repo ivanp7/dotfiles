@@ -5,11 +5,11 @@ then
     _PASSPHRASE_COMP="computers/$HOST/os/archlinux/$USER/ssh/passphrase"
     _PASSPHRASE_VM="vm/$HOST/os/archlinux/$USER/ssh/passphrase"
 
-    if [ -f "$HOME/.password-store/$_PASSPHRASE_COMP.gpg" ]
+    if [ -f "$PASSWORD_STORE_DIR/$_PASSPHRASE_COMP.gpg" ]
     then 
         _PASSPHRASE="$_PASSPHRASE_COMP"
         unset _PASSPHRASE_COMP
-    elif [ -f "$HOME/.password-store/$_PASSPHRASE_VM.gpg" ]
+    elif [ -f "$PASSWORD_STORE_DIR/$_PASSPHRASE_VM.gpg" ]
     then 
         _PASSPHRASE="$_PASSPHRASE_VM"
         unset _PASSPHRASE_VM
