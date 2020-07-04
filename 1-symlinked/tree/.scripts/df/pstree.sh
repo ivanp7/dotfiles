@@ -1,6 +1,6 @@
 #!/bin/sh
 
-pstree -ls $$ | head -n 1 | sed -E "
+pstree -ls $$ | head -1 | sed -E "
     s/-(-|[+])-/---/g; 
     s/^(runit|systemd)(|---runsvdir---runsv)(|---login)//;
     s/---pstree\.sh---head$//;

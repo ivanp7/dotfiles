@@ -103,7 +103,7 @@ map am %file --mime-type "$f" -b
 map aM link_mime
 
 # calculate used space
-map au %du -chD ${(f)fx} | tail -n 1
+map au %du -chD ${(f)fx} | tail -1
 
 # }}}
 # Quick action ('t' keys) {{{
