@@ -1,8 +1,8 @@
 # PATH
-export HOMEPATH="$(
+export USERPATH="$(
     find -L $HOME/bin -path "*/.*" -prune -o -type d -print |
     tr '\n' ':' | head -c -1)"
-export PATH="$(echo "$(echo "$PATH" | sed "s@$HOME/bin[^:]*@@g"):$HOMEPATH" | sed 's/:\+/:/g')"
+export PATH="$(echo "$(echo "$PATH" | sed "s@$HOME/bin[^:]*@@g"):$USERPATH" | sed 's/:\+/:/g')"
 
 # XDG Base Directory
 
@@ -15,7 +15,7 @@ export XDG_CONFIG_DIRS=/etc/xdg
 
 # default applications
 
-export PAGER=$HOME/bin/df/pager.sh
+export PAGER=$HOME/.scripts/df/pager.sh
 export EDITOR=/usr/bin/nvim
 export VISUAL=$EDITOR
 export FILE=lfcd
