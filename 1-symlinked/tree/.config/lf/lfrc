@@ -335,7 +335,7 @@ cmd bulk_rename !{{
     sed -i "$NAME_FIX" $original_names_file
     sed -i "$NAME_FIX" $changed_names_file
 
-    if [ "$(cat $original_names_file | wc -l)" -ne "$(cat $changed_names_file | wc -l)" ]
+    if [ "$(wc -l < $original_names_file)" -ne "$(wc -l < $changed_names_file)" ]
     then
         echo "Error: number of lines is not equal to the number of files."
     else
@@ -382,7 +382,7 @@ cmd paste %{{
             if [ "$mode" = "copy" ]; then
                 target_name="$(basename "$file")"
                 if [ "$(dirname "$file")" = "$PWD" ]; then
-                    if [ ! -d "$file" ] || [ -L "$file" ] || [ ! -e "$target_name.copy" ]; then
+                    if [ ! -d "$file" -o -L "$file" -o ! -e "$target_name.copy" ]; then
                         target_name="$target_name.copy"
                     fi
                 fi

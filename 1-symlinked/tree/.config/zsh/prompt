@@ -217,7 +217,7 @@ _p_processinfo_f ()
         local SkipRegEx='s@^([^/]*///)(.*)@\2@'
 
         local OutputStrShorter=$(echo "$OutputStr" | sed -E "$SkipRegEx")
-        while [ "${#OutputStr}" -gt "$MaxOutputLength" ] && [ "${#OutputStrShorter}" -lt "${#OutputStr}" ]
+        while [ "${#OutputStr}" -gt "$MaxOutputLength" -a "${#OutputStrShorter}" -lt "${#OutputStr}" ]
         do
             local OutputStr="$OutputStrShorter"
             local OutputStrShorter=$(echo "$OutputStr" | sed -E "$SkipRegEx")
@@ -324,7 +324,7 @@ _p_gitinfo_f ()
     [ -n "$_p_gitinfo_div" ] && _p_gitinfo_length=$(($_p_gitinfo_length + 1))
 
     local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-    if [ -n "$GIT_DIR" ] && [ -r "$GIT_DIR/MERGE_HEAD" ]
+    if [ -n "$GIT_DIR" -a -r "$GIT_DIR/MERGE_HEAD" ]
     then 
         local _p_gitinfo_flag=true
         _p_gitinfo_length=$(($_p_gitinfo_length + 1))
@@ -389,7 +389,7 @@ _p_pwdinfo_f ()
     local DirPath="$PWD/"
     local DirPathShorter=$(echo "$DirPath" | sed -E "$SkipRegEx")
 
-    while [ "$((${#DirPath} - 1))" -gt "$MaxOutputLength" ] && [ "${#DirPathShorter}" -lt "${#DirPath}" ]
+    while [ "$((${#DirPath} - 1))" -gt "$MaxOutputLength" -a "${#DirPathShorter}" -lt "${#DirPath}" ]
     do
         local DirPath="$DirPathShorter"
         local DirPathShorter=$(echo "$DirPath" | sed -E "$SkipRegEx")
@@ -399,6 +399,7 @@ _p_pwdinfo_f ()
     for i in $(seq 1 $SkipCounter)
     do local DirPath=$(echo "$DirPath" | sed -E "$SkipColoringRegEx")
     done
+    unset i
 
     local DirPath=${DirPath:0:-1}
     local DirPath=$(echo "$DirPath" | sed -E "$DirColoringRegEx")
