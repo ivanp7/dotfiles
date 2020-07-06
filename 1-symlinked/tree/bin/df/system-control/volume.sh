@@ -15,6 +15,7 @@ if [ -z "$STATE" ]
 then
     STATE_LEVEL_LEFT=$(state_level "Front Left")
     STATE_LEVEL_RIGHT=$(state_level "Front Right")
+    [ -z "$STATE_LEVEL_LEFT" -o -z "$STATE_LEVEL_RIGHT" ] && exit 1
 
     STATE_LEFT=${STATE_LEVEL_LEFT% *}
     STATE_RIGHT=${STATE_LEVEL_RIGHT% *}
