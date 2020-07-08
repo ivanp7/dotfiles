@@ -2,7 +2,7 @@ case $(tty) in
     /dev/tty*) clear ;;
 esac
 
-ssh-add.sh
+. $HOME/.scripts/df/ssh-add.sh
 
 printf "\n\n\n\n"
 neofetch
