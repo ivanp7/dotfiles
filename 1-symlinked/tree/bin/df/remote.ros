@@ -10,6 +10,29 @@ exec ros -Q -- $0 "$@"
   #+quicklisp
   (ql:quickload '(:alexandria :unix-opts) :silent t))
 
+(defpackage :ros.script.remote.3803286846
+  (:use :cl))
+(in-package :ros.script.remote.3803286846)
+
+(defmacro exit-code (run-form)
+  `(nth-value 2 ,run-form))
+
+(defun pass-test (parameter)
+  (zerop 
+    (exit-code 
+      (uiop:run-program 
+        `("pass" ,parameter) :ignore-error-status t :input :interactive))))
+
+(defun pass (parameter)
+  (multiple-value-bind (stdout stderr exitcode)
+      (uiop:run-program 
+        `("pass" ,parameter) :ignore-error-status t :input :interactive 
+        :output '(:string :stripped t))
+    (declare (ignore stderr))
+    (values stdout (zerop exitcode))))
+
+;;; --- Customizable parameters ---
+
 (defparameter *localhost-address* "localhost")
 (defparameter *default-ssh-port* "22")
 (defparameter *default-wakeup-port* "40000")
@@ -25,6 +48,37 @@ exec ros -Q -- $0 "$@"
 
 (defparameter *default-local-path* "./")
 (defparameter *default-remote-path* "~/")
+
+(defun host-info-path (hostname &optional property)
+  (let ((basepath (concatenate 'string "computers/" hostname))
+        (subpath (if property (concatenate 'string "/net/" property) "")))
+    (concatenate 'string basepath subpath)))
+
+(defun host-known-p (hostname)
+  (pass-test (host-info-path hostname)))
+
+(defun host-ip-address (hostname local-p)
+  (if local-p
+    (pass (host-info-path hostname "local/ip-address"))
+    (pass (host-info-path hostname "global/ip-address"))))
+
+(defun host-ssh-port (hostname local-p)
+  (if local-p
+    (pass (host-info-path hostname "local/port-ssh"))
+    (pass (host-info-path hostname "global/port-ssh"))))
+
+(defun host-wakeup-port (hostname local-p)
+  (if local-p
+    (pass (host-info-path hostname "local/port-wakeup"))
+    (pass (host-info-path hostname "global/port-wakeup"))))
+
+(defun host-mac-address (hostname)
+  (pass (host-info-path hostname "mac-address")))
+
+(defun host-wakeup-delay (hostname)
+  (pass (host-info-path hostname "wakeup-delay")))
+
+;;; ---------------------------
 
 (unix-opts:define-opts
   (:name :help
@@ -113,43 +167,34 @@ exec ros -Q -- $0 "$@"
    :long "args"
    :arg-parser #'identity :meta-var "ARGUMENTS"))
 
-(defun host-known-p (hostname)
-  (uiop/filesystem:directory-exists-p
-    (concatenate 'string 
-                 (uiop:getenv "PASSWORD_STORE_DIR") "/computers/" hostname)))
+(macrolet ((define-getter (name arg-key form default)
+             `(defun ,name (options)
+                (let ((hostname (getf options :host)) 
+                      (value (getf options ,arg-key)))
+                  (if value value 
+                    (multiple-value-bind (value success-p) ,form
+                      (if success-p value ,default)))))))
+
+  (define-getter get-address :address 
+                 (host-ip-address hostname (getf options :lan))
+                 (if hostname (error "no address known for host")
+                   *localhost-address*))
+  (define-getter get-port :port
+                 (host-ssh-port hostname (getf options :lan))
+                 *default-ssh-port*)
+  (define-getter get-wakeup-port :wakeup-port
+                 (host-wakeup-port hostname (getf options :lan))
+                 *default-wakeup-port*)
+  (define-getter get-mac-address :mac-address
+                 (host-mac-address hostname)
+                 (error "no MAC-address known for host"))
+  (define-getter get-wakeup-delay :wakeup-delay
+                 (host-wakeup-delay hostname)
+                 *default-wakeup-delay*))
 
 (defun get-user-name (options)
   (let ((username (getf options :user)))
     (if username username (uiop:getenv "USER"))))
-
-(defun get-host-parameter (hostname parameter)
-  (uiop:run-program 
-    `("pass" ,(concatenate 'string "computers/" hostname "/net/" parameter))
-    :ignore-error-status t :input :interactive :output '(:string :stripped t)))
-
-(macrolet ((define-getter (name arg-key param default)
-             `(defun ,name (options)
-                (let ((value (getf options ,arg-key)))
-                  (if value value 
-                    (let ((value (get-host-parameter (getf options :host)
-                                                     ,param)))
-                      (if (string-equal value "") ,default value)))))))
-
-  (define-getter get-address :address 
-                 (if (getf options :lan) "local/ip-address" 
-                   "global/ip-address") 
-                 (if (getf options :host) (error "no address known for host")
-                   *localhost-address*))
-  (define-getter get-port :port
-                 (if (getf options :lan) "local/port-ssh" 
-                   "global/port-ssh") *default-ssh-port*)
-  (define-getter get-mac-address :mac-address
-                 "mac-address" (error "no MAC-address known for host"))
-  (define-getter get-wakeup-port :wakeup-port
-                 (if (getf options :lan) "local/port-wakeup" 
-                   "global/port-wakeup") *default-wakeup-port*)
-  (define-getter get-wakeup-delay :wakeup-delay
-                 "wakeup-delay" *default-wakeup-delay*))
 
 (defun get-url (user address port)
   (concatenate 'string "ssh://" user "@" address ":" port))
@@ -166,9 +211,6 @@ exec ros -Q -- $0 "$@"
          (uiop:run-program ,command :ignore-error-status t :input :interactive
                            :output :interactive :error-output :interactive 
                            ,@ args)))))
-
-(defmacro exit-code (run-form)
-  `(nth-value 2 ,run-form))
 
 (defun host-status (address port)
   (exit-code (run `("nc" "-w" ,*status-timeout* "-z" ,address ,port))))
@@ -361,4 +403,4 @@ exec ros -Q -- $0 "$@"
                       (error "unknown operation requested")))))))))
     (t (msg) (format *error-output* "Error: ~A~%" msg) 1)))
 
-;;; vim: ft=lisp:
+;;; vim: ft=lisp lisp:

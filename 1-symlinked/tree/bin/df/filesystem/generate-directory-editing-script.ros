@@ -10,6 +10,10 @@ exec ros -Q -- $0 "$@"
   #+quicklisp
   (ql:quickload '(:alexandria :split-sequence) :silent t))
 
+(defpackage :ros.script.generate-directory-editing-script.3803287809
+  (:use :cl))
+(in-package :ros.script.generate-directory-editing-script.3803287809)
+
 (defmacro run (command &rest args)
   `(nth-value 0 (uiop:run-program ,command :ignore-error-status t 
                                   :input :interactive
@@ -200,4 +204,4 @@ exec ros -Q -- $0 "$@"
         (error "expecting 2 parameters -- original and pattern directories"))
       (t (msg) (format *error-output* "Error: ~A~%" msg) 1)))
 
-;;; vim: ft=lisp:
+;;; vim: ft=lisp lisp:
