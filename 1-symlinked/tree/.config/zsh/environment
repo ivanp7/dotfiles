@@ -13,6 +13,17 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_DATA_DIRS=/usr/local/share:/usr/share
 export XDG_CONFIG_DIRS=/etc/xdg
 
+# XDG User Directories
+
+export XDG_DOWNLOAD_DIR=$HOME/Downloads
+export XDG_DESKTOP_DIR=$XDG_DOWNLOAD_DIR
+export XDG_PICTURES_DIR=$XDG_DOWNLOAD_DIR/Pictures
+export XDG_MUSIC_DIR=$XDG_DOWNLOAD_DIR/Music
+export XDG_VIDEOS_DIR=$XDG_DOWNLOAD_DIR/Videos
+export XDG_DOCUMENTS_DIR=$XDG_DOWNLOAD_DIR/Documents
+export XDG_PUBLICSHARE_DIR=$XDG_DOWNLOAD_DIR/Public
+export XDG_TEMPLATES_DIR=$XDG_DOWNLOAD_DIR/Templates
+
 # default applications
 
 export PAGER=$HOME/.scripts/df/pager.sh
