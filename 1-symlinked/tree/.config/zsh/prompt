@@ -244,7 +244,6 @@ _p_userhostinfo_f ()
 {
     local USER=$(whoami)
     local HOST=$(hostname)
-    _p_userhostinfo_length="$((3 + ${#USER} + ${#HOST}))"
 
     local RootColor=$(_p_safe_color "$(_p_color 15 196)" "${_p_bold}$(_p_color 7 1)")
     local UserColor=$(_p_safe_color "$(_p_color 40)" "${_p_bold}$(_p_color 2)")
@@ -254,15 +253,30 @@ _p_userhostinfo_f ()
     local _p_username="${UserColor}${USER}${_p_stdcolor}"
     local _p_hostname="${HostColor}${HOST}${_p_stdcolor}"
 
+    local _p_username_length=${#USER}
+    local _p_hostname_length=${#HOST}
+
     if [ "$_p_colors" -ge 256 ]
     then
         local username_line="$(grep -s "^$USER " $ZDOTDIR/prompt.usernames)"
         local hostname_line="$(grep -s "^$HOST " $ZDOTDIR/prompt.hostnames)"
 
-        [ -n "$username_line" ] && local _p_username="$(echo "$username_line" | cut -d' ' -f2)${_p_stdcolor}"
-        [ -n "$hostname_line" ] && local _p_hostname="$(echo "$hostname_line" | cut -d' ' -f2)${_p_stdcolor}"
+        local name_regex='s/%.{[^{}]*}//g; s/%[^%]//g; s/%%/%/g'
+
+        if [ -n "$username_line" ]
+        then
+            local _p_username="${username_line#* }${_p_stdcolor}"
+            local _p_username_length="$(echo -n "$_p_username" | sed "$name_regex" | wc -m)"
+        fi
+
+        if [ -n "$hostname_line" ] 
+        then 
+            local _p_hostname="${hostname_line#* }${_p_stdcolor}"
+            local _p_hostname_length="$(echo -n "$_p_hostname" | sed "$name_regex" | wc -m)"
+        fi
     fi
 
+    _p_userhostinfo_length="$((3 + $_p_username_length + $_p_hostname_length))"
     _p_userhostinfo="  ${_p_username}@${_p_hostname}"
 }
 add-zsh-hook precmd _p_userhostinfo_f
