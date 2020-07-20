@@ -49,11 +49,12 @@ fi
 # Shell info {{{
 _p_shellinfo_f ()
 {
-    local Date=$(date +'%b %d')
     local Tty=$(tty | sed 's@^/dev/@@')
     local Dimensions="(${COLUMNS}x${LINES})*$_p_colors"
     local Sep="${_p_dot}${_p_dot}${_p_dot}"
-    _p_shellinfo=" [#${_p_cmd_nr:=1}] $Sep $Date $Sep $Tty @ $TERM $Dimensions $Sep"
+    local Login=
+    [[ -o login ]] && local Login=" <login>"
+    _p_shellinfo="$Login $Tty @ $TERM $Dimensions $Sep [#${_p_cmd_nr:=1}]"
     _p_shellinfo_length=${#_p_shellinfo}
     _p_cmd_nr=$(($_p_cmd_nr + 1))
 }
@@ -102,9 +103,9 @@ add-zsh-hook precmd _p_prompt_init_f
 
 _p_timeinfo_f ()
 {
-    _p_timeinfo_length=10
+    _p_timeinfo_length=16
     local TimeColor=${_p_stdcolor}
-    _p_timeinfo="${_p_dash} ${TimeColor}%D{%T}${_p_stdcolor}"
+    _p_timeinfo="${_p_dash} ${TimeColor}%D{%T %d/%m}${_p_stdcolor}"
 }
 add-zsh-hook precmd _p_timeinfo_f
 
