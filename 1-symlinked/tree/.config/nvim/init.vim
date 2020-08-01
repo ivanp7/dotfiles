@@ -485,6 +485,7 @@ Plug 'farmergreg/vim-lastplace'
 " Appearance
 Plug 'fxn/vim-monochrome'
 Plug 'itchyny/lightline.vim'
+Plug 'mhinz/vim-startify'
 Plug 'raymond-w-ko/vim-niji'
 Plug 'Yggdroot/indentLine'
 
