@@ -65,11 +65,11 @@ map == $sudo lf
 map V push ::glob-select<space>
 map U push ::glob-unselect<space>
 
-cmd moveless_toggle :toggle; up
-cmd back_toggle :moveless_toggle; up
-map <space> moveless_toggle
-map b toggle
-map B back_toggle
+cmd toggle_up :toggle; up
+cmd toggle_down :toggle; down
+map <space> toggle
+map b toggle_down
+map B toggle_up
 
 # }}}
 # Clipboard operations {{{
