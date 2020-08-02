@@ -42,11 +42,7 @@ lfcd ()
     if [ -f "$tmp" ]; then
         dir="$(cat "$tmp")"
         rm -f "$tmp"
-        if [ -d "$dir" ]; then
-            if [ "$dir" != "$PWD" ]; then
-                cd "$dir"
-            fi
-        fi
+        [ -d "$dir" -a "$dir" != "$PWD" ] && cd "$dir" || true
     fi
 }
 
@@ -79,8 +75,7 @@ colorgrid ()
         echo -en "\033[38;5;$(echo $iter)m█ "
         printf "%03d" $iter
 
-        if [ $(($iter % 8)) = 7 ]
-        then printf '\r\n'; else printf ' '; fi
+        [ $(($iter % 8)) = 7 ] && printf '\r\n' || printf ' '
 
         local iter=$(($iter+1))
     done

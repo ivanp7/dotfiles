@@ -271,9 +271,7 @@ cmd open ${{
                     postfix="-archive-mount"
                     first_file=""
                     for file in ${(f)fx}; do
-                        if [ -z "$first_file" ]; then
-                            first_file="$file"
-                        fi
+                        [ -z "$first_file" ] && first_file="$file"
                         mntdir="$file$postfix"
                         mountpoint -q "$mntdir" || {
                             mkdir -p "$mntdir"
@@ -353,11 +351,7 @@ cmd bulk_rename !{{
 }}
 
 cmd smart_rename ${{
-    if [ -z "$fs" ]
-    then lf -remote "send $id rename"
-    else lf -remote "send $id bulk_rename"
-    fi
-
+    [ -z "$fs" ] && lf -remote "send $id rename" || lf -remote "send $id bulk_rename"
     lf -remote "send $id reload"
 }}
 

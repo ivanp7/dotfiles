@@ -10,10 +10,7 @@ fi
 
 LINK_PATH="$(readlink "$LINK")"
 
-if [ ! -d "$LINK_PATH" ]
-then
-    exit 0
-fi
+[ ! -d "$LINK_PATH" ] && exit 0
 
 DIR="$(dirname "$LINK")"
 NAME="$(basename "$LINK")"

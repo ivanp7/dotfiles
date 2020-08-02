@@ -11,7 +11,7 @@ _p_color ()
 
 _p_safe_color ()
 {
-    if [ "$_p_colors" -ge 256 ]; then echo "$1"; else echo "$2"; fi
+    [ "$_p_colors" -ge 256 ] && echo "$1" || echo "$2"
 }
 
 _p_color_white=$(_p_safe_color "$(_p_color 15)" "${_p_bold}$(_p_color 7)")%k
@@ -37,12 +37,8 @@ _p_pilcrow="¶"
 
 _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
-if [ "$_p_colors" -ge 256 ]
-then
-    _p_default_prompt_text="%F{240}>>>>>>>>"
-else
-    _p_default_prompt_text=">>>>>>>>"
-fi
+_p_default_prompt_text=">>>>>>>>"
+[ "$_p_colors" -ge 256 ] && _p_default_prompt_text="%F{240}$_p_default_prompt_text"
 
 # }}}
 # Initialization {{{
