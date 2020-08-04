@@ -109,7 +109,7 @@ map au %du -chD ${(f)fx} | tail -1
 # Quick action ('t' keys) {{{
 
 # create directory
-cmd mkdir %mkdir "$(echo "$@")"; lf -remote "send $id reload"
+cmd mkdir %mkdir -p "$(echo "$@")"; lf -remote "send $id reload"
 map td push ::mkdir<space>
 
 # touch
