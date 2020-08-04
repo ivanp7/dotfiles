@@ -497,7 +497,6 @@ Plug 'ivanp7/lisp-semantic-highlight.vim'
 Plug 'qpkorr/vim-bufkill'
 Plug 'rbgrouleff/bclose.vim'
 
-Plug 'ptzz/lf.vim'
 Plug 'junegunn/fzf.vim'
 Plug 'majutsushi/tagbar'
 
@@ -589,9 +588,13 @@ let g:semanticLispPersistCacheLocation = $XDG_CACHE_HOME . "/nvim/semantic-lisp-
 " }}}
 " interface enhancement {{{
 
-" ********************* lf.vim **************************
+" ********************* fzf.vim *****************************
 
-let g:lf_replace_netrw = 1 " open lf when vim open a directory
+nnoremap <silent> <leader>f :Files<CR>
+nnoremap <silent> <leader>F :GFiles<CR>
+nnoremap <silent> <leader>g :Rg<CR>
+
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 " ********************* tagbar ******************************
 
