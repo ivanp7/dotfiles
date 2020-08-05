@@ -133,7 +133,7 @@ fzf_cd ()
 }
 zle -N fzf_cd
 
-bindkey '\C-t' fzf_cd
+bindkey '\C-g' fzf_cd
 
 # Finally, make sure the terminal is in application mode, when zle is
 # active. Only then are the values from $terminfo valid.
