@@ -588,12 +588,23 @@ let g:semanticLispPersistCacheLocation = $XDG_CACHE_HOME . "/nvim/semantic-lisp-
 " }}}
 " interface enhancement {{{
 
+set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+
 " ********************* fzf.vim *****************************
 
 nnoremap <silent> <leader>u :Buffers<CR>
 nnoremap <silent> <leader>f :Files<CR>
 nnoremap <silent> <leader>F :GFiles<CR>
+
 nnoremap <silent> <leader>g :Rg<CR>
+nnoremap <silent> <leader>/ :BLines<CR>
+nnoremap <silent> <leader>' :Marks<CR>
+
+nnoremap <silent> <leader>hh :History<CR>
+nnoremap <silent> <leader>h: :History:<CR>
+nnoremap <silent> <leader>h/ :History/<CR>
+
+nnoremap <silent> <leader>H :Helptags<CR>
 
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 

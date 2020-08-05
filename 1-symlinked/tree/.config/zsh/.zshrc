@@ -113,8 +113,20 @@ bindkey '\C-e' vi-end-of-line
 
 fzf_cd ()
 {
-    dir="$(find -L . -mindepth 1 -maxdepth 10 -type d -printf '%P\n' 2> /dev/null | fzf --header='Change directory')"
-    [ -z "$dir" ] && return
+    dir=$({ 
+        old_pwd="$PWD"
+        cur=".."
+        while [ "$PWD" != "/" ]
+        do
+            echo $cur
+            cur="$cur/.."
+            cd ..
+        done
+        cd "$old_pwd"
+
+        find -L . -mindepth 1 -maxdepth 10 -type d -printf '%P\n' 2> /dev/null
+    } | fzf +m --header='Change directory') || return 0
+
     cd "$dir"
     zle push-line
     zle accept-line

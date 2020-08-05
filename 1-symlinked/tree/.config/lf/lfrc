@@ -59,21 +59,37 @@ map =w $sudo -s
 map == $sudo lf
 
 # }}}
-# Movement {{{
+# Fast movement {{{
 
 cmd fzf_select ${{
-    file="$(find . -mindepth 1 -maxdepth 1 -printf '%P\n' 2> /dev/null | fzf --header='Select file/directory')"
+    file=$(find . -mindepth 1 -maxdepth 1 -printf '%P\n' 2> /dev/null | 
+            fzf +m --header='Select file/directory') || return 0
+
     file="$(echo "$file" | sed 's/"/\\"/g')"
     lf -remote "send $id select \"$file\""
 }}
 
 cmd fzf_jump ${{
-    file="$(find . $@ -printf '%P\n' 2> /dev/null | fzf --header='Jump to location')"
+    file=$({
+        old_pwd="$PWD"
+        cur=".."
+        while [ "$PWD" != "/" ]
+        do
+            echo $cur
+            cur="$cur/.."
+            cd ..
+        done
+        cd "$old_pwd"
+
+        find . $@ -printf '%P\n' 2> /dev/null
+    } | fzf +m --header="Jump from $PWD") || return 0
+
     if [ -f "$file" ]
     then cmd="select"
     elif [ -d "$file" ]
     then cmd="cd"
     fi
+
     file="$(echo "$file" | sed 's/"/\\"/g')"
     lf -remote "send $id $cmd \"$file\""
 }}
