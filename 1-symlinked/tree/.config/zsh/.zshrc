@@ -125,7 +125,7 @@ fzf_cd ()
         cd "$old_pwd"
 
         find -L . -mindepth 1 -maxdepth 10 -type d -printf '%P\n' 2> /dev/null
-    } | fzf +m --header='Change directory') || return 0
+    } | fzf +m --header="Change directory from $PWD") || return 0
 
     cd "$dir"
     zle push-line
