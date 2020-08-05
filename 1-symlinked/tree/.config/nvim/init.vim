@@ -597,8 +597,11 @@ nnoremap <silent> <leader>f :Files<CR>
 nnoremap <silent> <leader>F :GFiles<CR>
 
 nnoremap <silent> <leader>g :Rg<CR>
+nnoremap <silent> <leader>G :Lines<CR>
 nnoremap <silent> <leader>/ :BLines<CR>
 nnoremap <silent> <leader>' :Marks<CR>
+
+nnoremap <silent> <leader>: :Commands<CR>
 
 nnoremap <silent> <leader>hh :History<CR>
 nnoremap <silent> <leader>h: :History:<CR>
