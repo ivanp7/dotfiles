@@ -52,6 +52,8 @@ fi
 
 # fixes for things
 
-export GNUMAKEFLAGS=--no-print-directory
+export FZF_DEFAULT_COMMAND="find . -printf '%P\\n'"
+export FZF_DEFAULT_OPTS="--bind=ctrl-j:accept,ctrl-k:kill-line"
+export GNUMAKEFLAGS="--no-print-directory"
 
 # vim: ft=zsh:

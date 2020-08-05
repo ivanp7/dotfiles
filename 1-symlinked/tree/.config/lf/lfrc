@@ -59,6 +59,21 @@ map =w $sudo -s
 map == $sudo lf
 
 # }}}
+# Movement {{{
+
+cmd fzf_jump ${{
+    file="$(find . -mindepth 1 -maxdepth 1 -printf '%P\n' | fzf --reverse --header='Jump to location')"
+    if [ -f "$file" ]
+    then cmd="select"
+    elif [ -d "$file" ]
+    then cmd="cd"
+    fi
+    file="$(echo "$file" | sed 's/"/\\"/g')"
+    lf -remote "send $id $cmd \"$file\""
+}}
+map <c-/> :fzf_jump
+
+# }}}
 # Visual operations {{{
 
 # glob select&unselect
@@ -87,9 +102,6 @@ map Ynt $tmux set-buffer -- "$(basename "$f")"
 
 # process tree
 map ap %$HOME/.scripts/df/pstree.sh
-
-# read link
-map al %readlink "$f"
 
 # display owner & group
 map ao %stat -c %U:%G "$f"
