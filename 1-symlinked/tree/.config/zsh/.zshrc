@@ -111,6 +111,18 @@ bindkey '\C-f' vi-forward-char
 bindkey '\C-a' vi-beginning-of-line
 bindkey '\C-e' vi-end-of-line
 
+fzf_cd ()
+{
+    dir="$(find -L . -mindepth 1 -maxdepth 10 -type d -printf '%P\n' 2> /dev/null | fzf --header='Change directory')"
+    [ -z "$dir" ] && return
+    cd "$dir"
+    zle push-line
+    zle accept-line
+}
+zle -N fzf_cd
+
+bindkey '\C-t' fzf_cd
+
 # Finally, make sure the terminal is in application mode, when zle is
 # active. Only then are the values from $terminfo valid.
 if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then

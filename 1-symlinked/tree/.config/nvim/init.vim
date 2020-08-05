@@ -590,6 +590,7 @@ let g:semanticLispPersistCacheLocation = $XDG_CACHE_HOME . "/nvim/semantic-lisp-
 
 " ********************* fzf.vim *****************************
 
+nnoremap <silent> <leader>u :Buffers<CR>
 nnoremap <silent> <leader>f :Files<CR>
 nnoremap <silent> <leader>F :GFiles<CR>
 nnoremap <silent> <leader>g :Rg<CR>

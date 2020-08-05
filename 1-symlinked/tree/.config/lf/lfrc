@@ -61,8 +61,14 @@ map == $sudo lf
 # }}}
 # Movement {{{
 
+cmd fzf_select ${{
+    file="$(find . -mindepth 1 -maxdepth 1 -printf '%P\n' 2> /dev/null | fzf --header='Select file/directory')"
+    file="$(echo "$file" | sed 's/"/\\"/g')"
+    lf -remote "send $id select \"$file\""
+}}
+
 cmd fzf_jump ${{
-    file="$(find . -mindepth 1 -maxdepth 1 -printf '%P\n' | fzf --reverse --header='Jump to location')"
+    file="$(find . $@ -printf '%P\n' 2> /dev/null | fzf --header='Jump to location')"
     if [ -f "$file" ]
     then cmd="select"
     elif [ -d "$file" ]
@@ -71,7 +77,9 @@ cmd fzf_jump ${{
     file="$(echo "$file" | sed 's/"/\\"/g')"
     lf -remote "send $id $cmd \"$file\""
 }}
-map <c-/> :fzf_jump
+map g/ :fzf_select
+map gf :fzf_jump
+map gd :fzf_jump -type d
 
 # }}}
 # Visual operations {{{
