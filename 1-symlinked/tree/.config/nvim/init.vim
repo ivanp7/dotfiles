@@ -600,6 +600,7 @@ nnoremap <silent> <leader>g :Rg<CR>
 nnoremap <silent> <leader>G :Lines<CR>
 nnoremap <silent> <leader>/ :BLines<CR>
 nnoremap <silent> <leader>' :Marks<CR>
+nnoremap <silent> <leader>a :Tags<CR>
 
 nnoremap <silent> <leader>: :Commands<CR>
 
