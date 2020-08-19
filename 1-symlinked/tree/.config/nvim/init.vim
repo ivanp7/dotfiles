@@ -254,6 +254,8 @@ function! ShowColumnRuler(placement)
         let l:win_id = win_getid()
         call win_gotoid(w:column_ruler_window)
         let w:column_ruler = l:win_id
+
+        normal zz
     endif
     let g:column_ruler_auto = v:false
 endfunction
