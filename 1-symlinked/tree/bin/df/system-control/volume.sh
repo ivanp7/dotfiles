@@ -28,12 +28,7 @@ fi
 
 case $1 in
     "") echo "$LEVEL% $STATE" ;;
-    toggle) 
-        case "$STATE" in
-            on) amixer -q sset Master mute ;;
-            off) amixer -q sset Master unmute ;;
-        esac
-        ;;
+    toggle) amixer -q sset Master toggle ;;
     up) amixer -q -M sset Master 3%+ ;;
     down) amixer -q -M sset Master 3%- ;;
     *) amixer -q -M sset Master $1%
