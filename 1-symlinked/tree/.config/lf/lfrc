@@ -22,7 +22,6 @@ set ifs "\n"
 # leave some space at the top and the bottom of the screen
 set scrolloff 10
 
-set color256
 set drawbox on
 set tabstop 4
 
@@ -499,7 +498,7 @@ cmd smart_delete ${{
         lf -remote "send $id reload"
     fi
 }}
-map <delete> smart_delete
+map <backspace> smart_delete
 
 # move current file or selected files to trash folder
 cmd trash ${{
@@ -514,7 +513,7 @@ cmd trash ${{
         lf -remote "send $id reload"
     fi
 }}
-map <bs2> trash
+map <backspace2> trash
 
 # }}}
 # Compression {{{
