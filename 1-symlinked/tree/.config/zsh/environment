@@ -24,6 +24,10 @@ export XDG_DOCUMENTS_DIR=$XDG_DOWNLOAD_DIR/Documents
 export XDG_PUBLICSHARE_DIR=$XDG_DOWNLOAD_DIR/Public
 export XDG_TEMPLATES_DIR=$XDG_DOWNLOAD_DIR/Templates
 
+# other directories
+
+export TMPDIR=/tmp
+
 # default applications
 
 export PAGER=$HOME/.scripts/df/pager.sh
@@ -35,7 +39,7 @@ export TERMINAL=/usr/bin/st
 export VIEWER=/usr/bin/sxiv
 export PLAYER=/usr/bin/mpv
 export PDFVIEWER=/usr/bin/zathura
-export BROWSER=$HOME/bin/xdf/tabbed-surf.sh
+export BROWSER=$HOME/bin/xdf/applications/tabbed/tabbed-surf.sh
 
 # cleanup
 

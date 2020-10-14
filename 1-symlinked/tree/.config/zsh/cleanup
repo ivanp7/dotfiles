@@ -1,9 +1,11 @@
 # editing & organizing & calculation
 
-export LESSHISTFILE=$XDG_CACHE_HOME/less-history
-
 export TASKDATA=$HOME/.task
 export TASKRC=$TASKDATA/config
+
+export LESSHISTFILE=$XDG_CACHE_HOME/less-history
+
+export SDCV_HISTFILE=$XDG_CACHE_HOME/sdcv-history
 
 export OCTAVE_SITE_INITFILE=$XDG_CONFIG_HOME/octave/octaverc
 export OCTAVE_HISTFILE=$XDG_CACHE_HOME/octave-history
