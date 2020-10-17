@@ -1,4 +1,4 @@
 #!/bin/sh
 
-exec nvim -R "$@"
+exec nvimpager -p "$@"
 
