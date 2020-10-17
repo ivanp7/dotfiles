@@ -1,6 +1,6 @@
 # This is Git's per-user configuration file.
 [core]
-    pager = less
+    pager = nvimpager
     editor = nvim
 
 [diff]
