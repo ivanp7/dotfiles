@@ -14,6 +14,8 @@ alias diff='diff --color=auto '
 
 alias less="$PAGER "
 
+alias nv='nvim '
+
 alias lf='lfcd '
 alias d='dirs -v | head'
 alias 1='cd -'
