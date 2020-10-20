@@ -34,6 +34,11 @@ export CARGO_HOME=$XDG_DATA_HOME/cargo
 
 export CUDA_CACHE_PATH=$XDG_CACHE_HOME/nv
 
+# games
+
+export SOKSAVEDIR=$XDG_DATA_HOME/csokoban
+export BLKSAVEDIR=$XDG_DATA_HOME/cblocks
+
 # custom
 
 [ -x "$XDG_CONFIG_HOME/zsh/extra-cleanup" ] && . $XDG_CONFIG_HOME/zsh/extra-cleanup

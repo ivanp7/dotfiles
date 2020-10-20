@@ -35,4 +35,8 @@ alias pwd_='printf "%q\n" "$(pwd)"'
 alias yaft=''
 alias yaft_wall=''
 
+# cleanup
+
+alias cmines="cmines -s $XDG_DATA_HOME/cminesrc "
+
 # vim: ft=zsh:
