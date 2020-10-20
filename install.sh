@@ -1,7 +1,7 @@
 #!/bin/sh
 
 CONF_DIR="$(realpath "$(dirname "$0")")"
-UNINST_SCRIPT=$HOME/.uninstall-dotfiles.sh
+UNINST_SCRIPT=$HOME/.config/uninstall-dotfiles.sh
 
 if [ -f "$UNINST_SCRIPT" ]
 then
@@ -27,6 +27,6 @@ do
 done
 
 echo '
-rm -f "'"$UNINST_SCRIPT"'"
+rm -f "$(realpath "$0")"
 ' >> $UNINST_SCRIPT
 
