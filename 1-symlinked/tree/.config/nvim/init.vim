@@ -68,6 +68,10 @@ let maplocalleader=" "
 
 set cedit=\<C-Y>
 
+" New buffers
+nnoremap <silent> <leader>e :enew<CR>
+nnoremap <silent> <leader>l :enew<CR>:set<Space>ft=lisp<CR>
+
 " Paste mode toggle
 autocmd VimEnter * set pastetoggle=<F2>
 
