@@ -101,7 +101,7 @@ _p_timeinfo_f ()
 {
     _p_timeinfo_length=16
     local TimeColor=${_p_stdcolor}
-    _p_timeinfo="${_p_dash} ${TimeColor}%D{%T %d/%m}${_p_stdcolor}"
+    _p_timeinfo="${_p_dash} ${TimeColor}%D{%T %b%d}${_p_stdcolor}"
 }
 add-zsh-hook precmd _p_timeinfo_f
 
