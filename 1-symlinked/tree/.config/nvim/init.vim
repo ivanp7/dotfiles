@@ -682,6 +682,8 @@ let g:sexp_mappings = {
             \ 'sexp_curly_tail_wrap_element':   '<LocalLeader>ee}',
             \ }
 
+autocmd FileType lisp imap <silent><buffer> <C-H> <Plug>(sexp_insert_backspace)
+
 " ******************** vlime *******************************
 
 let g:vlime_leader = '<LocalLeader>'
