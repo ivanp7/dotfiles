@@ -498,7 +498,7 @@ cmd smart_delete ${{
         lf -remote "send $id reload"
     fi
 }}
-map <backspace> smart_delete
+map <backspace2><enter> smart_delete
 
 # move current file or selected files to trash folder
 cmd trash ${{
@@ -513,7 +513,7 @@ cmd trash ${{
         lf -remote "send $id reload"
     fi
 }}
-map <backspace2> trash
+map <backspace2><backspace2> trash
 
 # }}}
 # Compression {{{
