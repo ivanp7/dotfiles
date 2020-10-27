@@ -242,7 +242,7 @@ _p_userhostinfo_f ()
     local USER=$(whoami)
     local HOST=$(hostname)
 
-    local RootColor=$(_p_safe_color "$(_p_color 15 196)" "${_p_bold}$(_p_color 7 1)")
+    local RootColor=$(_p_safe_color "$(_p_color 196)" "${_p_bold}$(_p_color 1)")
     local UserColor=$(_p_safe_color "$(_p_color 44)" "${_p_bold}$(_p_color 6)")
     [ "$(id -u)" -eq 0 ] && UserColor=$RootColor
     local HostColor=$(_p_safe_color "$(_p_color 33)" "${_p_bold}$(_p_color 4)")
@@ -255,8 +255,13 @@ _p_userhostinfo_f ()
 
     if [ "$_p_colors" -ge 256 ]
     then
-        local username_line="$(grep -s "^$USER " $ZDOTDIR/prompt.usernames)"
-        local hostname_line="$(grep -s "^$HOST " $ZDOTDIR/prompt.hostnames)"
+        local userhostname_script="/usr/local/bin/zsh/user-host-name.sh"
+
+        if [ -x "$userhostname_script" ]
+        then
+            local username_line=$($userhostname_script user "$USER")
+            local hostname_line=$($userhostname_script host "$HOST")
+        fi
 
         local name_regex='s/%.{[^{}]*}//g; s/%[^%]//g; s/%%/%/g'
 
