@@ -243,9 +243,9 @@ _p_userhostinfo_f ()
     local HOST=$(hostname)
 
     local RootColor=$(_p_safe_color "$(_p_color 15 196)" "${_p_bold}$(_p_color 7 1)")
-    local UserColor=$(_p_safe_color "$(_p_color 40)" "${_p_bold}$(_p_color 2)")
+    local UserColor=$(_p_safe_color "$(_p_color 44)" "${_p_bold}$(_p_color 6)")
     [ "$(id -u)" -eq 0 ] && UserColor=$RootColor
-    local HostColor=$(_p_safe_color "$(_p_color 39)" "${_p_bold}$(_p_color 4)")
+    local HostColor=$(_p_safe_color "$(_p_color 33)" "${_p_bold}$(_p_color 4)")
 
     local _p_username="${UserColor}${USER}${_p_stdcolor}"
     local _p_hostname="${HostColor}${HOST}${_p_stdcolor}"
@@ -262,13 +262,13 @@ _p_userhostinfo_f ()
 
         if [ -n "$username_line" ]
         then
-            local _p_username="${username_line#* }${_p_stdcolor}"
+            local _p_username="${UserColor}${username_line#* }${_p_stdcolor}"
             local _p_username_length="$(echo -n "$_p_username" | sed "$name_regex" | wc -m)"
         fi
 
         if [ -n "$hostname_line" ] 
         then 
-            local _p_hostname="${hostname_line#* }${_p_stdcolor}"
+            local _p_hostname="${HostColor}${hostname_line#* }${_p_stdcolor}"
             local _p_hostname_length="$(echo -n "$_p_hostname" | sed "$name_regex" | wc -m)"
         fi
     fi
