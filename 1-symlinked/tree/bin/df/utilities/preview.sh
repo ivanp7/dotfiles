@@ -12,6 +12,9 @@ preview_image ()
 
 preview_video_thumbnail ()
 {
+    command -v ffmpegthumbnailer > /dev/null || 
+        { echo "Error: ffmpegthumbnailer is not available"; exit 1; }
+
     CACHE=$(mktemp /tmp/thumb_cache.XXXXX.png)
     ffmpegthumbnailer -i "$1" -o $CACHE -s 0 -c png
     preview_image $CACHE png
