@@ -22,7 +22,7 @@ _p_cmdcolor=${_p_color_white}
 _p_dot="·"
 _p_dash="─"
 _p_2dash="═"
-_p_aeq="≈"
+_p_delta="⌂"
 _p_rightarrow="→"
 _p_top="┌"
 _p_mid0="│"
@@ -99,9 +99,9 @@ add-zsh-hook precmd _p_prompt_init_f
 
 _p_timeinfo_f ()
 {
-    _p_timeinfo_length=16
+    _p_timeinfo_length=10
     local TimeColor=${_p_stdcolor}
-    _p_timeinfo="${_p_dash} ${TimeColor}%D{%T %b%d}${_p_stdcolor}"
+    _p_timeinfo="${_p_dash} ${TimeColor}%D{%T}${_p_stdcolor}"
 }
 add-zsh-hook precmd _p_timeinfo_f
 
@@ -153,7 +153,7 @@ _p_cmdtimeinfo_f ()
 
     _p_cmdtimeinfo_length=$((2 + ${#days_nocolor} + ${#hours_nocolor} + 
     ${#minutes_nocolor} + ${#seconds_nocolor}))
-    _p_cmdtimeinfo=" ${_p_aeq}${days}${hours}${minutes}${seconds}${_p_stdcolor}"
+    _p_cmdtimeinfo=" ${_p_delta}${days}${hours}${minutes}${seconds}${_p_stdcolor}"
 }
 add-zsh-hook precmd _p_cmdtimeinfo_f
 
@@ -169,14 +169,14 @@ _p_cmdstatusinfo_f ()
         if [ "$_p_exitcode" -eq 0 ]
         then 
             _p_cmdstatusinfo_length=3
-            _p_cmdstatusinfo=" ${SuccessColor}↓0${_p_stdcolor}"
+            _p_cmdstatusinfo=" ${_p_downarrow}${SuccessColor}0${_p_stdcolor}"
         else 
             _p_cmdstatusinfo_length=$((2 + ${#_p_exitcode}))
-            _p_cmdstatusinfo=" ${FailureColor}↓${_p_exitcode}${_p_stdcolor}"
+            _p_cmdstatusinfo=" ${_p_downarrow}${FailureColor}${_p_exitcode}${_p_stdcolor}"
         fi
     else 
-        _p_cmdstatusinfo_length=0
-        _p_cmdstatusinfo=
+        _p_cmdstatusinfo_length=2
+        _p_cmdstatusinfo=" ${_p_downarrow}"
     fi
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
@@ -197,7 +197,7 @@ _p_processinfo_f ()
     fi
 
     local PromptLength=$((1 + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
-                          $_p_cmdstatusinfo_length + 3))
+                          $_p_cmdstatusinfo_length + 1))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     local PNameColor=$(_p_safe_color "$(_p_color 252)" "$(_p_color 7)")
@@ -206,7 +206,7 @@ _p_processinfo_f ()
     if [ "${#OutputStr}" -le "$MaxOutputLength" ]
     then
         local OutputStr=$(echo "$OutputStr" | sed -E "$PrettifyingRegEx")
-        _p_processinfo=" ($PNameColor$OutputStr${_p_stdcolor})"
+        _p_processinfo=" $PNameColor$OutputStr${_p_stdcolor}"
     else
         local OutputStr="$OutputStr///"
         local MaxOutputLength=$(($MaxOutputLength - ${#_p_ellipsis}))
@@ -224,9 +224,9 @@ _p_processinfo_f ()
         then
             local OutputStr="$SkipColor${_p_ellipsis}///${OutputStr:0:-3}"
             local OutputStr=$(echo "$OutputStr" | sed -E "$PrettifyingRegEx")
-            _p_processinfo=" ($OutputStr${_p_stdcolor})"
+            _p_processinfo=" $OutputStr${_p_stdcolor}"
         else
-            _p_processinfo=" ($SkipColor${_p_ellipsis}${_p_stdcolor})"
+            _p_processinfo=" $SkipColor${_p_ellipsis}${_p_stdcolor}"
         fi
     fi
 }
@@ -253,29 +253,29 @@ _p_userhostinfo_f ()
     local _p_username_length=${#USER}
     local _p_hostname_length=${#HOST}
 
-    if [ "$_p_colors" -ge 256 ]
+    local userhostname_script="/usr/local/bin/zsh/user-host-name.sh"
+    if [ -x "$userhostname_script" ]
     then
-        local userhostname_script="/usr/local/bin/zsh/user-host-name.sh"
+        local username_line=$($userhostname_script user "$USER")
+        local username_line=${username_line#* }
+        local hostname_line=$($userhostname_script host "$HOST")
+        local hostname_line=${hostname_line#* }
+    fi
 
-        if [ -x "$userhostname_script" ]
-        then
-            local username_line=$($userhostname_script user "$USER")
-            local hostname_line=$($userhostname_script host "$HOST")
-        fi
+    local name_regex='s/%.{[^{}]*}//g; s/%[^%]//g; s/%%/%/g'
 
-        local name_regex='s/%.{[^{}]*}//g; s/%[^%]//g; s/%%/%/g'
+    if [ -n "$username_line" ]
+    then
+        [ "$_p_colors" -ge 256 ] || local username_line=$(echo -n "${username_line}" | sed "$name_regex")
+        local _p_username="${UserColor}${username_line}${_p_stdcolor}"
+        local _p_username_length="$(echo -n "${username_line}" | sed "$name_regex" | wc -m)"
+    fi
 
-        if [ -n "$username_line" ]
-        then
-            local _p_username="${UserColor}${username_line#* }${_p_stdcolor}"
-            local _p_username_length="$(echo -n "$_p_username" | sed "$name_regex" | wc -m)"
-        fi
-
-        if [ -n "$hostname_line" ] 
-        then 
-            local _p_hostname="${HostColor}${hostname_line#* }${_p_stdcolor}"
-            local _p_hostname_length="$(echo -n "$_p_hostname" | sed "$name_regex" | wc -m)"
-        fi
+    if [ -n "$hostname_line" ] 
+    then 
+        [ "$_p_colors" -ge 256 ] || local hostname_line=$(echo -n "${hostname_line}" | sed "$name_regex")
+        local _p_hostname="${HostColor}${hostname_line}${_p_stdcolor}"
+        local _p_hostname_length="$(echo -n "${hostname_line}" | sed "$name_regex" | wc -m)"
     fi
 
     _p_userhostinfo_length="$((3 + $_p_username_length + $_p_hostname_length))"
