@@ -60,6 +60,7 @@ map <F5> :source $MYVIMRC<CR>
 " Record into register 'q', playback with 'Q'
 nnoremap Q @q
 
+noremap \ ,
 noremap ,, ,
 noremap ,; ,
 
@@ -96,15 +97,15 @@ vmap <down> gj
 
 " Emacs-style editing in insert mode and on the command-line: 
 " start of line
-noremap! <C-A>		<Home>
+noremap! <C-A>  <Home>
 " back one character
-noremap! <C-B>		<Left>
+noremap! <C-B>  <Left>
 " delete character under cursor
-noremap! <C-D>		<Del>
+noremap! <C-D>  <Del>
 " end of line
-noremap! <C-E>		<End>
+noremap! <C-E>  <End>
 " forward one character
-noremap! <C-F>		<Right>
+noremap! <C-F>  <Right>
 
 " }}}
 " copy-paste mappings {{{
@@ -491,6 +492,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-capslock'
 Plug 'tpope/vim-eunuch'
 Plug 'farmergreg/vim-lastplace'
+Plug 'justinmk/vim-sneak'
 
 " Appearance
 Plug 'fxn/vim-monochrome'
@@ -498,6 +500,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'mhinz/vim-startify'
 Plug 'raymond-w-ko/vim-niji'
 Plug 'Yggdroot/indentLine'
+Plug 'machakann/vim-highlightedyank'
 
 " Syntax highlighting
 Plug 'jaxbot/semantic-highlight.vim'
@@ -523,7 +526,25 @@ Plug 'vlime/vlime', {'rtp': 'vim/'}
 call plug#end()
 
 " }}}
+" basic things {{{
+
+" ******************** vim-sneak **************************
+
+let g:sneak#label = 1
+let g:sneak#target_labels = ";sftunq/[]SFGHLTUNRMZ?0"
+
+map f <Plug>Sneak_f
+map F <Plug>Sneak_F
+map t <Plug>Sneak_t
+map T <Plug>Sneak_T
+
+" }}}
 " appearance {{{
+
+" ******************** vim-highlightedyank **************************
+
+" set highlight for 1 second
+let g:highlightedyank_highlight_duration = 1000
 
 " ******************** vim-lightline **************************
 
@@ -559,7 +580,7 @@ highlight CursorLineNR      guifg=#ee3333
 highlight LineNr            guifg=#999999
 highlight MatchParen        guifg=#ffffff guibg=#ff0000
 highlight ColorColumn       guibg=#3a3a3a
-highlight IncSearch         guifg=#990000 guibg=#ffffff
+highlight IncSearch         guifg=#aa2200 guibg=#ffffff
 
 " terminal colors
 
