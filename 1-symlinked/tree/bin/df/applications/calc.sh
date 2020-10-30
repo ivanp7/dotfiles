@@ -1,4 +1,4 @@
 #!/bin/sh
 
-mispipe "$(echo octave-cli --eval \""$@"\")" "sed 's/^.*= *//'"
+exec mispipe "$(echo octave-cli --eval \""$@"\")" "sed 's/^.*= *//'"
 
