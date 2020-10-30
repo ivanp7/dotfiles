@@ -1,5 +1,5 @@
-#!/bin/zsh
+#!/bin/bash
 
 [ "$#" -gt 0 ] && echo "$@"
-read -rsk 1
+read -rsn 1
 
