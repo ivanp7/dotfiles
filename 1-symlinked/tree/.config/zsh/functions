@@ -23,6 +23,17 @@ txclip ()
 }
 
 # }}}
+# bd {{{
+
+bd ()
+{
+    [ "$#" -eq 0 ] && { cd ..; return; }
+    for i in $(seq $1)
+    do cd ..
+    done
+}
+
+# }}}
 # lf {{{
 
 # lf
