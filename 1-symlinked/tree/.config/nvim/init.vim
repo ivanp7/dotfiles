@@ -119,8 +119,6 @@ map <leader>x "_x
 map <leader>X "_X
 map <leader>c "_c
 map <leader>C "_C
-map <leader>s "_s
-map <leader>S "_S
 
 " }}}
 " indentation mappings {{{
