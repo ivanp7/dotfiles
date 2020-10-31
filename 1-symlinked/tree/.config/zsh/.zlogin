@@ -6,4 +6,6 @@ esac
 
 printf "\n\n\n\n"
 neofetch
+echo
+fortune.sh
 

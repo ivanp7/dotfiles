@@ -535,6 +535,10 @@ let g:sneak#s_next = 1
 " }}}
 " appearance {{{
 
+" ******************** vim-startify **************************
+
+let g:startify_custom_header = map(split(system("fortune.sh"), '\n'), 'repeat(" ", 8) . v:val')
+
 " ******************** vim-highlightedyank **************************
 
 " set highlight for 1 second
