@@ -184,8 +184,8 @@ _p_cmdstatusinfo_f ()
             _p_cmdstatusinfo=" ${_p_downarrow}${FailureColor}${_p_exitcode}${_p_stdcolor}"
         fi
     else 
-        _p_cmdstatusinfo_length=2
-        _p_cmdstatusinfo=" ${_p_downarrow}"
+        _p_cmdstatusinfo_length=0
+        _p_cmdstatusinfo=""
     fi
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
