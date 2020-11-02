@@ -58,6 +58,11 @@ add-zsh-hook -Uz precmd rehash_precmd
 # disable ctrl+s/ctrl+q
 stty -ixon -ixoff
 
+exit_zsh() { exit }
+zle -N exit_zsh
+bindkey '^D' exit_zsh
+
+
 # }}}
 # Keys {{{
 
