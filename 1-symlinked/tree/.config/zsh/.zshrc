@@ -58,11 +58,6 @@ add-zsh-hook -Uz precmd rehash_precmd
 # disable ctrl+s/ctrl+q
 stty -ixon -ixoff
 
-exit_zsh() { exit }
-zle -N exit_zsh
-bindkey '^D' exit_zsh
-
-
 # }}}
 # Keys {{{
 
@@ -140,6 +135,10 @@ fzf_cd ()
 zle -N fzf_cd
 
 bindkey '\C-g' fzf_cd
+
+exit_zsh() { exit }
+zle -N exit_zsh
+bindkey '^D' exit_zsh
 
 # Finally, make sure the terminal is in application mode, when zle is
 # active. Only then are the values from $terminfo valid.

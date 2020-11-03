@@ -1,10 +1,10 @@
 alias fucking='sudo '
 alias fuck='sudo '
 
-alias ls='ls --color=auto '
-alias ll='ls -alF '
-alias la='ls -A '
-alias l='ls -CF '
+alias ls='ls --group-directories-first --color=auto '
+alias ll='ls --group-directories-first -alF '
+alias la='ls --group-directories-first -A '
+alias l='ls --group-directories-first -CF '
 
 alias grep='grep --color=auto '
 alias fgrep='fgrep --color=auto '
