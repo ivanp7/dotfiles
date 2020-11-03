@@ -26,7 +26,7 @@ _p_safe_color ()
 _p_color_white=$(_p_safe_color "$(_p_color 15)" "${_p_bold}$(_p_color 7)")%k
 
 _p_stdcolor=$(_p_safe_color "$(_p_color 244)" "$(_p_color 7)${_p_stopbold}")%k
-_p_cmdcolor=${_p_color_white}
+_p_resetcolor="%f%k"
 
 _p_dot="·"
 _p_dash="─"
@@ -462,7 +462,7 @@ add-zsh-hook precmd _p_pwdinfo_f
 _p_cmdline_f ()
 {
     local PromptCharacterColor=$(_p_safe_color "$(_p_color 250)" "$(_p_color 7)")
-    local PromptCharacters="${PromptCharacterColor} $_p_interactive_shells ${_p_cmdcolor}"
+    local PromptCharacters="${PromptCharacterColor} $_p_interactive_shells ${_p_resetcolor}"
 
     PROMPT="${_p_stdcolor}${_p_bot}${_p_dash} $1${_p_stdcolor}${PromptCharacters}"
     local CSI=$'\e['
