@@ -36,6 +36,45 @@ set relativenumber
 
 set previewer ~/.scripts/df/lf-previewer.sh
 
+cmd _set_promptfmt %{{
+    [ "$(id -u)" -ne 0 ] && user_color=44 || user_color=196
+    host_color=33
+
+    userhostname_script="/usr/local/bin/zsh/user-host-name.sh"
+    if [ -x "$userhostname_script" ]
+    then
+        username_line=$("$userhostname_script" user "$(whoami)")
+        hostname_line=$("$userhostname_script" host "$(hostname)")
+
+        name_regex='s/%F\{([^{}]*)\}/\\033[38;5;\1m/g; s/%[^%]\{[^{}]*\}//g; s/%%/%/g'
+
+        if [ -n "$username_line" ]
+        then
+            user_name="$(echo "$username_line" | sed -E "$name_regex")"
+        else
+            user_name="%u"
+        fi
+        user_name="\\033[38;5;${user_color}m$user_name"
+
+        if [ -n "$hostname_line" ]
+        then
+            host_name="$(echo "$hostname_line" | sed -E "$name_regex")"
+        else
+            host_name="%h"
+        fi
+        host_name="\\033[38;5;${host_color}m$host_name"
+    else
+        user_name="\\033[38;5;${user_color}m%u"
+        host_name="\\033[38;5;${host_color}m%h"
+    fi
+
+    pwd_color=255
+    file_color=84
+    std_color=244
+    lf -remote "send $id set promptfmt \" ${user_name}\\033[38;5;${std_color}m@${host_name}\\033[38;5;${std_color}m § \\033[38;5;${pwd_color}m%w\\033[38;5;${file_color}m%f\""
+}}
+_set_promptfmt
+
 # }}} 
 # Unmapped keys {{{
 

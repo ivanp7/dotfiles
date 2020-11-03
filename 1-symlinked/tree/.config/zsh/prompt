@@ -265,10 +265,8 @@ _p_userhostinfo_f ()
     local userhostname_script="/usr/local/bin/zsh/user-host-name.sh"
     if [ -x "$userhostname_script" ]
     then
-        local username_line=$($userhostname_script user "$USER")
-        local username_line=${username_line#* }
-        local hostname_line=$($userhostname_script host "$HOST")
-        local hostname_line=${hostname_line#* }
+        local username_line=$("$userhostname_script" user "$USER")
+        local hostname_line=$("$userhostname_script" host "$HOST")
     fi
 
     local name_regex='s/%.{[^{}]*}//g; s/%[^%]//g; s/%%/%/g'
