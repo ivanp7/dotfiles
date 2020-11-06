@@ -737,5 +737,13 @@ function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
 endfunction
 
 " }}}
+" plugins override {{{
+
+" ******************** vim-sensible **************************
+
+runtime! plugin/sensible.vim
+set sidescrolloff=0
+
+" }}}
 
 " vim: foldmethod=marker:
