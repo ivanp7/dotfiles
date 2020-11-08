@@ -43,7 +43,7 @@ _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 _p_default_prompt_text=">>>>>>>>"
 [ "$_p_colors" -ge 256 ] && _p_default_prompt_text="$(_p_color 240)$_p_default_prompt_text"
 
-_p_prompt_prefix="▐"
+_p_prompt_prefix="▐▐"
 
 # }}}
 # Initialization {{{
