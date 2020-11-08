@@ -43,7 +43,9 @@ _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 _p_default_prompt_text=">>>>>>>>"
 [ "$_p_colors" -ge 256 ] && _p_default_prompt_text="$(_p_color 240)$_p_default_prompt_text"
 
-_p_prompt_prefix="▐▐"
+_p_prompt_prefix1="▐▐"
+_p_prompt_prefix2="▐▐"
+_p_prompt_prefix3="▐▐"
 
 # }}}
 # Initialization {{{
@@ -201,7 +203,7 @@ _p_processinfo_f ()
         return
     fi
 
-    local PromptLength=$((${#_p_prompt_prefix} + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
+    local PromptLength=$((${#_p_prompt_prefix1} + $_p_timeinfo_length + $_p_cmdtimeinfo_length + 
                           $_p_cmdstatusinfo_length + 1))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
@@ -396,7 +398,7 @@ add-zsh-hook precmd _p_gitinfo_f
 
 _p_pwdinfo_f ()
 {
-    local PromptLength=$((${#_p_prompt_prefix} + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
+    local PromptLength=$((${#_p_prompt_prefix2} + $_p_userhostinfo_length + $_p_gitinfo_length + 3))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     if [ "$(($_p_gitinfo_length * 2))" -ge "$MaxOutputLength" ]
@@ -460,11 +462,11 @@ _p_cmdline_f ()
     local PromptCharacterColor=$(_p_safe_color "$(_p_color 250)" "$(_p_color 7)")
     local PromptCharacters="${PromptCharacterColor} $_p_interactive_shells ${_p_resetcolor}"
 
-    PROMPT="${_p_stdcolor}${_p_prompt_prefix} $1${_p_stdcolor}${PromptCharacters}"
+    PROMPT="${_p_stdcolor}${_p_prompt_prefix3} $1${_p_stdcolor}${PromptCharacters}"
     local CSI=$'\e['
     local len=$((8 + 1 + ${#_p_interactive_shells}))
-    local FixPrevPromptPrefix="%{${CSI}A${_p_prompt_prefix}$(printf "%0.s " $(seq $len))${_p_dot}${CSI}${len}D${CSI}3D${CSI}B%}"
-    PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${_p_prompt_prefix} $1${_p_stdcolor}${PromptCharacters}"
+    local FixPrevPromptPrefix="%{${CSI}A${_p_prompt_prefix2}$(printf "%0.s " $(seq $len))${_p_dot}${CSI}${len}D${CSI}3D${CSI}B%}"
+    PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${_p_prompt_prefix3} $1${_p_stdcolor}${PromptCharacters}"
 }
 
 _p_cursor_block ()
@@ -531,8 +533,8 @@ _p_prompt ()
 {
     print -P "${_p_stdcolor}"
     print -P "${_p_stdcolor}${_p_separator}"
-    print -P "${_p_stdcolor}${_p_prompt_prefix}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_processinfo}"
-    print -P "${_p_stdcolor}${_p_prompt_prefix}${_p_userhostinfo}${_p_pwdinfo}${_p_gitinfo}"
+    print -P "${_p_stdcolor}${_p_prompt_prefix1}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_processinfo}"
+    print -P "${_p_stdcolor}${_p_prompt_prefix2}${_p_userhostinfo}${_p_pwdinfo}${_p_gitinfo}"
 
     _p_cmdline_f "${_p_default_prompt_text}"
 }
