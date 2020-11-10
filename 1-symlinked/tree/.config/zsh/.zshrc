@@ -157,6 +157,8 @@ fi
 # }}}
 # Extra configuration {{{
 
+eval $(dircolors)
+
 # functions
 . $ZDOTDIR/functions
 
