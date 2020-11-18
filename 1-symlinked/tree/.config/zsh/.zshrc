@@ -136,7 +136,7 @@ zle -N fzf_cd
 
 bindkey '\C-g' fzf_cd
 
-exit_zsh() { exit }
+exit_zsh () { exit 0 }
 zle -N exit_zsh
 bindkey '^D' exit_zsh
 
