@@ -10,10 +10,17 @@ ssh_add ()
 
 tx ()
 {
+    local TMUX_SCRIPT="$HOME/.scripts/df/tmux-new-session.sh"
+
     DIR="$PWD"
     cd ~
     if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
-    then tmux attach || . $HOME/.scripts/df/tmux-default-session.sh; fi
+    then 
+        if [ -z "$1" ]
+        then tmux attach || . "$TMUX_SCRIPT"
+        else tmux attach -t "$1" || . "$TMUX_SCRIPT" "$1"
+        fi
+    fi
     cd -- $DIR
 }
 
