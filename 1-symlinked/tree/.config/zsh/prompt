@@ -47,11 +47,12 @@ _p_default_prompt_text=">>>>>>>>"
 _p_prompt_prefix_active_color=$_p_color_white
 _p_prompt_prefix_inactive_color=$(_p_color 240)
 
-_p_prompt_prefix1="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
+_p_prompt_prefix1="${_p_prompt_prefix_inactive_color} "
 _p_prompt_prefix1_length=1
-_p_prompt_prefix2="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
+_p_prompt_prefix2="${_p_prompt_prefix_inactive_color} "
 _p_prompt_prefix2_length=1
 
+_p_prompt_prefix3_fix="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
 _p_prompt_prefix3="${_p_prompt_prefix_active_color}${_p_righttriangle}"
 _p_prompt_prefix3_final="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
 
@@ -474,7 +475,7 @@ _p_cmdline_f ()
     PROMPT="${_p_stdcolor}${PROMPT_PREFIX}${_p_stdcolor} $1${_p_stdcolor}${PromptCharacters}"
     local CSI=$'\e['
     local len=$((8 + 1 + ${#_p_interactive_shells}))
-    local FixPrevPromptPrefix="%{${CSI}A${_p_prompt_prefix2}${_p_stdcolor}$(printf "%0.s " $(seq $len))${_p_dot}${CSI}${len}D${CSI}3D${CSI}B%}"
+    local FixPrevPromptPrefix="%{${CSI}A${_p_prompt_prefix3_fix}${_p_stdcolor}$(printf "%0.s " $(seq $len))${_p_dot}${CSI}${len}D${CSI}3D${CSI}B%}"
     PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${PROMPT_PREFIX}${_p_stdcolor} $1${_p_stdcolor}${PromptCharacters}"
 }
 
@@ -527,6 +528,12 @@ zle-line-finish ()
     _p_cursor_block
 }
 zle -N zle-line-finish
+
+preexec_newline ()
+{
+    echo
+}
+add-zsh-hook preexec preexec_newline
 
 # Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
