@@ -61,24 +61,18 @@ _p_prompt_prefix3_final="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
 # Shell info {{{
 _p_shellinfo_f ()
 {
+    [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
+
     local Tty=$(tty | sed 's@^/dev/@@')
     local Dimensions="(${COLUMNS}x${LINES})*$_p_colors"
     local Sep="${_p_dot}${_p_dot}${_p_dot}"
     local Login=
     [[ -o login ]] && local Login=" <login>"
-    _p_shellinfo="$Login $Tty @ $TERM $Dimensions $Sep [#${_p_cmd_nr:=1}]"
+    _p_shellinfo="$Login $Tty @ $TERM $Dimensions $Sep [#${_p_command_number:=1}]"
     _p_shellinfo_length=${#_p_shellinfo}
-    _p_cmd_nr=$(($_p_cmd_nr + 1))
 }
 add-zsh-hook precmd _p_shellinfo_f
 # }}}
-
-_p_preexec ()
-{
-    _p_timer=${_p_timer:-$SECONDS}
-    _p_command_executed=true
-}
-add-zsh-hook preexec _p_preexec
 
 _p_prompt_init_f ()
 {
@@ -529,11 +523,13 @@ zle-line-finish ()
 }
 zle -N zle-line-finish
 
-preexec_newline ()
+_p_preexec ()
 {
+    _p_timer=${_p_timer:-$SECONDS}
+    _p_command_executed=true
     echo
 }
-add-zsh-hook preexec preexec_newline
+add-zsh-hook preexec _p_preexec
 
 # Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
