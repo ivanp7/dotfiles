@@ -526,7 +526,6 @@ zle-line-finish ()
     then 
         local TimeColor=${_p_stdcolor}
         _p_set_prompt "%D{%T}" "${TimeColor}" "${_p_prompt_prefix3_final}"
-        zle reset-prompt
     else
         _p_prompt2_active=true
         PROMPT="$_p_PROMPT2"
@@ -555,16 +554,11 @@ TRAPINT ()
     return $(( 128 + $1 ))
 }
 
-_p_trap_exit ()
+_p_prompt_on_exit ()
 {
-    if [ -n "$_p_in_prompt" ]
-    then
-        _p_set_prompt "${_p_default_prompt_text}" "${_p_stdcolor}" "${_p_prompt_prefix3_final}"
-        local CSI=$'\e['
-        print -P "%{${CSI}A${CSI}2K%}$PROMPT"
-    fi
+    _p_set_prompt "${_p_default_prompt_text}" "${_p_stdcolor}" "${_p_prompt_prefix3_final}"
+    zle reset-prompt
 }
-trap '_p_trap_exit' EXIT
 
 # }}}
 # Prompt itself {{{
