@@ -558,7 +558,19 @@ _p_prompt_on_exit ()
 {
     _p_set_prompt "${_p_default_prompt_text}" "${_p_stdcolor}" "${_p_prompt_prefix3_final}"
     zle reset-prompt
+    unset _p_in_prompt
 }
+
+_p_trap_exit ()
+{
+    if [ -n "$_p_in_prompt" ]
+    then
+        _p_set_prompt "${_p_default_prompt_text}" "${_p_stdcolor}" "${_p_prompt_prefix3_final}"
+        local CSI=$'\e['
+        print -P "%{${CSI}$(echo "$PREBUFFER" | wc -l)A${CSI}2K%}$PROMPT"
+    fi
+}
+trap '_p_trap_exit' EXIT
 
 # }}}
 # Prompt itself {{{
