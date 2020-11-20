@@ -60,6 +60,35 @@ _p_prompt_prefix3_final="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
 _p_PROMPT2="${_p_stdcolor}${_p_prompt_prefix3_fix}${_p_stdcolor} $(printf "%0.s " $(seq $((8+${#_p_interactive_shells}))))${_p_dot} ${_p_resetcolor}"
 
 # }}}
+# Separator {{{
+
+_p_shellinfo_f ()
+{
+    [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
+
+    local Tty=$(tty | sed 's@^/dev/@@')
+    local Dimensions="(${COLUMNS}x${LINES})*$_p_colors"
+    local Sep="${_p_dot}${_p_dot}${_p_dot}"
+    local Login=
+    [[ -o login ]] && local Login=" <login>"
+    _p_shellinfo="$Login $Tty @ $TERM $Dimensions $Sep [#${_p_command_number:=1}]"
+    _p_shellinfo_length=${#_p_shellinfo}
+}
+add-zsh-hook precmd _p_shellinfo_f
+
+_p_separator_f ()
+{
+    if [ "$COLUMNS" -gt "$((2 * $_p_shellinfo_length))" ]
+    then
+        _p_separator="$(dd if=/dev/zero bs=1 count=$(($COLUMNS-$_p_shellinfo_length)) status=none | 
+            sed "s/./${_p_dot}/g")${_p_shellinfo}"
+    else
+        _p_separator="$(dd if=/dev/zero bs=1 count=$COLUMNS status=none | sed "s/./${_p_dot}/g")"
+    fi
+}
+add-zsh-hook precmd _p_separator_f
+
+# }}}
 # Previous command result info {{{
 
 _p_prev_command_info_f ()
@@ -93,34 +122,6 @@ _p_preexec ()
     echo
 }
 add-zsh-hook preexec _p_preexec
-
-# }}}
-# Separator {{{
-_p_shellinfo_f ()
-{
-    [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
-
-    local Tty=$(tty | sed 's@^/dev/@@')
-    local Dimensions="(${COLUMNS}x${LINES})*$_p_colors"
-    local Sep="${_p_dot}${_p_dot}${_p_dot}"
-    local Login=
-    [[ -o login ]] && local Login=" <login>"
-    _p_shellinfo="$Login $Tty @ $TERM $Dimensions $Sep [#${_p_command_number:=1}]"
-    _p_shellinfo_length=${#_p_shellinfo}
-}
-add-zsh-hook precmd _p_shellinfo_f
-
-_p_separator_f ()
-{
-    if [ "$COLUMNS" -gt "$((2 * $_p_shellinfo_length))" ]
-    then
-        _p_separator="$(dd if=/dev/zero bs=1 count=$(($COLUMNS-$_p_shellinfo_length)) status=none | 
-            sed "s/./${_p_dot}/g")${_p_shellinfo}"
-    else
-        _p_separator="$(dd if=/dev/zero bs=1 count=$COLUMNS status=none | sed "s/./${_p_dot}/g")"
-    fi
-}
-add-zsh-hook precmd _p_separator_f
 
 # }}}
 # First line {{{
