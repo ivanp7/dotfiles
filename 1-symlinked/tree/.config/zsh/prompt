@@ -60,6 +60,41 @@ _p_prompt_prefix3_final="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
 _p_PROMPT2="${_p_stdcolor}${_p_prompt_prefix3_fix}${_p_stdcolor} $(printf "%0.s " $(seq $((8+${#_p_interactive_shells}))))${_p_dot} ${_p_resetcolor}"
 
 # }}}
+# Previous command result info {{{
+
+_p_prev_command_info_f ()
+{
+    _p_exitcode="$?" # This needs to be first
+
+    if [ -n "$_p_command_executed" ]
+    then 
+        unset _p_command_executed
+
+        if [ -n "$_p_timer" ]
+        then
+            _p_timer_delta=$(($SECONDS - $_p_timer))
+            [ $_p_timer_delta -lt 0 ] && _p_timer_delta=0
+            unset _p_timer
+        fi
+    else 
+        unset _p_timer_delta
+        unset _p_exitcode
+    fi
+
+    _p_in_prompt=true
+}
+add-zsh-hook precmd _p_prev_command_info_f
+
+_p_preexec ()
+{
+    unset _p_in_prompt
+    _p_timer=${_p_timer:-$SECONDS}
+    _p_command_executed=true
+    echo
+}
+add-zsh-hook preexec _p_preexec
+
+# }}}
 # Separator {{{
 _p_shellinfo_f ()
 {
@@ -464,29 +499,11 @@ _p_set_cursor_shape ()
 
 _p_prompt_init_f ()
 {
-    _p_exitcode="$?" # This needs to be first
-
-    if [ -n "$_p_command_executed" ]
-    then 
-        unset _p_command_executed
-
-        if [ -n "$_p_timer" ]
-        then
-            _p_timer_delta=$(($SECONDS - $_p_timer))
-            [ $_p_timer_delta -lt 0 ] && _p_timer_delta=0
-            unset _p_timer
-        fi
-    else 
-        unset _p_timer_delta
-        unset _p_exitcode
-    fi
-
     _p_set_prompt
     PROMPT2="$_p_PROMPT2"
     _p_set_cursor_shape bar
 
     unset _p_prompt2_active
-    _p_in_prompt=true
 }
 add-zsh-hook precmd _p_prompt_init_f
 
@@ -536,15 +553,6 @@ zle-line-finish ()
 }
 zle -N zle-line-finish
 
-_p_preexec ()
-{
-    unset _p_in_prompt
-    _p_timer=${_p_timer:-$SECONDS}
-    _p_command_executed=true
-    echo
-}
-add-zsh-hook preexec _p_preexec
-
 # Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
 TRAPINT ()
@@ -571,9 +579,6 @@ _p_trap_exit ()
     fi
 }
 trap '_p_trap_exit' EXIT
-
-# }}}
-# Prompt itself {{{
 
 _p_prompt ()
 {
