@@ -43,6 +43,7 @@ _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
 _p_default_prompt_text=">>>>>>>>"
 [ "$_p_colors" -ge 256 ] && _p_default_prompt_text="$(_p_color 240)$_p_default_prompt_text"
+_p_vicommand_prompt_text="$(_p_color 0 7)${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}"
 
 _p_prompt_prefix_active_color=$_p_color_white
 _p_prompt_prefix_inactive_color=$(_p_color 240)
@@ -56,9 +57,10 @@ _p_prompt_prefix3_fix="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
 _p_prompt_prefix3="${_p_prompt_prefix_active_color}${_p_righttriangle}"
 _p_prompt_prefix3_final="${_p_prompt_prefix_inactive_color}${_p_righttriangle}"
 
+_p_PROMPT2="${_p_stdcolor}${_p_prompt_prefix3_fix}${_p_stdcolor} $(printf "%0.s " $(seq $((8+${#_p_interactive_shells}))))${_p_dot} ${_p_resetcolor}"
+
 # }}}
-# Initialization {{{
-# Shell info {{{
+# Separator {{{
 _p_shellinfo_f ()
 {
     [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
@@ -72,27 +74,9 @@ _p_shellinfo_f ()
     _p_shellinfo_length=${#_p_shellinfo}
 }
 add-zsh-hook precmd _p_shellinfo_f
-# }}}
 
-_p_prompt_init_f ()
+_p_separator_f ()
 {
-    _p_exitcode="$?" # This needs to be first
-
-    if [ -n "$_p_command_executed" ]
-    then 
-        unset _p_command_executed
-
-        if [ -n "$_p_timer" ]
-        then
-            _p_timer_delta=$(($SECONDS - $_p_timer))
-            [ $_p_timer_delta -lt 0 ] && _p_timer_delta=0
-            unset _p_timer
-        fi
-    else 
-        unset _p_timer_delta
-        unset _p_exitcode
-    fi
-
     if [ "$COLUMNS" -gt "$((2 * $_p_shellinfo_length))" ]
     then
         _p_separator="$(dd if=/dev/zero bs=1 count=$(($COLUMNS-$_p_shellinfo_length)) status=none | 
@@ -101,7 +85,7 @@ _p_prompt_init_f ()
         _p_separator="$(dd if=/dev/zero bs=1 count=$COLUMNS status=none | sed "s/./${_p_dot}/g")"
     fi
 }
-add-zsh-hook precmd _p_prompt_init_f
+add-zsh-hook precmd _p_separator_f
 
 # }}}
 # First line {{{
@@ -458,42 +442,63 @@ add-zsh-hook precmd _p_pwdinfo_f
 
 # }}}
 # }}}
-# Third line {{{
+# Prompt {{{
 
-_p_cmdline_f ()
+_p_set_prompt ()
 {
     local PromptCharacterColor=$(_p_safe_color "$(_p_color 252)" "$(_p_color 7)${_p_bold}")
     local PromptCharacters=" ${_p_interactive_shells:0:$((${#_p_interactive_shells}-1))}${PromptCharacterColor}${_p_interactive_shells: -1:1} ${_p_resetcolor}"
+    local PromptValue="${_p_stdcolor}${3:-${_p_prompt_prefix3}}${_p_stdcolor} ${1:-$_p_default_prompt_text}${_p_stdcolor}${PromptCharacters}"
 
-    PROMPT_PREFIX="${3:-${_p_prompt_prefix3}}"
-    PROMPT="${_p_stdcolor}${PROMPT_PREFIX}${_p_stdcolor} $1${_p_stdcolor}${PromptCharacters}"
-    local CSI=$'\e['
-    local len=$((8 + 1 + ${#_p_interactive_shells}))
-    local FixPrevPromptPrefix="%{${CSI}A${_p_prompt_prefix3_fix}${_p_stdcolor}$(printf "%0.s " $(seq $len))${_p_dot}${CSI}${len}D${CSI}3D${CSI}B%}"
-    PROMPT2="${_p_stdcolor}${FixPrevPromptPrefix}${PROMPT_PREFIX}${_p_stdcolor} $1${_p_stdcolor}${PromptCharacters}"
+    [ -z "$_p_prompt2_active" ] && PROMPT="$PromptValue" || PROMPT2="$PromptValue"
 }
 
-_p_cursor_block ()
+_p_set_cursor_shape ()
 {
-    echo -ne '\e[1 q'
+    case $1 in
+        block) echo -ne '\e[2 q' ;;
+        underline) echo -ne '\e[4 q' ;;
+        bar) echo -ne '\e[6 q' ;;
+    esac
 }
 
-_p_cursor_beam ()
+_p_prompt_init_f ()
 {
-    echo -ne '\e[5 q'
+    _p_exitcode="$?" # This needs to be first
+
+    if [ -n "$_p_command_executed" ]
+    then 
+        unset _p_command_executed
+
+        if [ -n "$_p_timer" ]
+        then
+            _p_timer_delta=$(($SECONDS - $_p_timer))
+            [ $_p_timer_delta -lt 0 ] && _p_timer_delta=0
+            unset _p_timer
+        fi
+    else 
+        unset _p_timer_delta
+        unset _p_exitcode
+    fi
+
+    _p_set_prompt
+    PROMPT2="$_p_PROMPT2"
+    _p_set_cursor_shape bar
+
+    unset _p_prompt2_active
+    _p_in_prompt=true
 }
+add-zsh-hook precmd _p_prompt_init_f
 
 zle-keymap-select ()
 {
-    local _p_vicommand_prompt_text="$(_p_color 0 7)${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}"
-
     if [ "$KEYMAP" = "vicmd" ]
     then 
-        _p_cmdline_f "${_p_vicommand_prompt_text}"
-        _p_cursor_block
+        _p_set_prompt "${_p_vicommand_prompt_text}"
+        _p_set_cursor_shape block
     else 
-        _p_cmdline_f "${_p_default_prompt_text}"
-        _p_cursor_beam
+        _p_set_prompt
+        _p_set_cursor_shape bar
     fi
     zle reset-prompt
 }
@@ -502,29 +507,39 @@ zle -N zle-keymap-select
 zle-line-init ()
 {
     (( ${+terminfo[smkx]} )) && echoti smkx
-    _p_cmdline_f "${_p_default_prompt_text}"
+
+    _p_set_prompt
     zle reset-prompt
-    _p_in_prompt="true"
-    _p_cursor_beam
 }
 zle -N zle-line-init
 
 zle-line-finish ()
 {
     (( ${+terminfo[rmkx]} )) && echoti rmkx
-    if [ "$(($(echo -En "$BUFFER" | sed -E 's;(.*[^\\])(\\*)$;\2;' | wc -m) % 2))" -eq 0 ]
+
+    PROMPT2="$_p_PROMPT2"
+
+    local LastLine="$(echo -En "$BUFFER" | tail -1)"
+    local BackslashValue=$(echo -En "$LastLine" | sed -E 's;(.*[^\\])(\\*)$;\2;' | wc -m)
+
+    if [ -z "$LastLine" -o "$(($BackslashValue % 2))" -eq 0 ]
     then 
         local TimeColor=${_p_stdcolor}
-        _p_cmdline_f "%D{%T}" "${TimeColor}" "${_p_prompt_prefix3_final}"
+        _p_set_prompt "%D{%T}" "${TimeColor}" "${_p_prompt_prefix3_final}"
+        zle reset-prompt
+    else
+        _p_prompt2_active=true
+        PROMPT="$_p_PROMPT2"
     fi
+
     zle reset-prompt
-    unset _p_in_prompt
-    _p_cursor_block
+    _p_set_cursor_shape block
 }
 zle -N zle-line-finish
 
 _p_preexec ()
 {
+    unset _p_in_prompt
     _p_timer=${_p_timer:-$SECONDS}
     _p_command_executed=true
     echo
@@ -535,7 +550,7 @@ add-zsh-hook preexec _p_preexec
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
 TRAPINT ()
 {
-    _p_cmdline_f "${_p_default_prompt_text}" "${_p_stdcolor}" "${_p_prompt_prefix3_final}"
+    _p_set_prompt "${_p_default_prompt_text}" "${_p_stdcolor}" "${_p_prompt_prefix3_final}"
     zle && { zle reset-prompt; zle -R; }
     return $(( 128 + $1 ))
 }
@@ -544,7 +559,7 @@ _p_trap_exit ()
 {
     if [ -n "$_p_in_prompt" ]
     then
-        _p_cmdline_f "${_p_default_prompt_text}" "${_p_stdcolor}" "${_p_prompt_prefix3_final}"
+        _p_set_prompt "${_p_default_prompt_text}" "${_p_stdcolor}" "${_p_prompt_prefix3_final}"
         local CSI=$'\e['
         print -P "%{${CSI}A${CSI}2K%}$PROMPT"
     fi
@@ -561,7 +576,7 @@ _p_prompt ()
     print -P "${_p_stdcolor}${_p_prompt_prefix1}${_p_stdcolor}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_processinfo}"
     print -P "${_p_stdcolor}${_p_prompt_prefix2}${_p_stdcolor}${_p_userhostinfo}${_p_pwdinfo}${_p_gitinfo}"
 
-    _p_cmdline_f "${_p_default_prompt_text}"
+    _p_set_prompt
 }
 add-zsh-hook precmd _p_prompt
 

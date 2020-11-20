@@ -111,6 +111,8 @@ bindkey '\C-f' vi-forward-char
 bindkey '\C-a' vi-beginning-of-line
 bindkey '\C-e' vi-end-of-line
 
+bindkey '^M' self-insert-unmeta
+
 fzf_cd ()
 {
     dir=$({ 
