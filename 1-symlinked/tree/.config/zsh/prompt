@@ -29,7 +29,6 @@ _p_stdcolor=$(_p_safe_color "$(_p_color 244)" "$(_p_color 7)${_p_stopbold}")%k
 _p_resetcolor="%f%k"
 
 _p_dot="·"
-_p_righttriangle="▶"
 _p_uptriangle="▲"
 _p_downtriangle="▼"
 _p_delta="⌂"
@@ -43,25 +42,16 @@ _p_pilcrow="¶"
 
 _p_ellipsis="${_p_dot}${_p_dot}${_p_dot}"
 
-_p_default_prompt_text=">>>>>>>>"
-[ "$_p_colors" -ge 256 ] && _p_default_prompt_text="$(_p_color 240)$_p_default_prompt_text"
-_p_vicommand_prompt_text="$(_p_color 0 7)${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}${_p_righttriangle}"
-
-_p_prompt_prefix_active_color=$_p_color_white
-_p_prompt_prefix_std_color=$(_p_color 240)
-
-_p_prompt_prefix1="${_p_prompt_prefix_std_color} "
+_p_prompt_prefix1="${_p_dot}"
 _p_prompt_prefix1_length=1
-_p_prompt_prefix2="${_p_prompt_prefix_std_color} "
+_p_prompt_prefix2="${_p_dot}"
 _p_prompt_prefix2_length=1
 
-_p_prompt_prefix3="${_p_prompt_prefix_std_color}${_p_righttriangle}"
-_p_prompt_prefix3_active="${_p_prompt_prefix_active_color}${_p_righttriangle}"
-_p_prompt_prefix3_final="${_p_prompt_prefix_std_color}${_p_downtriangle}"
+_p_mode_indicator_insert="$(_p_color 7)--- INSERT ---"
+_p_mode_indicator_command="$(_p_color 0 7)--- NORMAL ---"
 
-_p_prevline_prompt="${_p_stdcolor}${_p_prompt_prefix3}${_p_stdcolor} $(printf "%0.s " $(seq $((8+${#_p_interactive_shells}))))${_p_dot} ${_p_resetcolor}"
-
-_p_postcommand_delimiter="${_p_prompt_prefix_std_color}${_p_uptriangle}"
+_p_prompt_prefix_precommand="${_p_downtriangle}"
+_p_prompt_prefix_postcommand="${_p_uptriangle}"
 
 # }}}
 # Separator {{{
@@ -124,7 +114,7 @@ _p_preexec ()
     _p_timer=${_p_timer:-$SECONDS}
     _p_command_executed=true
 
-    print -P "${_p_postcommand_delimiter}${_p_resetcolor}"
+    _p_prompt_postcommand_preexec
 }
 add-zsh-hook preexec _p_preexec
 
@@ -487,14 +477,10 @@ add-zsh-hook precmd _p_pwdinfo_f
 
 _p_set_prompt ()
 {
-    local PromptPrefix=$1
-    local PromptText=$2
-    local PromptCharacterColor=${3:-${_p_stdcolor}}
-
-    local PromptCharacters="${_p_interactive_shells:0:$((${#_p_interactive_shells}-1))}${PromptCharacterColor}${_p_interactive_shells: -1:1}"
-    local PromptValue="${_p_stdcolor}${PromptPrefix}${_p_stdcolor} ${PromptText}${_p_stdcolor} ${PromptCharacters}${_p_resetcolor} "
-
-    [ -z "$_p_prompt2_active" ] && PROMPT="$PromptValue" || PROMPT2="$PromptValue"
+    local ModeIndicator=$1
+    PROMPT="${_p_stdcolor}${_p_prompt_prefix_precommand}${_p_stdcolor} ${_p_interactive_shells} $ModeIndicator${_p_resetcolor}
+"
+    PROMPT2="$PROMPT"
 }
 
 _p_set_cursor_shape ()
@@ -506,39 +492,33 @@ _p_set_cursor_shape ()
     esac
 }
 
-_p_set_active_insert_prompt ()
+_p_set_insert_prompt ()
 {
-    _p_set_prompt "$_p_prompt_prefix3_active" "$_p_default_prompt_text" "$(_p_safe_color "$(_p_color 252)" "$(_p_color 7)${_p_bold}")"
+    _p_set_prompt "$_p_mode_indicator_insert"
     _p_set_cursor_shape bar
 }
 
-_p_set_active_vicommand_prompt ()
+_p_set_vicommand_prompt ()
 {
-    _p_set_prompt "$_p_prompt_prefix3_active" "$_p_vicommand_prompt_text" "$(_p_safe_color "$(_p_color 252)" "$(_p_color 7)${_p_bold}")"
+    _p_set_prompt "$_p_mode_indicator_command"
     _p_set_cursor_shape block
 }
 
-_p_set_inactive_insert_prompt ()
+_p_set_abandoned_prompt ()
 {
-    _p_set_prompt "$_p_prompt_prefix3" "$_p_default_prompt_text"
-}
-
-_p_set_inactive_date_prompt ()
-{
-    _p_set_prompt "$_p_prompt_prefix3_final" "%D{%T}"
+    _p_set_prompt ""
+    _p_set_cursor_shape block
 }
 
 _p_prompt_init_f ()
 {
-    unset _p_prompt2_active
-    PROMPT2="$_p_prevline_prompt"
-    _p_set_active_insert_prompt
+    _p_set_insert_prompt
 }
 add-zsh-hook precmd _p_prompt_init_f
 
 zle-keymap-select ()
 {
-    [ "$KEYMAP" = "vicmd" ] && _p_set_active_vicommand_prompt || _p_set_active_insert_prompt
+    [ "$KEYMAP" = "vicmd" ] && _p_set_vicommand_prompt || _p_set_insert_prompt
     zle reset-prompt
 }
 zle -N zle-keymap-select
@@ -547,7 +527,7 @@ zle-line-init ()
 {
     (( ${+terminfo[smkx]} )) && echoti smkx
 
-    _p_set_active_insert_prompt
+    _p_set_insert_prompt
     zle reset-prompt
 }
 zle -N zle-line-init
@@ -556,53 +536,36 @@ zle-line-finish ()
 {
     (( ${+terminfo[rmkx]} )) && echoti rmkx
 
-    PROMPT2="$_p_prevline_prompt"
-
-    local LastLine="$(echo -En "$BUFFER" | tail -1)"
-    local BackslashValue=$(echo -En "$LastLine" | sed -E 's;(.*[^\\])(\\*)$;\2;' | wc -m)
-
-    if [ -z "$LastLine" -o "$(($BackslashValue % 2))" -eq 0 ]
-    then 
-        _p_set_inactive_date_prompt
-    else
-        _p_prompt2_active=true
-        PROMPT="$_p_prevline_prompt"
-    fi
-
+    _p_set_abandoned_prompt
     zle reset-prompt
-
-    _p_set_cursor_shape block
 }
 zle -N zle-line-finish
+
+_p_prompt_postcommand_preexec ()
+{
+    print -P "${_p_stdcolor}${_p_prompt_prefix_postcommand}${_p_stdcolor} $(date +'%T')${_p_resetcolor}
+"
+}
 
 # Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
 # Fixed by catching SIGINT (C-c), set vim_mode to INS and then repropagate the SIGINT, so if anything else depends on it, we will not break it
 TRAPINT ()
 {
-    _p_set_inactive_insert_prompt
+    _p_set_abandoned_prompt
     zle && { zle reset-prompt; zle -R; }
-    _p_set_cursor_shape block
     return $(( 128 + $1 ))
 }
 
 _p_prompt_on_exit ()
 {
-    _p_set_inactive_insert_prompt
+    _p_set_abandoned_prompt
     zle reset-prompt
-    _p_set_cursor_shape block
     unset _p_in_prompt
 }
 
 _p_trap_exit ()
 {
-    if [ -n "$_p_in_prompt" ]
-    then
-        unset _p_prompt2_active
-        _p_set_inactive_insert_prompt
-        local CSI=$'\e['
-        print -P "%{${CSI}A${CSI}2K%}$PROMPT"
-        _p_set_cursor_shape block
-    fi
+    [ -n "$_p_in_prompt" ] && _p_set_abandoned_prompt
 }
 trap '_p_trap_exit' EXIT
 
@@ -613,7 +576,7 @@ _p_prompt ()
     print -P "${_p_stdcolor}${_p_prompt_prefix1}${_p_stdcolor}${_p_timeinfo}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_processinfo}"
     print -P "${_p_stdcolor}${_p_prompt_prefix2}${_p_stdcolor}${_p_userhostinfo}${_p_pwdinfo}${_p_gitinfo}"
 
-    _p_set_active_insert_prompt
+    _p_set_insert_prompt
 }
 add-zsh-hook precmd _p_prompt
 
