@@ -565,7 +565,8 @@ _p_prompt_on_exit ()
 
 _p_trap_exit ()
 {
-    [ -n "$_p_in_prompt" ] && _p_set_abandoned_prompt
+    local CSI=$'\e['
+    [ -n "$_p_in_prompt" ] && { _p_set_abandoned_prompt; print -P "%{${CSI}2A${CSI}2K%}$PROMPT"; }
 }
 trap '_p_trap_exit' EXIT
 
