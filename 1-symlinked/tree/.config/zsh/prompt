@@ -58,14 +58,12 @@ _p_prompt_prefix_postcommand="${_p_uptriangle}"
 
 _p_shellinfo_f ()
 {
-    [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
-
     local Tty=$(tty | sed 's@^/dev/@@')
     local Dimensions="(${COLUMNS}x${LINES})*$_p_colors"
     local Sep="${_p_dot}${_p_dot}${_p_dot}"
     local Login=
     [[ -o login ]] && local Login=" <login>"
-    _p_shellinfo="$Login $Tty @ $TERM $Dimensions $Sep [#${_p_command_number:=1}]"
+    _p_shellinfo="$Login $Tty @ $TERM $Dimensions $Sep"
     _p_shellinfo_length=${#_p_shellinfo}
 }
 add-zsh-hook precmd _p_shellinfo_f
@@ -84,6 +82,12 @@ add-zsh-hook precmd _p_separator_f
 
 # }}}
 # Previous command result info {{{
+
+_p_command_number_f ()
+{
+    [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
+}
+add-zsh-hook precmd _p_command_number_f
 
 _p_prev_command_info_f ()
 {
@@ -478,7 +482,7 @@ add-zsh-hook precmd _p_pwdinfo_f
 _p_set_prompt ()
 {
     local ModeIndicator=$1
-    PROMPT="${_p_stdcolor}${_p_prompt_prefix_precommand}${_p_stdcolor} ${_p_interactive_shells} $ModeIndicator${_p_resetcolor}
+    PROMPT="${_p_stdcolor}${_p_prompt_prefix_precommand}${_p_stdcolor} ${_p_interactive_shells}:${_p_command_number:=1} $ModeIndicator${_p_resetcolor}
 "
     PROMPT2="$PROMPT"
 }
