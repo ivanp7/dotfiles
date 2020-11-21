@@ -103,8 +103,6 @@ bindkey '^[[H' vi-beginning-of-line
 bindkey '^[[F' vi-end-of-line
 bindkey -M vicmd 'k' up-line-or-beginning-search
 bindkey -M vicmd 'j' down-line-or-beginning-search
-bindkey '^v' edit-command-line
-bindkey -M vicmd '^v' edit-command-line
 
 bindkey '\C-b' vi-backward-char
 bindkey '\C-f' vi-forward-char
@@ -112,6 +110,17 @@ bindkey '\C-a' vi-beginning-of-line
 bindkey '\C-e' vi-end-of-line
 
 bindkey '^M' self-insert-unmeta
+
+edit_command_in_vim ()
+{
+    _p_set_abandoned_prompt
+    zle reset-prompt
+    edit-command-line
+}
+zle -N edit_command_in_vim
+
+bindkey '^v' edit_command_in_vim
+bindkey -M vicmd '^v' edit_command_in_vim
 
 fzf_cd ()
 {
@@ -140,6 +149,8 @@ bindkey '\C-g' fzf_cd
 
 exit_zsh () 
 { 
+    _p_set_abandoned_prompt
+    zle reset-prompt
     _p_prompt_on_exit
     exit 0 
 }

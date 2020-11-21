@@ -562,8 +562,6 @@ TRAPINT ()
 
 _p_prompt_on_exit ()
 {
-    _p_set_abandoned_prompt
-    zle reset-prompt
     unset _p_in_prompt
 }
 
