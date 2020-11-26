@@ -36,7 +36,8 @@ endif
 
 set clipboard+=unnamedplus
 
-set keymap=russian-jcukenwin
+set langmap=ЁФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;~ABCDEFGHIJKLMNOPQRSTUVWXYZ,ёфисвуапршолдьтщзйкыегмцчня;`abcdefghijklmnopqrstuvwxyz
+set keymap=russian
 set iminsert=0
 set spelllang=en_us,ru_yo
 
