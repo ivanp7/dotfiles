@@ -236,6 +236,8 @@ endfunction
 
 nnoremap <silent> <leader>t :call SwitchColorColumn()<CR>
 
+nnoremap <silent> <leader>n :set relativenumber!<CR>
+
 " }}}
 " complex user interface extensions {{{
 " horizontal (column) ruler {{{
