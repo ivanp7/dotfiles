@@ -56,7 +56,7 @@ fi
 
 # fixes for things
 
-export FZF_DEFAULT_COMMAND="find . -printf '%P\\n'"
+export FZF_DEFAULT_COMMAND="find . -path './.git' -prune -o -printf '%P\\n'"
 export FZF_DEFAULT_OPTS="--bind=ctrl-j:accept,ctrl-k:kill-line -m"
 export GNUMAKEFLAGS="--no-print-directory"
 
