@@ -531,7 +531,7 @@ map Pp link -r
 cmd smart_delete ${{
     echo
     echo "$fx"
-    echo -n "delete? [y/N] "
+    echo -n "($(echo "${fx}" | wc -l)) delete? [y/N] "
     read ans
     if [ "$ans" = "y" ]
     then 
@@ -546,7 +546,7 @@ map <backspace2><enter> smart_delete
 cmd trash ${{
     echo
     echo "$fx"
-    echo -n "trash? [y/N] "
+    echo -n "($(echo "${fx}" | wc -l)) trash? [y/N] "
     read ans
     if [ "$ans" = "y" ]
     then 
