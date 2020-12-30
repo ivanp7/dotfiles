@@ -541,6 +541,7 @@ cmd smart_delete ${{
     fi
 }}
 map <backspace><enter> smart_delete
+map <backspace2><enter> smart_delete
 
 # move current file or selected files to trash folder
 cmd trash ${{
@@ -556,6 +557,7 @@ cmd trash ${{
     fi
 }}
 map <backspace><backspace> trash
+map <backspace2><backspace2> trash
 
 # }}}
 # Compression {{{
