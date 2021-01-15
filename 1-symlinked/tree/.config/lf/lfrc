@@ -288,6 +288,8 @@ cmd preview ${{
             case $(echo $mime_type | tail -c +13) in
                 pdf) 
                     pdftotext -layout "$f" - | $PAGER ;;
+                postscript) 
+                    ps2ascii "$f" | $PAGER ;;
                 x-tar|x-bzip|x-bzip2|gzip|x-xz|zstd|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
                     list-files.sh "$f" | $PAGER ;;
                 pgp|pgp-encrypted)
@@ -334,7 +336,7 @@ cmd open ${{
     mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
     case $mime_type in
         "") ;;
-        application/pdf|image/vnd.djvu)
+        application/pdf|application/postscript|image/vnd.djvu)
             setsid $PDFVIEWER ${(f)fx} > /dev/null 2>&1 & ;;
         image/*)
             $VIEWER ${(f)fx} ;;
