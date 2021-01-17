@@ -60,4 +60,8 @@ export FZF_DEFAULT_COMMAND="find . -path './.git' -prune -o -printf '%P\\n'"
 export FZF_DEFAULT_OPTS="--bind=ctrl-j:accept,ctrl-k:kill-line -m"
 export GNUMAKEFLAGS="--no-print-directory"
 
+# extra configuration
+
+[ -f "$ZDOTDIR/env_config" ] && . $ZDOTDIR/env_config
+
 # vim: ft=zsh:
