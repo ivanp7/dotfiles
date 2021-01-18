@@ -3,6 +3,8 @@
 CONF_DIR="$(realpath "$(dirname "$0")")"
 UNINST_SCRIPT=$1
 
+[ -d "$CONF_DIR/instructions" ] || exit 0
+
 for instruction in $(find "$CONF_DIR/instructions" -mindepth 1 -maxdepth 1 -type f -name "*.sh" | sort)
 do 
     echo ">> Installing '$(basename $instruction)'..."

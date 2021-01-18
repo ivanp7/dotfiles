@@ -3,7 +3,9 @@
 CONF_DIR="$(realpath "$(dirname "$0")")"
 UNINST_SCRIPT=$1
 
-install()
+[ -d "$CONF_DIR/tree" ] || exit 0
+
+install ()
 {
     mkdir -p "$HOME/$(dirname $1)"
     cp -fT "$CONF_DIR/tree/$1" "$HOME/$1"

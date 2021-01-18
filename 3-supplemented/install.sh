@@ -2,7 +2,9 @@
 
 CONF_DIR="$(realpath "$(dirname "$0")")"
 
-install()
+[ -d "$CONF_DIR/tree" ] || exit 0
+
+install ()
 {
     if [ ! -f "$HOME/$1" ]
     then

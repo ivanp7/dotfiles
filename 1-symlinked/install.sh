@@ -5,7 +5,9 @@ UNINST_SCRIPT=$1
 
 INTERMEDIATE_SYMLINK="$HOME/.config/dotfiles"
 
-install()
+[ -d "$CONF_DIR/tree" ] || exit 0
+
+install ()
 {
     mkdir -p "$HOME/$(dirname $1)"
     ln -sfT "$INTERMEDIATE_SYMLINK/$1" "$HOME/$1"
@@ -28,7 +30,10 @@ delete_symlink ()
 
 ln -sfT "$CONF_DIR/tree" "$INTERMEDIATE_SYMLINK"
 
-DIRECTORIES="$(sed 's,^,-path ./,; s,$, -prune -o ,' "$CONF_DIR/directories" | tr -d '\n')"
+DIRECTORIES=
+[ -f "$CONF_DIR/directories" ] && 
+    DIRECTORIES="$(sed 's,^,-path ./,; s,$, -prune -o ,' "$CONF_DIR/directories" | tr -d '\n')"
+
 for file in $(cd "$CONF_DIR/tree"; find . $DIRECTORIES -type f | sort | sed 's,^\./,,')
 do install $file; done
 
