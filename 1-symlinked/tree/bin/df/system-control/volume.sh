@@ -1,36 +1,33 @@
 #!/bin/sh
 
-MASTER=$(amixer -M sget Master)
+SINK=$(pactl list short sinks | grep RUNNING | sed 's/\s.*//')
 
-state_level ()
+get_state_and_level ()
 {
-    echo "$MASTER" | sed -E "/\s*$1:.*\[([0-9]+)%\].*\[(on|off)\].*/!d; s//\2 \1/" 2> /dev/null
+    SINK_INFO=$(pactl list sinks | grep -A 11 "^Sink #$SINK$")
+
+    SINK_MUTE=$(echo "$SINK_INFO" | grep "^\s*Mute: " | sed 's/[^:]*: //')
+    case "$SINK_MUTE" in
+        no) STATE="on" ;;
+        yes) STATE="off" ;;
+    esac
+
+    SINK_VOLUME=$(echo "$SINK_INFO" | grep "^\s*Volume: " | sed 's/[^:]*: //')
+    SINK_VOLUME_FRONT_LEFT=$(echo "$SINK_VOLUME" | sed -E 's/.*front-left:[^:]*\/\s*([0-9]*)%\s*\/.*/\1/')
+    SINK_VOLUME_FRONT_RIGHT=$(echo "$SINK_VOLUME" | sed -E 's/.*front-right:[^:]*\/\s*([0-9]*)%\s*\/.*/\1/')
+
+    [ "$SINK_VOLUME_FRONT_LEFT" = "$SINK_VOLUME_FRONT_RIGHT" ] && 
+        LEVEL="$SINK_VOLUME_FRONT_LEFT" ||
+        LEVEL="$SINK_VOLUME_FRONT_LEFT/$SINK_VOLUME_FRONT_RIGHT"
+
+    echo "$LEVEL% $STATE"
 }
 
-STATE_LEVEL=$(state_level "Mono")
-STATE=${STATE_LEVEL% *}
-LEVEL=${STATE_LEVEL#* }
-
-if [ -z "$STATE" ]
-then
-    STATE_LEVEL_LEFT=$(state_level "Front Left")
-    STATE_LEVEL_RIGHT=$(state_level "Front Right")
-    [ -z "$STATE_LEVEL_LEFT" -o -z "$STATE_LEVEL_RIGHT" ] && exit 1
-
-    STATE_LEFT=${STATE_LEVEL_LEFT% *}
-    STATE_RIGHT=${STATE_LEVEL_RIGHT% *}
-    [ "$STATE_LEFT" = "on" -o "$STATE_RIGHT" = "on" ] && STATE="on" || STATE="off"
-
-    LEVEL_LEFT=${STATE_LEVEL_LEFT#* }
-    LEVEL_RIGHT=${STATE_LEVEL_RIGHT#* }
-    LEVEL=$(( ($LEVEL_LEFT + $LEVEL_RIGHT) / 2 ))
-fi
-
 case $1 in
-    "") echo "$LEVEL% $STATE" ;;
-    toggle) amixer -q sset Master toggle ;;
-    up) amixer -q -M sset Master 3%+ ;;
-    down) amixer -q -M sset Master 3%- ;;
-    *) amixer -q -M sset Master $1%
+    "") get_state_and_level ;;
+    toggle) pactl set-sink-mute "$SINK" toggle ;;
+    up) pactl set-sink-volume "$SINK" +3% ;;
+    down) pactl set-sink-volume "$SINK" -3% ;;
+    *) pactl set-sink-volume "$SINK" $1% ;;
 esac
 
