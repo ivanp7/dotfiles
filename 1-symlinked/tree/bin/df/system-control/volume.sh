@@ -1,10 +1,13 @@
 #!/bin/sh
 
-SINK=$(pactl list short sinks | grep RUNNING | sed 's/\s.*//')
+SINKS=$(pactl list short sinks | sed 's/\s.*//')
 
 get_state_and_level ()
 {
-    SINK_INFO=$(pactl list sinks | grep -A 11 "^Sink #$SINK$")
+    SINK_INFO=$(pactl list sinks | grep -A 11 "^Sink #$1$")
+
+    SINK_STATUS=$(echo "$SINK_INFO" | grep "^\s*State: " | sed 's/[^:]*: //' | head -c 3)
+    [ "$SINK_STATUS" != "RUN" ] && SINK_STATUS=$(echo "$SINK_STATUS" | tr 'A-Z' 'a-z')
 
     SINK_MUTE=$(echo "$SINK_INFO" | grep "^\s*Mute: " | sed 's/[^:]*: //')
     case "$SINK_MUTE" in
@@ -20,14 +23,17 @@ get_state_and_level ()
         LEVEL="$SINK_VOLUME_FRONT_LEFT" ||
         LEVEL="$SINK_VOLUME_FRONT_LEFT/$SINK_VOLUME_FRONT_RIGHT"
 
-    echo "$LEVEL% $STATE"
+    echo "($SINK_STATUS#$1): $LEVEL% $STATE"
 }
 
-case $1 in
-    "") get_state_and_level ;;
-    toggle) pactl set-sink-mute "$SINK" toggle ;;
-    up) pactl set-sink-volume "$SINK" +3% ;;
-    down) pactl set-sink-volume "$SINK" -3% ;;
-    *) pactl set-sink-volume "$SINK" $1% ;;
-esac
+for s in $SINKS
+do
+    case $1 in
+        "") get_state_and_level $s ;;
+        toggle) pactl set-sink-mute $s toggle ;;
+        up) pactl set-sink-volume $s +3% ;;
+        down) pactl set-sink-volume $s -3% ;;
+        *) pactl set-sink-volume $s $1% ;;
+    esac
+done
 
