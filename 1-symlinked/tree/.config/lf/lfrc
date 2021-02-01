@@ -71,7 +71,7 @@ cmd _set_promptfmt %{{
     pwd_color=255
     file_color=84
     std_color=244
-    lf -remote "send $id set promptfmt \" ${user_name}\\033[38;5;${std_color}m@${host_name}\\033[38;5;${std_color}m § \\033[38;5;${pwd_color}m%w\\033[38;5;${file_color}m%f\""
+    lf -remote "send $id set promptfmt \" ${user_name}\\033[38;5;${std_color}m@${host_name}\\033[38;5;${std_color}m § \\033[38;5;${pwd_color}m%w/\\033[38;5;${file_color}m%f\""
 }}
 _set_promptfmt
 
