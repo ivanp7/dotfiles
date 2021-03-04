@@ -1,6 +1,6 @@
 # Options {{{
 
-# interpreter for shell commands (needs to be POSIX compatible)
+# interpreter for shell commands
 set shell zsh
 
 # set '-eu' options for shell commands
@@ -24,6 +24,8 @@ set scrolloff 10
 
 set drawbox on
 set tabstop 4
+
+set mouse on
 
 map zp set preview!
 map z1 :set nopreview; set ratios 1
