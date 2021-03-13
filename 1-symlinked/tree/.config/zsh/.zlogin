@@ -9,3 +9,6 @@ neofetch
 echo
 fortune.sh
 
+separator
+shell_info
+

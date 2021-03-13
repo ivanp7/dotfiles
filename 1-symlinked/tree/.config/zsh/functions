@@ -1,67 +1,86 @@
-# ssh {{{
+# auxilliary functions and variables {{{
 
-ssh_add ()
+_p_colors=$(tput colors)
+
+_p_color_bold="%B"
+_p_color_stopbold="%b"
+_p_color_reset="%f%k"
+
+_p_color ()
 {
-    . $HOME/.scripts/df/ssh-add.sh
+    echo "%F{$1}$([ -n "$2" ] && echo "%K{$2}" || true)"
+}
+
+_p_color_fb ()
+{
+    [ "$_p_colors" -ge 256 ] && echo "$1" || echo "$2"
+}
+
+_p_color_white="$(_p_color_fb "$(_p_color 15)" "${_p_color_bold}$(_p_color 7)")"
+_p_color_std="$(_p_color_fb "$(_p_color 244)" "$(_p_color 7)${_p_color_stopbold}")%k"
+
+# }}}
+# shell info {{{
+
+userhost ()
+{
+    local UserColor="${_p_color_white}"
+    [ "$(id -u)" -eq 0 ] && UserColor="$(_p_color_fb "$(_p_color 196)" "${_p_color_bold}$(_p_color 1)")"
+    local HostColor="${_p_color_white}"
+
+    print -P "${UserColor}$(whoami)${_p_color_std}@${HostColor}$(hostname)${_p_color_reset}"
+}
+
+process_tree ()
+{
+    local ProcessTreeStr="$($HOME/.scripts/df/pstree.sh | sed 's@---@///@g')"
+    [ -z "$ProcessTreeStr" ] && return
+
+    local ProcNameColor="${_p_color_white}"
+    local bra=" "
+    local ket=" "
+    local PrettifyingRegEx='s@///@'"${_p_color_std}$ket${_p_rightarrow}$bra$ProcNameColor"'@g'
+
+    local ProcessTreeStr="$(echo "$ProcessTreeStr" | sed -E "$PrettifyingRegEx")"
+    print -P "$ProcNameColor$ProcessTreeStr${_p_color_reset}"
+}
+
+shell_info ()
+{
+    local Login=
+    [[ -o login ]] && local Login="login "
+
+    print -P "${_p_color_std}current date/time: ${_p_color_white}$(date)${_p_color_reset}"
+    print -P "${_p_color_std}device: ${_p_color_white}$TTY${_p_color_std}, terminal: ${_p_color_white}$TERM${_p_color_std}, ${_p_color_white}${COLUMNS}${_p_color_std}x${_p_color_white}${LINES}${_p_color_std} cells, ${_p_color_white}${_p_colors}${_p_color_std} colors${_p_color_reset}"
+    print -P "${_p_color_std}process tree: $(process_tree)"
+    print -P "${_p_color_std}running ${Login}${_p_color_white}$SHELL${_p_color_std} shell as $(userhost)${_p_color_reset}"
 }
 
 # }}}
-# tmux {{{
+# separator {{{
 
-tx ()
+separator ()
 {
-    local TMUX_SCRIPT="$HOME/.scripts/df/tmux-new-session.sh"
-
-    DIR="$PWD"
-    cd ~
-    if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
-    then 
-        if [ -z "$1" ]
-        then tmux attach || . "$TMUX_SCRIPT"
-        else tmux attach -t "$1" || . "$TMUX_SCRIPT" "$1"
-        fi
-    fi
-    cd -- $DIR
+    print -P "${_p_color_white}$(dd if=/dev/zero bs=1 count=$COLUMNS status=none | sed "s/./${_p_dot}/g")${_p_color_reset}"
 }
 
-txclip ()
+spectrum ()
 {
-    tmux set-buffer "$(cat)"
-}
-
-# }}}
-# bd {{{
-
-bd ()
-{
-    [ "$#" -eq 0 ] && { cd ..; return; }
-    for i in $(seq $1)
-    do cd ..
-    done
-}
-
-# }}}
-# lf {{{
-
-# lf
-cdlf ()
-{
-    [ "$#" -gt 0 ] && cd "$@"
-    [ -n "$id" ] && 
-        lf -remote "send $id cd \"$(echo "$PWD" | sed 's/\"/\\\"/g')\""
-}
-
-lfcd () 
-{
-    tmp="$(mktemp)"
-    fid="$(mktemp)"
-    lf -command '$printf $id > '"$fid"'' -last-dir-path="$tmp" "$@"
-    id="$(cat "$fid")"
-    if [ -f "$tmp" ]; then
-        dir="$(cat "$tmp")"
-        rm -f "$tmp"
-        [ -d "$dir" -a "$dir" != "$PWD" ] && cd "$dir" || true
-    fi
+    # Based on: https://gist.github.com/XVilka/8346728
+    # echo $COLORTERM
+    awk -v term_cols="$(tput cols)" 'BEGIN{
+        s="··";
+        for (colnum = 0; colnum<term_cols; colnum++) {
+            r = 255-(colnum*255/term_cols);
+            g = (colnum*510/term_cols);
+            b = (colnum*255/term_cols);
+            if (g>255) g = 510-g;
+                printf "\033[48;2;%d;%d;%dm", r,g,b;
+                printf "\033[38;2;%d;%d;%dm", 255-r,255-g,255-b;
+                printf "%s\033[0m", substr(s,colnum%2+1,1);
+            }
+        printf "\n";
+    }'
 }
 
 # }}}
@@ -115,25 +134,6 @@ colorgrid ()
     done
 }
 
-spectrum ()
-{
-    # Based on: https://gist.github.com/XVilka/8346728
-    # echo $COLORTERM
-    awk -v term_cols="$(tput cols)" 'BEGIN{
-        s="··";
-        for (colnum = 0; colnum<term_cols; colnum++) {
-            r = 255-(colnum*255/term_cols);
-            g = (colnum*510/term_cols);
-            b = (colnum*255/term_cols);
-            if (g>255) g = 510-g;
-                printf "\033[48;2;%d;%d;%dm", r,g,b;
-                printf "\033[38;2;%d;%d;%dm", 255-r,255-g,255-b;
-                printf "%s\033[0m", substr(s,colnum%2+1,1);
-            }
-        printf "\n";
-    }'
-}
-
 dir_colors ()
 {
     typeset -A names
@@ -166,6 +166,73 @@ dir_colors ()
         printf '(\e[%sm%s\e[m) ' $color $name
     done
     echo
+}
+
+# }}}
+# ssh {{{
+
+ssh_add ()
+{
+    . $HOME/.scripts/df/ssh-add.sh
+}
+
+# }}}
+# tmux {{{
+
+tx ()
+{
+    local TMUX_SCRIPT="$HOME/.scripts/df/tmux-new-session.sh"
+
+    DIR="$PWD"
+    cd ~
+    if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
+    then
+        if [ -z "$1" ]
+        then tmux attach || . "$TMUX_SCRIPT"
+        else tmux attach -t "$1" || . "$TMUX_SCRIPT" "$1"
+        fi
+    fi
+    cd -- $DIR
+}
+
+txclip ()
+{
+    tmux set-buffer "$(cat)"
+}
+
+# }}}
+# bd {{{
+
+bd ()
+{
+    [ "$#" -eq 0 ] && { cd ..; return; }
+    for i in $(seq $1)
+    do cd ..
+    done
+}
+
+# }}}
+# lf {{{
+
+# lf
+cdlf ()
+{
+    [ "$#" -gt 0 ] && cd "$@"
+    [ -n "$id" ] &&
+        lf -remote "send $id cd \"$(echo "$PWD" | sed 's/\"/\\\"/g')\""
+}
+
+lfcd ()
+{
+    tmp="$(mktemp)"
+    fid="$(mktemp)"
+    lf -command '$printf $id > '"$fid"'' -last-dir-path="$tmp" "$@"
+    id="$(cat "$fid")"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        rm -f "$tmp"
+        [ -d "$dir" -a "$dir" != "$PWD" ] && cd "$dir" || true
+    fi
 }
 
 # }}}

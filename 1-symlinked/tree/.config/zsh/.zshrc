@@ -25,7 +25,7 @@ autoload -Uz run-help-sudo
 alias help=run-help
 
 # completion
-fpath=($fpath $ZDOTDIR/completion) 
+fpath=($fpath $ZDOTDIR/completion)
 
 autoload -Uz compinit
 zmodload zsh/complist
@@ -36,7 +36,7 @@ _comp_options+=(globdots) # Include hidden files
 
 # auto prehash
 zshcache_time="$(date +%s%N)"
-rehash_precmd () 
+rehash_precmd ()
 {
   if [[ -a /var/cache/zsh/pacman ]]; then
     local paccache_time="$(date -r /var/cache/zsh/pacman +%s%N)"
@@ -98,7 +98,7 @@ key[ShiftTab]="${terminfo[kcbt]}"
 bindkey '^[[A' up-line-or-beginning-search
 bindkey '^[[B' down-line-or-beginning-search
 bindkey '^[[D' vi-backward-char
-bindkey '^[[C' vi-forward-char 
+bindkey '^[[C' vi-forward-char
 bindkey '^[[H' vi-beginning-of-line
 bindkey '^[[F' vi-end-of-line
 bindkey -M vicmd 'k' up-line-or-beginning-search
@@ -124,7 +124,7 @@ bindkey -M vicmd '^v' edit_command_in_vim
 
 fzf_cd ()
 {
-    dir=$({ 
+    dir=$({
         if [ "$PWD" != "/" ]
         then
             cur="${PWD%/*}"
@@ -147,12 +147,12 @@ zle -N fzf_cd
 
 bindkey '\C-g' fzf_cd
 
-exit_zsh () 
-{ 
+exit_zsh ()
+{
     _p_set_abandoned_prompt
     zle reset-prompt
     _p_prompt_on_exit
-    exit 0 
+    exit 0
 }
 zle -N exit_zsh
 bindkey '^D' exit_zsh
@@ -196,6 +196,12 @@ ttyctl -f
 
 # shell prompt
 . $ZDOTDIR/prompt
+
+if [[ ! -o login ]]
+then
+    separator
+    shell_info
+fi
 
 # }}}
 
