@@ -21,6 +21,8 @@ set noshowmode
 
 set inccommand  =nosplit
 
+set wildmode    =longest,list,full
+
 set synmaxcol   =400      " Only highlight the first 400 columns.
 
 set mouse       =a
@@ -96,7 +98,7 @@ nmap <down> gj
 vmap <up> gk
 vmap <down> gj
 
-" Emacs-style editing in insert mode and on the command-line: 
+" Emacs-style editing in insert mode and on the command-line:
 " start of line
 noremap! <C-A>  <Home>
 " back one character
@@ -249,6 +251,8 @@ function! ShowColumnRuler(placement)
     if !exists("w:column_ruler_window") && !exists("w:column_ruler")
         let l:win_id = win_getid()
 
+        let l:win_view = winsaveview()
+
         setl scrollbind scrollopt+=hor cursorcolumn
         if a:placement == 'b'
             sp +enew
@@ -265,7 +269,7 @@ function! ShowColumnRuler(placement)
         call win_gotoid(w:column_ruler_window)
         let w:column_ruler = l:win_id
 
-        normal zz
+        call winrestview(l:win_view)
     endif
     let g:column_ruler_auto = v:false
 endfunction
@@ -494,6 +498,7 @@ Plug 'tpope/vim-capslock'
 Plug 'tpope/vim-eunuch'
 Plug 'farmergreg/vim-lastplace'
 Plug 'justinmk/vim-sneak'
+Plug 'gagoar/StripWhiteSpaces'
 
 " Appearance
 Plug 'fxn/vim-monochrome'
@@ -538,38 +543,6 @@ let g:sneak#s_next = 1
 " }}}
 " appearance {{{
 
-" ******************** vim-startify **************************
-
-let g:startify_custom_header = map(split(system("fortune.sh"), '\n'), 'repeat(" ", 8) . v:val')
-
-" ******************** vim-highlightedyank **************************
-
-" set highlight for 1 second
-let g:highlightedyank_highlight_duration = 1000
-
-" ******************** vim-lightline **************************
-
-function! LanguageStatus(...) abort
-    return &iminsert == 1 ? (a:0 == 1 ? a:1 : 'RU') : ''
-endfunction
-
-function! CapsLockStatus(...) abort
-    return CapsLockStatusline('CAPS')
-endfunction
-
-let g:lightline = {
-      \ 'colorscheme': 'powerline',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'lang', 'caps', 'paste' ],
-      \             [ 'gitbranch', 'filename', 'readonly', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'lang': 'LanguageStatus',
-      \   'caps': 'CapsLockStatus',
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ }
-
 " ******************** COLOR SCHEME ********************
 
 colorscheme monochrome
@@ -604,10 +577,42 @@ let g:terminal_color_13 = '#b77ee0' " magenta
 let g:terminal_color_14 = '#54ced6' " cyan
 let g:terminal_color_15 = '#ffffff' " white
 
+" ******************** vim-lightline **************************
+
+function! LanguageStatus(...) abort
+    return &iminsert == 1 ? (a:0 == 1 ? a:1 : 'RU') : ''
+endfunction
+
+function! CapsLockStatus(...) abort
+    return CapsLockStatusline('CAPS')
+endfunction
+
+let g:lightline = {
+      \ 'colorscheme': 'powerline',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'lang', 'caps', 'paste' ],
+      \             [ 'gitbranch', 'filename', 'readonly', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'lang': 'LanguageStatus',
+      \   'caps': 'CapsLockStatus',
+      \   'gitbranch': 'fugitive#head'
+      \ },
+      \ }
+
+" ******************** vim-startify **************************
+
+let g:startify_custom_header = map(split(system("fortune.sh"), '\n'), 'repeat(" ", 8) . v:val')
+
 " ******************** indentLine **************************
 
 let g:indentLine_char = '·'
 let g:indentLine_color_gui = '#888888'
+
+" ******************** vim-highlightedyank **************************
+
+" set highlight for 1 second
+let g:highlightedyank_highlight_duration = 1000
 
 " }}}
 " syntax highlighting {{{
@@ -714,10 +719,10 @@ autocmd FileType lisp imap <silent><buffer> <C-H> <Plug>(sexp_insert_backspace)
 
 let g:vlime_leader = '<LocalLeader>'
 let g:vlime_enable_autodoc = v:true
-let g:vlime_window_settings = 
+let g:vlime_window_settings =
       \ {'repl':      {'pos': 'belowright', 'vertical': v:true},
-       \ 'sldb':      {'pos': 'belowright', 'vertical': v:true}, 
-       \ 'inspector': {'pos': 'belowright', 'vertical': v:true}, 
+       \ 'sldb':      {'pos': 'belowright', 'vertical': v:true},
+       \ 'inspector': {'pos': 'belowright', 'vertical': v:true},
        \ 'preview':   {'pos': 'belowright', 'size': v:null, 'vertical': v:true}}
 
 let g:vlime_force_default_keys = v:true
