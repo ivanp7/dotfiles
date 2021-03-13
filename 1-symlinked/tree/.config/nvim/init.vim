@@ -123,6 +123,21 @@ map <leader>X "_X
 map <leader>c "_c
 map <leader>C "_C
 
+" file name/path copying
+command! CopyRelativePath        let @" = expand("%")                     | exe 'CCO' | call TmuxYank()
+command! CopyRelativePathAndLine let @" = expand("%") . ":" . line('.')   | exe 'CCO' | call TmuxYank()
+command! CopyAbsolutePath        let @" = expand("%:p")                   | exe 'CCO' | call TmuxYank()
+command! CopyAbsolutePathAndLine let @" = expand("%:p") . ":" . line('.') | exe 'CCO' | call TmuxYank()
+command! CopyFileName            let @" = expand("%:t")                   | exe 'CCO' | call TmuxYank()
+command! CopyFileDirectory       let @" = expand("%:p:h")                 | exe 'CCO' | call TmuxYank()
+
+nnoremap <silent> <leader>yp :CopyRelativePath<CR>
+nnoremap <silent> <leader>yl :CopyRelativePathAndLine<CR>
+nnoremap <silent> <leader>yP :CopyAbsolutePath<CR>
+nnoremap <silent> <leader>yL :CopyAbsolutePathAndLine<CR>
+nnoremap <silent> <leader>yn :CopyFileName<CR>
+nnoremap <silent> <leader>yd :CopyFileDirectory<CR>
+
 " }}}
 " indentation mappings {{{
 
