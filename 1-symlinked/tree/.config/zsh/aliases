@@ -1,4 +1,5 @@
 alias si='shell_info'
+alias sep='separator'
 
 alias ls='ls --group-directories-first --color=auto '
 alias ll='ls --group-directories-first -alF '

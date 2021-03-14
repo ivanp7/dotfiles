@@ -39,45 +39,21 @@ set relativenumber
 set previewer ~/.scripts/df/lf-previewer.sh
 
 cmd _set_promptfmt %{{
-    [ "$(id -u)" -ne 0 ] && user_color=44 || user_color=196
-    host_color=33
-
-    userhostname_script="/usr/local/bin/zsh/user-host-name.sh"
-    if [ -x "$userhostname_script" ]
-    then
-        username_line=$("$userhostname_script" user "$(whoami)")
-        hostname_line=$("$userhostname_script" host "$(hostname)")
-
-        name_regex='s/%F\{([^{}]*)\}/\\033[38;5;\1m/g; s/%[^%]\{[^{}]*\}//g; s/%%/%/g'
-
-        if [ -n "$username_line" ]
-        then
-            user_name="$(echo "$username_line" | sed -E "$name_regex")"
-        else
-            user_name="%u"
-        fi
-        user_name="\\033[38;5;${user_color}m$user_name"
-
-        if [ -n "$hostname_line" ]
-        then
-            host_name="$(echo "$hostname_line" | sed -E "$name_regex")"
-        else
-            host_name="%h"
-        fi
-        host_name="\\033[38;5;${host_color}m$host_name"
-    else
-        user_name="\\033[38;5;${user_color}m%u"
-        host_name="\\033[38;5;${host_color}m%h"
-    fi
-
+    [ "$(id -u)" -ne 0 ] && user_color=15 || user_color=196
+    host_color=15
+    userhost_bg_color=238
     pwd_color=255
     file_color=84
     std_color=244
-    lf -remote "send $id set promptfmt \" ${user_name}\\033[38;5;${std_color}m@${host_name}\\033[38;5;${std_color}m § \\033[38;5;${pwd_color}m%w/\\033[38;5;${file_color}m%f\""
+
+    prefix_info="\\033[38;5;${std_color}m${_p_interactive_shells}·${_p_command_number}"
+    userhost_info="\\033[48;5;${userhost_bg_color}m\\033[38;5;${user_color}m%u\\033[38;5;${std_color}m@\\033[38;5;${host_color}m%h\\033[38;5;${std_color}m\\033[0m"
+    path_info="\\033[38;5;${pwd_color}m%w/\\033[38;5;${file_color}m%f"
+    lf -remote "send $id set promptfmt \" ${prefix_info} ${userhost_info} : ${path_info}\""
 }}
 _set_promptfmt
 
-# }}} 
+# }}}
 # Unmapped keys {{{
 
 map gh
@@ -102,7 +78,7 @@ map == $sudo lf
 # Fast movement {{{
 
 cmd fzf_select ${{
-    file=$(find . -mindepth 1 -maxdepth 1 -printf '%P\n' 2> /dev/null | 
+    file=$(find . -mindepth 1 -maxdepth 1 -printf '%P\n' 2> /dev/null |
             fzf +m --header='Select file/directory') || return 0
 
     file="$(echo "$file" | sed 's/"/\\"/g')"
@@ -288,9 +264,9 @@ cmd preview ${{
             ;;
         application/*)
             case $(echo $mime_type | tail -c +13) in
-                pdf) 
+                pdf)
                     pdftotext -layout "$f" - | $PAGER ;;
-                postscript) 
+                postscript)
                     ps2ascii "$f" | $PAGER ;;
                 x-tar|x-bzip|x-bzip2|gzip|x-xz|zstd|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
                     list-files.sh "$f" | $PAGER ;;
@@ -376,7 +352,7 @@ cmd alt_open ${{
     mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
     case $mime_type in
         "") ;;
-        inode/directory) 
+        inode/directory)
             ncdu -e2 "$f" ;;
         image/*)
             setsid $VIEWER ${(f)fx} > /dev/null 2>&1 & ;;
@@ -390,7 +366,7 @@ map L alt_open
 # map o &mimeopen "$f"
 # map O $mimeopen --ask "$f"
 cmd opener ${{
-    for file in ${(f)fx}; do 
+    for file in ${(f)fx}; do
         setsid $OPENER "$file" > /dev/null 2>&1 &
     done
 }}
@@ -404,7 +380,7 @@ cmd bulk_rename !{{
     original_names_file=$(mktemp)
     changed_names_file=$(mktemp)
     for file in ${(f)fs}
-    do 
+    do
         echo "$file" >> $original_names_file
         echo "$file" >> $changed_names_file
     done
@@ -538,7 +514,7 @@ cmd smart_delete ${{
     echo -n "($(echo "${fx}" | wc -l)) delete? [y/N] "
     read ans
     if [ "$ans" = "y" ]
-    then 
+    then
         lf -remote "send clear"
         rm -rf ${(f)fx}
         lf -remote "send $id reload"
@@ -554,7 +530,7 @@ cmd trash ${{
     echo -n "($(echo "${fx}" | wc -l)) trash? [y/N] "
     read ans
     if [ "$ans" = "y" ]
-    then 
+    then
         lf -remote "send clear"
         trash-put ${(f)fx}
         lf -remote "send $id reload"

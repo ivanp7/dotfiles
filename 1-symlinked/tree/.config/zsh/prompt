@@ -17,14 +17,14 @@ _p_downarrow="↓"
 _p_updownarrow="↕"
 
 # }}}
-# Previous command result info {{{
+# Prompt counter {{{
 
 _p_command_number_f ()
 {
     # [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
     [ -n "$_p_command_number" ] &&
-        _p_command_number=$(($_p_command_number+1)) ||
-        _p_command_number=1
+        export _p_command_number=$(($_p_command_number+1)) ||
+        export _p_command_number=1
 }
 add-zsh-hook precmd _p_command_number_f
 
@@ -71,7 +71,6 @@ _p_preexec ()
 add-zsh-hook preexec _p_preexec
 
 # }}}
-# First line {{{
 # Last command duration {{{
 
 _p_cmdtimeinfo_f ()
@@ -166,8 +165,6 @@ _p_cmdstatusinfo_f ()
 add-zsh-hook precmd _p_cmdstatusinfo_f
 
 # }}}
-# }}}
-# Second line {{{
 # git info {{{
 
 _p_gitinfo_f ()
@@ -290,7 +287,7 @@ _p_pwdinfo_f ()
 
     local BgColor=$(_color 0 240)
     local DirColor=$(_color 15)
-    local SlashColor=$(_color 244)
+    local SlashColor=$(_color 236)
     local DirColoringRegEx="s@/@$SlashColor/$DirColor@g"
 
     local SkipColor=$(_color 1)
@@ -316,11 +313,20 @@ _p_pwdinfo_f ()
     local DirPath="${DirPath:0:-1}"
     local DirPath="$(echo "$DirPath" | sed -E "$DirColoringRegEx")"
 
+    if [ "$PWD" != "/" ]
+    then
+        local DirCounter=1
+        while echo "$DirPath" | grep -q "/"
+        do
+            local DirPath="$(echo "$DirPath" | sed -E "s@\/([^/]*)\$@$DirCounter\1@")"
+            local DirCounter=$((($DirCounter + 1) % 10))
+        done
+    fi
+
     _p_pwdinfo="${BgColor} $DirColor$DirPath "
 }
 add-zsh-hook precmd _p_pwdinfo_f
 
-# }}}
 # }}}
 # Prompt {{{
 
