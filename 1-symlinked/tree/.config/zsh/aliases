@@ -1,5 +1,4 @@
-alias fucking='sudo '
-alias fuck='sudo '
+alias si='shell_info'
 
 alias ls='ls --group-directories-first --color=auto '
 alias ll='ls --group-directories-first -alF '
@@ -34,6 +33,11 @@ alias pwd_='printf "%q\n" "$(pwd)"'
 
 alias yaft=''
 alias yaft_wall=''
+
+# jokes
+
+alias fucking='sudo '
+alias fuck='sudo '
 
 # cleanup
 

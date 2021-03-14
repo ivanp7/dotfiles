@@ -1,59 +1,59 @@
 # auxilliary functions and variables {{{
 
-_p_colors=$(tput colors)
+_colors=$(tput colors)
 
-_p_color_bold="%B"
-_p_color_stopbold="%b"
-_p_color_reset="%f%k"
-
-_p_color ()
+_color ()
 {
-    echo "%F{$1}$([ -n "$2" ] && echo "%K{$2}" || true)"
+    [ -z "$2" ] &&
+        echo -en "\033[38;5;${1}m" ||
+        echo -en "\033[38;5;${1}m\033[48;5;${2}m"
 }
 
-_p_color_fb ()
+_color_reset ()
 {
-    [ "$_p_colors" -ge 256 ] && echo "$1" || echo "$2"
+    echo -en "\033[0m"
 }
-
-_p_color_white="$(_p_color_fb "$(_p_color 15)" "${_p_color_bold}$(_p_color 7)")"
-_p_color_std="$(_p_color_fb "$(_p_color 244)" "$(_p_color 7)${_p_color_stopbold}")%k"
 
 # }}}
 # shell info {{{
 
 userhost ()
 {
-    local UserColor="${_p_color_white}"
-    [ "$(id -u)" -eq 0 ] && UserColor="$(_p_color_fb "$(_p_color 196)" "${_p_color_bold}$(_p_color 1)")"
-    local HostColor="${_p_color_white}"
+    local UserColor="$(_color 15)"
+    [ "$(id -u)" -eq 0 ] && UserColor="$(_color 196)"
+    local AtColor="$(_color 244)"
+    local HostColor="$(_color 15)"
 
-    print -P "${UserColor}$(whoami)${_p_color_std}@${HostColor}$(hostname)${_p_color_reset}"
+    echo "$(_color_reset)${UserColor}$(whoami)${AtColor}@${HostColor}$(hostname)$(_color_reset)"
 }
 
-process_tree ()
+process_chain ()
 {
     local ProcessTreeStr="$($HOME/.scripts/df/pstree.sh | sed 's@---@///@g')"
     [ -z "$ProcessTreeStr" ] && return
 
-    local ProcNameColor="${_p_color_white}"
+    local ProcNameColor="$(_color 15)"
+    local OtherColor="$(_color 244)"
     local bra=" "
     local ket=" "
-    local PrettifyingRegEx='s@///@'"${_p_color_std}$ket${_p_rightarrow}$bra$ProcNameColor"'@g'
+    local right_arrow="→"
+    local PrettifyingRegEx='s@///@'"${OtherColor}$ket${right_arrow}$bra${ProcNameColor}"'@g'
 
     local ProcessTreeStr="$(echo "$ProcessTreeStr" | sed -E "$PrettifyingRegEx")"
-    print -P "$ProcNameColor$ProcessTreeStr${_p_color_reset}"
+    echo "$(_color_reset)${ProcNameColor}${ProcessTreeStr}$(_color_reset)"
 }
 
 shell_info ()
 {
+    local TextColor="$(_color 244)"
+    local ValueColor="$(_color 15)"
     local Login=
     [[ -o login ]] && local Login="login "
 
-    print -P "${_p_color_std}current date/time: ${_p_color_white}$(date)${_p_color_reset}"
-    print -P "${_p_color_std}device: ${_p_color_white}$TTY${_p_color_std}, terminal: ${_p_color_white}$TERM${_p_color_std}, ${_p_color_white}${COLUMNS}${_p_color_std}x${_p_color_white}${LINES}${_p_color_std} cells, ${_p_color_white}${_p_colors}${_p_color_std} colors${_p_color_reset}"
-    print -P "${_p_color_std}process tree: $(process_tree)"
-    print -P "${_p_color_std}running ${Login}${_p_color_white}$SHELL${_p_color_std} shell as $(userhost)${_p_color_reset}"
+    echo "${TextColor}current date/time: ${ValueColor}$(date)$(_color_reset)"
+    echo "${TextColor}device: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors$(_color_reset)"
+    echo "${TextColor}process chain: $(process_chain)"
+    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)$(_color_reset)"
 }
 
 # }}}
@@ -61,7 +61,7 @@ shell_info ()
 
 separator ()
 {
-    print -P "${_p_color_white}$(dd if=/dev/zero bs=1 count=$COLUMNS status=none | sed "s/./${_p_dot}/g")${_p_color_reset}"
+    echo "$(_color 15)$(dd if=/dev/zero bs=1 count=$COLUMNS status=none | sed "s/./·/g")$(_color_reset)"
 }
 
 spectrum ()
@@ -92,7 +92,7 @@ colorgrid ()
     local iter=0
     while [ $iter -lt 16 ]
     do
-        echo -en "\033[38;5;$(echo $iter)m█ "
+        echo -en "\033[48;5;$(echo $iter)m \033[0m\033[38;5;$(echo $iter)m█ "
         printf "%03d" $iter
 
         [ $(($iter % 8)) = 7 ] && printf '\r\n' || printf ' '
@@ -107,26 +107,26 @@ colorgrid ()
     do
         local second=$(($iter+36))
         local third=$(($second+36))
-        local four=$(($third+36))
-        local five=$(($four+36))
-        local six=$(($five+36))
-        local seven=$(($six+36))
+        local fourth=$(($third+36))
+        local fifth=$(($fourth+36))
+        local sixth=$(($fifth+36))
+        local seventh=$(($sixth+36))
 
-        echo -en "\033[38;5;$(echo $iter)m█ "
+        echo -en "\033[48;5;$(echo $iter)m \033[0m\033[38;5;$(echo $iter)m█ "
         printf "%03d" $iter
-        echo -en "   \033[38;5;$(echo $second)m█ "
+        echo -en " \033[48;5;$(echo $second)m \033[0m\033[38;5;$(echo $second)m█ "
         printf "%03d" $second
-        echo -en "   \033[38;5;$(echo $third)m█ "
+        echo -en " \033[48;5;$(echo $third)m \033[0m\033[38;5;$(echo $third)m█ "
         printf "%03d" $third
-        echo -en "   \033[38;5;$(echo $four)m█ "
-        printf "%03d" $four
-        echo -en "   \033[38;5;$(echo $five)m█ "
-        printf "%03d" $five
-        echo -en "   \033[38;5;$(echo $six)m█ "
-        printf "%03d" $six
-        if [ $seven -lt 256 ]; then
-            echo -en "   \033[38;5;$(echo $seven)m█ "
-            printf "%03d" $seven
+        echo -en " \033[48;5;$(echo $fourth)m \033[0m\033[38;5;$(echo $fourth)m█ "
+        printf "%03d" $fourth
+        echo -en " \033[48;5;$(echo $fifth)m \033[0m\033[38;5;$(echo $fifth)m█ "
+        printf "%03d" $fifth
+        echo -en " \033[48;5;$(echo $sixth)m \033[0m\033[38;5;$(echo $sixth)m█ "
+        printf "%03d" $sixth
+        if [ $seventh -lt 256 ]; then
+            echo -en " \033[48;5;$(echo $seventh)m \033[0m\033[38;5;$(echo $seventh)m█ "
+            printf "%03d" $seventh
         fi
 
         local iter=$(($iter+1))

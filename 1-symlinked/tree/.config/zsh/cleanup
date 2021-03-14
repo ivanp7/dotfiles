@@ -17,7 +17,7 @@ export SCREENRC=$XDG_CONFIG_HOME/screen/screenrc
 export PASSWORD_STORE_DIR=$XDG_DATA_HOME/password-store
 export GNUPGHOME=$XDG_DATA_HOME/gnupg
 
-# utilities 
+# utilities
 
 export WGETRC=$XDG_CONFIG_HOME/wgetrc
 
