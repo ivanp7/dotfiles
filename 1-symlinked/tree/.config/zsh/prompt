@@ -341,16 +341,19 @@ _p_set_cursor_shape ()
 
 _p_set_insert_prompt ()
 {
+    RPROMPT=""
     _p_set_cursor_shape bar
 }
 
 _p_set_vicommand_prompt ()
 {
+    RPROMPT="%{$(_color 0 15)%}vicmd%{$(_color_reset)%}"
     _p_set_cursor_shape block
 }
 
 _p_set_abandoned_prompt ()
 {
+    RPROMPT=""
     _p_set_cursor_shape block
 }
 
@@ -406,7 +409,7 @@ _p_prompt_on_exit ()
 
 _p_trap_exit ()
 {
-    [ -n "$_p_in_prompt" ] && { _p_set_abandoned_prompt; echo -en "%{\033[2A\033[2K%}$PROMPT"; }
+    [ -n "$_p_in_prompt" ] && _p_set_abandoned_prompt
 }
 trap '_p_trap_exit' EXIT
 
@@ -417,6 +420,7 @@ _p_prompt ()
 
     PROMPT=""
     PROMPT2=""
+    RPROMPT=""
     _p_set_insert_prompt
 }
 add-zsh-hook precmd _p_prompt
