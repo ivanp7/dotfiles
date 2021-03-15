@@ -65,9 +65,6 @@ stty -ixon -ixoff
 mkdir -p "$TMPDIR_CURRENT/pid/$TTY"
 echo "$PARENT_SHELL_PID" > "$TMPDIR_CURRENT/pid/$TTY/$$"
 
-[ -n "$PARENT_SHELL_PID" -a -f "$TMPDIR_CURRENT/pid/$TTY/$PARENT_SHELL_PID" ] &&
-    _parent_shell_this_tty=true
-
 # shell_info file handling
 mkdir -p "$TMPDIR_CURRENT/shell_info/$TTY"
 touch "$TMPDIR_CURRENT/shell_info/$TTY/$$"
@@ -226,6 +223,9 @@ alias sudo='sudo '
 
 # unfreeze terminal if left frozen
 ttyctl -f
+
+# initialize variables
+_p_command_number=0
 
 # shell prompt
 . $ZDOTDIR/prompt

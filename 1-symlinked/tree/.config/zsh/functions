@@ -77,13 +77,10 @@ shell_info ()
 
     local Login=
     [[ -o login ]] && local Login="login "
-    [ -n "$_parent_shell_this_tty" ] &&
-        local TtyInheritance=inherited ||
-        local TtyInheritance=new
 
     echo "${TextColor}current date/time: ${ValueColor}$(date)$(_color_reset)"
-    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor} (${ValueColor}${TtyInheritance}${TextColor}), terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors$(_color_reset)"
-    echo "${TextColor}process chain: $(process_chain)${TextColor} [$$]"
+    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors$(_color_reset)"
+    echo "${TextColor}process chain: $(process_chain)${TextColor}"
     echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)$(_color_reset)"
 }
 
@@ -213,7 +210,7 @@ tx ()
     local TMUX_SCRIPT="$HOME/.scripts/df/tmux-new-session.sh"
 
     DIR="$PWD"
-    cd ~
+    cd
     if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
     then
         if [ -z "$1" ]
@@ -221,7 +218,7 @@ tx ()
         else tmux attach -t "$1" || . "$TMUX_SCRIPT" "$1"
         fi
     fi
-    cd -- $DIR
+    cd -- "$DIR"
 }
 
 txclip ()

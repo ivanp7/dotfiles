@@ -39,17 +39,15 @@ set relativenumber
 set previewer ~/.scripts/df/lf-previewer.sh
 
 cmd _set_promptfmt %{{
-    [ "$(id -u)" -ne 0 ] && user_color=15 || user_color=196
-    host_color=15
-    userhost_bg_color=238
+    [ "$(id -u)" -ne 0 ] && user_color=250 || user_color=196
+    host_color=250
     pwd_color=255
     file_color=84
     std_color=244
 
-    prefix_info="\\033[38;5;${std_color}m${_p_interactive_shells}·${_p_command_number}"
-    userhost_info="\\033[48;5;${userhost_bg_color}m\\033[38;5;${user_color}m%u\\033[38;5;${std_color}m@\\033[38;5;${host_color}m%h\\033[38;5;${std_color}m\\033[0m"
+    userhost_info="\\033[38;5;${user_color}m%u\\033[38;5;${std_color}m@\\033[38;5;${host_color}m%h\\033[38;5;${std_color}m\\033[38;5;${std_color}m"
     path_info="\\033[38;5;${pwd_color}m%w/\\033[38;5;${file_color}m%f"
-    lf -remote "send $id set promptfmt \" ${prefix_info} ${userhost_info} : ${path_info}\""
+    lf -remote "send $id set promptfmt \" ${userhost_info} -> ${path_info}\""
 }}
 _set_promptfmt
 

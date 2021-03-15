@@ -2,14 +2,17 @@
 
 [ "$(id -u)" -eq 0 ] && _p_root=true
 
-_p_prompt_character ()
-{
-    [ -z "$_p_root" ] && echo "$" || echo "#"
-}
+[ -z "$_p_root" ] && _p_prompt_character="$" || _p_prompt_character="#"
 
-[ -z "$_p_interactive_shells" ] &&
-    export _p_interactive_shells="$(_p_prompt_character)" ||
-    export _p_interactive_shells="${_p_interactive_shells}$(_p_prompt_character)"
+[ -n "$_p_interactive_shells" ] &&
+    export _p_interactive_shells="${_p_interactive_shells}${_p_prompt_character}" ||
+    export _p_interactive_shells="${_p_prompt_character}"
+
+[ -n "$PARENT_SHELL_PID" -a -f "$TMPDIR_CURRENT/pid/$TTY/$PARENT_SHELL_PID" ] &&
+    export _p_interactive_shells_this_tty=$(($_p_interactive_shells_this_tty + 1)) ||
+    export _p_interactive_shells_this_tty=1
+
+_p_intsh_indicator="${_p_interactive_shells:0:-${_p_interactive_shells_this_tty}}[${_p_interactive_shells: -${_p_interactive_shells_this_tty}}]"
 
 _p_dot="·"
 _p_bullet="•"
@@ -24,22 +27,20 @@ _p_updownarrow="↕"
 _p_command_number_f ()
 {
     # [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
-    [ -n "$_p_command_number" ] &&
-        export _p_command_number=$(($_p_command_number+1)) ||
-        export _p_command_number=1
+    _p_command_number=$(($_p_command_number+1))
 }
 add-zsh-hook precmd _p_command_number_f
 
-_p_prompt_info_f ()
+_p_shell_info_f ()
 {
     [ -z "$_p_root" ] &&
         local BgColor="$(_color 244 238)" ||
         local BgColor="$(_color 0 202)"
 
-    _p_prompt_info_length=$((1 + ${#_p_interactive_shells} + 1 + ${#_p_command_number} + 1))
-    _p_prompt_info="${BgColor} ${_p_interactive_shells}${_p_dot}${_p_command_number} "
+    _p_shell_info_length=$((1 + ${#_p_intsh_indicator} + 1 + ${#_p_command_number} + 1))
+    _p_shell_info="${BgColor} ${_p_intsh_indicator}${_p_dot}${_p_command_number} "
 }
-add-zsh-hook precmd _p_prompt_info_f
+add-zsh-hook precmd _p_shell_info_f
 
 _p_prev_command_info_f ()
 {
@@ -279,7 +280,7 @@ add-zsh-hook precmd _p_gitinfo_f
 
 _p_pwdinfo_f ()
 {
-    local PromptLength=$(($_p_prompt_info_length + $_p_cmdtimeinfo_length + $_p_cmdstatusinfo_length + $_p_gitinfo_length + 2))
+    local PromptLength=$(($_p_shell_info_length + $_p_cmdtimeinfo_length + $_p_cmdstatusinfo_length + $_p_gitinfo_length + 2))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     if [ "$(($_p_gitinfo_length * 2))" -ge "$MaxOutputLength" ]
@@ -426,7 +427,7 @@ _p_prompt ()
         shell_info
         echo
     fi
-    echo "${_p_prompt_info}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_pwdinfo}${_p_gitinfo}$(_color_reset)"
+    echo "${_p_shell_info}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_pwdinfo}${_p_gitinfo}$(_color_reset)"
 
     PROMPT=""
     PROMPT2=""

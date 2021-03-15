@@ -58,7 +58,7 @@ fi
 
 # default commands and flags
 
-export SUDO_PRESERVE_ENV="TMPDIR_CURRENT,PARENT_SHELL_PID_EXPORTED,_p_interactive_shells"
+export SUDO_PRESERVE_ENV="TMPDIR_CURRENT,PARENT_SHELL_PID_EXPORTED,_p_interactive_shells,_p_interactive_shells_this_tty"
 
 export FZF_DEFAULT_COMMAND="find . -path './.git' -prune -o -printf '%P\\n'"
 export FZF_DEFAULT_OPTS="--bind=ctrl-j:accept,ctrl-k:kill-line -m"
