@@ -74,12 +74,16 @@ shell_info ()
 {
     local TextColor="$(_color 244)"
     local ValueColor="$(_color 15)"
+
     local Login=
     [[ -o login ]] && local Login="login "
+    [ -n "$_parent_shell_this_tty" ] &&
+        local TtyInheritance=inherited ||
+        local TtyInheritance=new
 
     echo "${TextColor}current date/time: ${ValueColor}$(date)$(_color_reset)"
-    echo "${TextColor}device: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors$(_color_reset)"
-    echo "${TextColor}process chain: $(process_chain)"
+    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor} (${ValueColor}${TtyInheritance}${TextColor}), terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors$(_color_reset)"
+    echo "${TextColor}process chain: $(process_chain)${TextColor} [$$]"
     echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)$(_color_reset)"
 }
 
@@ -165,6 +169,14 @@ dir_colors ()
         printf '(\e[%sm%s\e[m) ' $color $name
     done
     echo
+}
+
+# }}}
+# sudo shell {{{
+
+sudo_shell ()
+{
+    sudo -s --preserve-env=$SUDO_PRESERVE_ENV "$@"
 }
 
 # }}}

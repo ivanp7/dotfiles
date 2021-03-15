@@ -1,8 +1,10 @@
 # Auxilliary constants & functions {{{
 
+[ "$(id -u)" -eq 0 ] && _p_root=true
+
 _p_prompt_character ()
 {
-    [ "$(id -u)" -ne 0 ] && echo "$" || echo "#"
+    [ -z "$_p_root" ] && echo "$" || echo "#"
 }
 
 [ -z "$_p_interactive_shells" ] &&
@@ -30,7 +32,9 @@ add-zsh-hook precmd _p_command_number_f
 
 _p_prompt_info_f ()
 {
-    local BgColor="$(_color 244 238)"
+    [ -z "$_p_root" ] &&
+        local BgColor="$(_color 244 238)" ||
+        local BgColor="$(_color 0 202)"
 
     _p_prompt_info_length=$((1 + ${#_p_interactive_shells} + 1 + ${#_p_command_number} + 1))
     _p_prompt_info="${BgColor} ${_p_interactive_shells}${_p_dot}${_p_command_number} "

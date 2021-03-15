@@ -27,7 +27,8 @@ export XDG_TEMPLATES_DIR=$XDG_DOWNLOAD_DIR/Templates
 # other directories
 
 export TMPDIR=/tmp
-export TMPDIR_CURRENT="$(mktemp -d)"
+[ -z "$TMPDIR_CURRENT" ] &&
+    export TMPDIR_CURRENT="$(mktemp -d)"
 
 # default applications
 
@@ -55,7 +56,9 @@ then export DEFAULT_FONT=$(cat "$XDG_CONFIG_HOME/default_font")
 else export DEFAULT_FONT="xos4 Terminus:size=10"
 fi
 
-# fixes for things
+# default commands and flags
+
+export SUDO_PRESERVE_ENV="TMPDIR_CURRENT,PARENT_SHELL_PID_EXPORTED,_p_interactive_shells"
 
 export FZF_DEFAULT_COMMAND="find . -path './.git' -prune -o -printf '%P\\n'"
 export FZF_DEFAULT_OPTS="--bind=ctrl-j:accept,ctrl-k:kill-line -m"

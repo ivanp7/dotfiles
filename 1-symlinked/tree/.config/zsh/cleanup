@@ -39,6 +39,8 @@ export CUDA_CACHE_PATH=$XDG_CACHE_HOME/nv
 export SOKSAVEDIR=$XDG_DATA_HOME/csokoban
 export BLKSAVEDIR=$XDG_DATA_HOME/cblocks
 
+alias cmines="cmines -s $XDG_DATA_HOME/cminesrc "
+
 # custom
 
 [ -x "$XDG_CONFIG_HOME/zsh/extra-cleanup" ] && . $XDG_CONFIG_HOME/zsh/extra-cleanup

@@ -1,5 +1,8 @@
 # Options & initialization {{{
 
+PARENT_SHELL_PID=$PARENT_SHELL_PID_EXPORTED
+export PARENT_SHELL_PID_EXPORTED=$$
+
 # zsh directories
 mkdir -p $XDG_CACHE_HOME/zsh
 mkdir -p $XDG_DATA_HOME/zsh
@@ -58,6 +61,13 @@ add-zsh-hook -Uz precmd rehash_precmd
 # disable ctrl+s/ctrl+q
 stty -ixon -ixoff
 
+# pid file handling
+mkdir -p "$TMPDIR_CURRENT/pid/$TTY"
+echo "$PARENT_SHELL_PID" > "$TMPDIR_CURRENT/pid/$TTY/$$"
+
+[ -n "$PARENT_SHELL_PID" -a -f "$TMPDIR_CURRENT/pid/$TTY/$PARENT_SHELL_PID" ] &&
+    _parent_shell_this_tty=true
+
 # shell_info file handling
 mkdir -p "$TMPDIR_CURRENT/shell_info/$TTY"
 touch "$TMPDIR_CURRENT/shell_info/$TTY/$$"
@@ -65,12 +75,13 @@ touch "$TMPDIR_CURRENT/shell_info/$TTY/$$"
 [ -n "$PARENT_SHELL_PID" -a -f "$TMPDIR_CURRENT/shell_info/$TTY/$PARENT_SHELL_PID" ] &&
     rm "$TMPDIR_CURRENT/shell_info/$TTY/$PARENT_SHELL_PID"
 
-export PARENT_SHELL_PID=$$
-
 uninit_shell ()
 {
+    [ -f "$TMPDIR_CURRENT/pid/$TTY/$$" ] &&
+        rm "$TMPDIR_CURRENT/pid/$TTY/$$"
     [ -f "$TMPDIR_CURRENT/shell_info/$TTY/$$" ] &&
         rm "$TMPDIR_CURRENT/shell_info/$TTY/$$"
+    true
 }
 
 # }}}
@@ -221,6 +232,7 @@ ttyctl -f
 
 if [[ ! -o login ]]
 then
+    echo
     separator
     shell_info
 fi

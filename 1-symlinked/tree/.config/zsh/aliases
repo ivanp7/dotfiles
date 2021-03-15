@@ -1,4 +1,5 @@
-alias sudo='sudo --preserve-env=_p_interactive_shells '
+alias sudo="sudo --preserve-env=$SUDO_PRESERVE_ENV "
+alias sush='sudo_shell '
 
 alias si='shell_info'
 alias sep='separator'
@@ -43,9 +44,5 @@ alias yaft_wall=''
 
 alias fucking='sudo '
 alias fuck='sudo '
-
-# cleanup
-
-alias cmines="cmines -s $XDG_DATA_HOME/cminesrc "
 
 # vim: ft=zsh:

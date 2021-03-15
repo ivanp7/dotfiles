@@ -71,8 +71,8 @@ map <c-z> $kill -STOP $PPID
 cmd q quit
 
 # elevate priviledges
-map =w $sudo -s
-map == $sudo lf
+map =w $sudo -s --preserve-env=$SUDO_PRESERVE_ENV
+map == $sudo --preserve-env=$SUDO_PRESERVE_ENV lf
 
 # }}}
 # Fast movement {{{
@@ -283,13 +283,13 @@ cmd preview ${{
 }}
 map i preview
 map I $$PAGER "$f"
-map =I $sudo $PAGER "$f"
+map =I $sudo --preserve-env=$SUDO_PRESERVE_ENV $PAGER "$f"
 map -I !cat "$f"
 map =-I !sudo cat "$f"
 
 # edit files
 map e $$EDITOR ${(f)fx}
-map =e $sudo -e ${(f)fx}
+map =e $sudo -e --preserve-env=$SUDO_PRESERVE_ENV ${(f)fx}
 
 # edit symlink path
 map E $edit-symlink.sh "$f"
