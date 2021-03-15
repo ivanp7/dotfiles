@@ -172,6 +172,12 @@ if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
 fi
 
 # }}}
+# Constants {{{
+
+_pstree="$(exec pstree -ls $$)"
+_pstree="$(echo "$_pstree" | head -1 | sed -Ef "$HOME/.scripts/df/pstree.sed")"
+
+# }}}
 # Extra configuration {{{
 
 eval $(dircolors)

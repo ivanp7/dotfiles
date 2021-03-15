@@ -1,3 +1,5 @@
+alias sudo='sudo --preserve-env=_p_interactive_shells '
+
 alias si='shell_info'
 alias sep='separator'
 

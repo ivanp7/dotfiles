@@ -141,7 +141,10 @@ map Ynt $tmux set-buffer -- "$(basename "$f")"
 # Quick info ('a' keys) {{{
 
 # process tree
-map ap %$HOME/.scripts/df/pstree.sh
+map ap %{{
+    PsTree="$(exec pstree -ls $$)"
+    echo "$PsTree" | head -1 | sed -Ef "$HOME/.scripts/df/pstree.sed"
+}}
 
 # display owner & group
 map ao %stat -c %U:%G "$f"
