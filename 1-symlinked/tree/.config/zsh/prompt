@@ -405,20 +405,23 @@ TRAPINT ()
     return $(( 128 + $1 ))
 }
 
-_p_prompt_on_exit ()
-{
-    unset _p_in_prompt
-}
-
 _p_trap_exit ()
 {
     [ -n "$_p_in_prompt" ] && _p_set_abandoned_prompt
+    uninit_shell
 }
 trap '_p_trap_exit' EXIT
 
 _p_prompt ()
 {
     echo "$(_color_reset)"
+    if [ ! -f "$TMPDIR_CURRENT/shell_info/$TTY/$$" ]
+    then
+        touch "$TMPDIR_CURRENT/shell_info/$TTY/$$"
+        separator
+        shell_info
+        echo
+    fi
     echo "${_p_prompt_info}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_pwdinfo}${_p_gitinfo}$(_color_reset)"
 
     PROMPT=""

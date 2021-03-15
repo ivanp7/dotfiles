@@ -252,5 +252,13 @@ lfcd ()
 }
 
 # }}}
+# remote {{{
+
+remote_si ()
+{
+    remote "$@" && { echo; separator; shell_info; }
+}
+
+# }}}
 
 # vim: ft=zsh: foldmethod=marker:

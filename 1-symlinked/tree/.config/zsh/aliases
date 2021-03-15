@@ -32,6 +32,8 @@ alias 9='cd -9'
 
 alias ssh_='TERM=xterm-256color ssh '
 
+alias remote='remote_si '
+
 alias pwd_='printf "%q\n" "$(pwd)"'
 
 alias yaft=''

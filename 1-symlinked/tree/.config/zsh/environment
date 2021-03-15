@@ -27,6 +27,7 @@ export XDG_TEMPLATES_DIR=$XDG_DOWNLOAD_DIR/Templates
 # other directories
 
 export TMPDIR=/tmp
+export TMPDIR_CURRENT="$(mktemp -d)"
 
 # default applications
 

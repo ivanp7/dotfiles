@@ -58,6 +58,21 @@ add-zsh-hook -Uz precmd rehash_precmd
 # disable ctrl+s/ctrl+q
 stty -ixon -ixoff
 
+# shell_info file handling
+mkdir -p "$TMPDIR_CURRENT/shell_info/$TTY"
+touch "$TMPDIR_CURRENT/shell_info/$TTY/$$"
+
+[ -n "$PARENT_SHELL_PID" -a -f "$TMPDIR_CURRENT/shell_info/$TTY/$PARENT_SHELL_PID" ] &&
+    rm "$TMPDIR_CURRENT/shell_info/$TTY/$PARENT_SHELL_PID"
+
+export PARENT_SHELL_PID=$$
+
+uninit_shell ()
+{
+    [ -f "$TMPDIR_CURRENT/shell_info/$TTY/$$" ] &&
+        rm "$TMPDIR_CURRENT/shell_info/$TTY/$$"
+}
+
 # }}}
 # Keys {{{
 
@@ -152,6 +167,7 @@ exit_zsh ()
     _p_set_abandoned_prompt
     zle reset-prompt
     _p_prompt_on_exit
+    uninit_shell
     exit 0
 }
 zle -N exit_zsh
