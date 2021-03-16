@@ -1,4 +1,4 @@
-alias sudo="sudo --preserve-env=$SUDO_PRESERVE_ENV "
+alias sudoenv="sudo --preserve-env=$SUDO_PRESERVE_ENV "
 alias sush='sudo_shell '
 
 alias si='shell_info'

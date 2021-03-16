@@ -287,7 +287,7 @@ map =-I !sudo cat "$f"
 
 # edit files
 map e $$EDITOR ${(f)fx}
-map =e $sudo -e --preserve-env=$SUDO_PRESERVE_ENV ${(f)fx}
+map =e $sudo -e ${(f)fx}
 
 # edit symlink path
 map E $edit-symlink.sh "$f"
