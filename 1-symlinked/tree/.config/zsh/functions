@@ -231,10 +231,13 @@ txclip ()
 
 bd ()
 {
+    local Path="./"
     [ "$#" -eq 0 ] && { cd ..; return; }
     for i in $(seq $1)
-    do cd ..
+    do
+        local Path="$Path/.."
     done
+    cd "$Path"
 }
 
 # }}}
