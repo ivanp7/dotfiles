@@ -56,18 +56,47 @@ userhost ()
 
 process_chain ()
 {
-    local ProcessTreeStr="$_pstree"
-    [ -z "$ProcessTreeStr" ] && return
+    [ -z "$_pstree" ] && return
 
-    local ProcNameColor="$(_color 15)"
-    local OtherColor="$(_color 244)"
-    local bra=" "
-    local ket=" "
-    local right_arrow="→"
-    local PrettifyingRegEx='s@---@'"${OtherColor}$ket${right_arrow}$bra${ProcNameColor}"'@g'
+    local Chain=(${(s/---/)_pstree})
 
-    local ProcessTreeStr="$(echo "$ProcessTreeStr" | sed -E "$PrettifyingRegEx")"
-    echo "$(_color_reset)${ProcNameColor}${ProcessTreeStr}$(_color_reset)"
+    local ArrowColor="$(_color_reset)$(_color 244)"
+    local Arrow=" → "
+
+    if [ "$_colors" -ge 256 ]
+    then
+        local ZshColor="$(_color 15 240)"
+        local LfColor="$(_color 0 35)"
+        local TmuxColor="$(_color 15 31)"
+        local SshColor="$(_color 0 226)"
+        local SuColor="$(_color 0 202)"
+        local OtherColor="$(_color 250)"
+    else
+        local ZshColor="$(_color 0 15)"
+        local LfColor="$(_color 0 2)"
+        local TmuxColor="$(_color 15 6)"
+        local SshColor="$(_color 0 3)"
+        local SuColor="$(_color 0 1)"
+        local OtherColor="$(_color 7)"
+    fi
+
+    for proc in $Chain
+    do
+        case "$proc" in
+            zsh) local proc="${ZshColor} $proc " ;;
+            lf) local proc="${LfColor} $proc " ;;
+            \(tmux\)) local proc="${TmuxColor} $proc " ;;
+            \(ssh\)) local proc="${SshColor} $proc " ;;
+            sudo|su) local proc="${SuColor} $proc " ;;
+            *) local proc="${OtherColor}$proc" ;;
+        esac
+
+        [ -n "$ProcessChainStr" ] &&
+            local ProcessChainStr="${ProcessChainStr}${ArrowColor}${Arrow}$proc" ||
+            local ProcessChainStr="$proc"
+    done
+
+    echo "$(_color_reset)${ProcessChainStr}$(_color_reset)"
 }
 
 shell_info ()
