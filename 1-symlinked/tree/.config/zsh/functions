@@ -160,9 +160,9 @@ dir_colors ()
 
     for i in ${(s.:.)LS_COLORS}
     do
-        key=${i%\=*}
-        color=${i#*\=}
-        name=${names[(e)$key]-$key}
+        local key=${i%\=*}
+        local color=${i#*\=}
+        local name=${names[(e)$key]-$key}
         printf '(\e[%sm%s\e[m) ' $color $name
     done
     echo
@@ -185,10 +185,8 @@ ssh_add ()
 
     if [ -n "$SSH_AUTH_SOCK" ]
     then
-        _SSH_ADD_HOST=$(hostname)
-        _SSH_ADD_PASSPHRASE_COMP="computers/$_SSH_ADD_HOST/os/linux/$USER/ssh/passphrase"
-        _SSH_ADD_PASSPHRASE_VM="vm/$_SSH_ADD_HOST/os/linux/$USER/ssh/passphrase"
-        unset _SSH_ADD_HOST
+        local _SSH_ADD_PASSPHRASE_COMP="computers/$HOST/os/linux/$USER/ssh/passphrase"
+        local _SSH_ADD_PASSPHRASE_VM="vm/$HOST/os/linux/$USER/ssh/passphrase"
 
         if [ -n "${_SSH_ADD_PASSPHRASE:=$(pass "$_SSH_ADD_PASSPHRASE_COMP" 2> /dev/null)}" -o \
             -n "${_SSH_ADD_PASSPHRASE:=$(pass "$_SSH_ADD_PASSPHRASE_VM" 2> /dev/null)}" ]
@@ -209,7 +207,7 @@ tx ()
 {
     local TMUX_SCRIPT="$HOME/.scripts/df/tmux-new-session.sh"
 
-    DIR="$PWD"
+    local DIR="$PWD"
     cd
     if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
     then
@@ -252,14 +250,16 @@ cdlf ()
 
 lfcd ()
 {
-    tmp="$(mktemp)"
-    fid="$(mktemp)"
+    [ -n "$LF_LEVEL" ] && echo "$_pstree" | grep -q -- '---lf---zsh$' && exit
+
+    local tmp="$(mktemp)"
+    local fid="$(mktemp)"
 
     lf -command '$printf $id > '"$fid"'' -last-dir-path="$tmp" "$@"
 
-    id="$(cat "$fid")"
+    local id="$(cat "$fid")"
     if [ -f "$tmp" ]; then
-        dir="$(cat "$tmp")"
+        local dir="$(cat "$tmp")"
         rm -f "$tmp"
         [ -d "$dir" -a "$dir" != "$PWD" ] && cd "$dir" || true
     fi
