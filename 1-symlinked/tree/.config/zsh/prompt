@@ -280,58 +280,54 @@ add-zsh-hook precmd _p_gitinfo_f
 
 _p_pwdinfo_f ()
 {
+    local BgColor=$(_color 0 240)
+    local DirColor=$(_color 15)
+    local SlashColor=$(_color 236)
+    local SkipCharacter="$(_color 1)~"
+
+    [ "$PWD" = "/" ] && { _p_pwdinfo="${BgColor} ${DirColor}/ "; return; }
+
     local PromptLength=$(($_p_shell_info_length + $_p_cmdtimeinfo_length + $_p_cmdstatusinfo_length + $_p_gitinfo_length + 2))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
-    if [ "$(($_p_gitinfo_length * 2))" -ge "$MaxOutputLength" ]
+    local PathLength=${#PWD}
+    local PathExcess=$(($PathLength - $MaxOutputLength))
+
+    if [ "$_p_gitinfo_length" -le "$PathExcess" ]
     then
         local MaxOutputLength=$(($MaxOutputLength + $_p_gitinfo_length))
+        local PathExcess=$(($PathLength - $MaxOutputLength))
         _p_gitinfo_length=0
         unset _p_gitinfo
     fi
 
-    local BgColor=$(_color 0 240)
-    local DirColor=$(_color 15)
-    local SlashColor=$(_color 236)
-    local DirColoringRegEx="s@/@$SlashColor/$DirColor@g"
+    local PathDirs=(${(s@/@)${PWD:1}}) # split path into components
+    local DirCounter=${#PathDirs}
 
-    local SkipColor=$(_color 1)
-    local SkipRegEx='s@/(.)([^/][^/]+)/@/\1~/@'
-    local SkipColoringRegEx="s@~/@$SkipColor~$SlashColor/@"
-    local SkipCounter=0
-
-    local DirPath="$PWD/"
-    local DirPathShorter="$(echo "$DirPath" | sed -E "$SkipRegEx")"
-
-    while [ "$((${#DirPath} - 1))" -gt "$MaxOutputLength" -a "${#DirPathShorter}" -lt "${#DirPath}" ]
+    for dir in $PathDirs
     do
-        local DirPath="$DirPathShorter"
-        local DirPathShorter="$(echo "$DirPath" | sed -E "$SkipRegEx")"
-        local SkipCounter=$(($SkipCounter + 1))
+        if [ "$PathExcess" -le 0 -o "${#dir}" -le 2 ]
+        then
+            local dir="${DirColor}$dir"
+        else
+            local DirDelta=$((${#dir} - 2))
+            if [ "$DirDelta" -le "$PathExcess" ]
+            then
+                local dir="${DirColor}${dir:0:1}${SkipCharacter}"
+                local PathLength=$(($PathLength - $DirDelta))
+                local PathExcess=$(($PathLength - $MaxOutputLength))
+            else
+                local dir="${DirColor}${dir:0:-$(($PathExcess + 1))}${SkipCharacter}"
+                local PathLength=$(($PathLength - $PathExcess))
+                local PathExcess=0
+            fi
+        fi
+
+        local PathStr="${PathStr}${SlashColor}$(($DirCounter % 10))$dir"
+        local DirCounter=$(($DirCounter - 1))
     done
 
-    for i in $(seq $SkipCounter)
-    do local DirPath="$(echo "$DirPath" | sed -E "$SkipColoringRegEx")"
-    done
-    unset i
-
-    local DirPath="${DirPath:0:-1}"
-    local DirPath="$(echo "$DirPath" | sed -E "$DirColoringRegEx")"
-
-    if [ "$PWD" != "/" ]
-    then
-        local Slashes="$(echo "$PWD" | sed "s/[^/]//g")"
-        local DirCounter=1
-
-        while [ -n "$Slashes" ]
-        do
-            local DirPath="$(echo "$DirPath" | sed -E "s@\/([^/]*)\$@$DirCounter\1@")"
-            local DirCounter=$((($DirCounter + 1) % 10))
-            local Slashes=${Slashes:1}
-        done
-    fi
-
-    _p_pwdinfo="${BgColor} $DirColor$DirPath "
+    _p_pwdinfo="${BgColor} $PathStr "
 }
 add-zsh-hook precmd _p_pwdinfo_f
 
