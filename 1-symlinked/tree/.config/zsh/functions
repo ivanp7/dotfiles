@@ -254,7 +254,9 @@ lfcd ()
 {
     tmp="$(mktemp)"
     fid="$(mktemp)"
+
     lf -command '$printf $id > '"$fid"'' -last-dir-path="$tmp" "$@"
+
     id="$(cat "$fid")"
     if [ -f "$tmp" ]; then
         dir="$(cat "$tmp")"
