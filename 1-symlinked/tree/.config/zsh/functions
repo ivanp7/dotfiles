@@ -24,6 +24,16 @@ _color_no_underline ()
     echo -en "\033[24m"
 }
 
+_color_blink ()
+{
+    echo -en "\033[5m"
+}
+
+_color_no_blink ()
+{
+    echo -en "\033[25m"
+}
+
 # }}}
 # separator {{{
 
@@ -78,7 +88,7 @@ process_chain ()
         local ZshColor="$(_color 15 240)"
         local LfColor="$(_color 0 35)"
         local TmuxColor="$(_color 15 31)"
-        local SshColor="$(_color 0 226)"
+        local SshColor="$(_color 0 226)$(_color_blink)"
         local SuColor="$(_color 0 202)"
         local OtherColor="$(_color 250)"
     else
