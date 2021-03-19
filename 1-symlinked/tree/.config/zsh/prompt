@@ -141,26 +141,79 @@ add-zsh-hook precmd _p_cmdtimeinfo_f
 # }}}
 # Last command status {{{
 
+_p_signal_name ()
+{
+    case $1 in
+        1  ) echo -n "SIGHUP" ;;
+        2  ) echo -n "SIGINT" ;;
+        3  ) echo -n "SIGQUIT" ;;
+        4  ) echo -n "SIGILL" ;;
+        5  ) echo -n "SIGTRAP" ;;
+        6  ) echo -n "SIGABRT" ;;
+        7  ) echo -n "SIGBUS" ;;
+        8  ) echo -n "SIGFPE" ;;
+        9  ) echo -n "SIGKILL" ;;
+        10 ) echo -n "SIGUSR1" ;;
+        11 ) echo -n "SIGSEGV" ;;
+        12 ) echo -n "SIGUSR2" ;;
+        13 ) echo -n "SIGPIPE" ;;
+        14 ) echo -n "SIGALRM" ;;
+        15 ) echo -n "SIGTERM" ;;
+        16 ) echo -n "SIGSTKFLT" ;;
+        17 ) echo -n "SIGCHLD" ;;
+        18 ) echo -n "SIGCONT" ;;
+        19 ) echo -n "SIGSTOP" ;;
+        20 ) echo -n "SIGTSTP" ;;
+        21 ) echo -n "SIGTTIN" ;;
+        22 ) echo -n "SIGTTOU" ;;
+        23 ) echo -n "SIGURG" ;;
+        24 ) echo -n "SIGXCPU" ;;
+        25 ) echo -n "SIGXFSZ" ;;
+        26 ) echo -n "SIGVTALRM" ;;
+        27 ) echo -n "SIGPROF" ;;
+        28 ) echo -n "SIGWINCH" ;;
+        29 ) echo -n "SIGIO" ;;
+        30 ) echo -n "SIGPWR" ;;
+        31 ) echo -n "SIGSYS" ;;
+        34 ) echo -n "SIGRTMIN" ;;
+        *) echo -n "$1" ;;
+    esac
+}
+
 _p_cmdstatusinfo_f ()
 {
     if [ "$_colors" -ge 256 ]
     then
         local SuccessColor="$(_color_reset)$(_color 7 35)"
-        local FailureColor="$(_color_reset)$(_color 0 196)"
+        local FailureColor="$(_color_reset)$(_color 0 124)"
     else
         local SuccessColor="$(_color_reset)$(_color 7 2)"
         local FailureColor="$(_color_reset)$(_color 0 1)"
     fi
+    local Delimiter=":"
 
     if [ -n "$_p_exitcode" ]
     then
         if [ "$_p_exitcode" -eq 0 ]
         then
             _p_cmdstatusinfo_length=4
-            _p_cmdstatusinfo="${SuccessColor} ${_p_downarrow}0 "
+            _p_cmdstatusinfo="${SuccessColor} ok "
         else
-            _p_cmdstatusinfo_length=$((3 + ${#_p_exitcode}))
-            _p_cmdstatusinfo="${FailureColor} ${_p_downarrow}${_p_exitcode} "
+            if [ "$_p_exitcode" -gt 128 -a "$_p_exitcode" -lt 163 ]
+            then
+                local description="$(_p_signal_name $(($_p_exitcode - 128)))"
+            else
+                case "$_p_exitcode" in
+                    1) local description="GENERAL" ;;
+                    2) local description="MISUSE" ;;
+                    126) local description="NOTEXEC" ;;
+                    127) local description="NOTFOUND" ;;
+                esac
+            fi
+            [ -n "$description" ] && local description="${Delimiter}$description"
+
+            _p_cmdstatusinfo_length=$((3 + ${#_p_exitcode} + ${#description}))
+            _p_cmdstatusinfo="${FailureColor} ${_p_downarrow}${_p_exitcode}${description} "
         fi
     else
         _p_cmdstatusinfo_length=0
