@@ -14,6 +14,16 @@ _color_reset ()
     echo -en "\033[0m"
 }
 
+_color_underline ()
+{
+    echo -en "\033[4m"
+}
+
+_color_no_underline ()
+{
+    echo -en "\033[24m"
+}
+
 # }}}
 # separator {{{
 
@@ -46,10 +56,10 @@ spectrum ()
 
 userhost ()
 {
-    local UserColor="$(_color 15)"
-    [ "$(id -u)" -eq 0 ] && UserColor="$(_color 196)"
-    local AtColor="$(_color 244)"
-    local HostColor="$(_color 15)"
+    local UserColor="$(_color 15)$(_color_underline)"
+    [ "$(id -u)" -eq 0 ] && UserColor="$(_color 196)$(_color_underline)"
+    local AtColor="$(_color_no_underline)$(_color 244)"
+    local HostColor="$(_color 15)$(_color_underline)"
 
     echo "$(_color_reset)${UserColor}$USERNAME${AtColor}@${HostColor}$HOST$(_color_reset)"
 }
@@ -107,10 +117,13 @@ shell_info ()
     local Login=
     [[ -o login ]] && local Login="login "
 
+    local IpAddress="$(timeout 0.5 public-ip.sh)"
+    [ -n "$IpAddress" ] && local IpAddress="${TextColor} ($IpAddress)"
+
     echo "${TextColor}current date/time: ${ValueColor}$(date)$(_color_reset)"
     echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors$(_color_reset)"
     echo "${TextColor}process chain: $(process_chain)${TextColor}"
-    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)$(_color_reset)"
+    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)$(_color_reset)$IpAddress"
 }
 
 # }}}
@@ -234,15 +247,13 @@ ssh_add ()
 
 tx ()
 {
-    local TMUX_SCRIPT="$HOME/.scripts/df/tmux-new-session.sh"
-
     local DIR="$PWD"
     cd
     if [[ -o interactive ]] && [[ ! "$TERM" =~ "screen" ]] && [[ ! "$TERM" =~ "tmux" ]] && [ -z "$TMUX" ]
     then
         if [ -z "$1" ]
-        then tmux attach || . "$TMUX_SCRIPT"
-        else tmux attach -t "$1" || . "$TMUX_SCRIPT" "$1"
+        then tmux attach || tmux new-session -x $COLUMNS -y $(($LINES-1)) -s default
+        else tmux attach -t "$1" || tmux new-session -x $COLUMNS -y $(($LINES-1)) -s "$1"
         fi
     fi
     cd -- "$DIR"
