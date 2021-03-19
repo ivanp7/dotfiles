@@ -34,7 +34,7 @@ add-zsh-hook precmd _p_command_number_f
 _p_shell_info_f ()
 {
     [ -z "$_p_root" ] &&
-        local BgColor="$(_color 244 238)" ||
+        local BgColor="$(_color 248 238)" ||
         local BgColor="$(_color 0 202)"
 
     _p_shell_info_length=$((1 + ${#_p_intsh_indicator} + 1 + ${#_p_command_number} + 1))
