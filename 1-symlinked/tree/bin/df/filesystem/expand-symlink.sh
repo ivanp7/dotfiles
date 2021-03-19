@@ -15,9 +15,9 @@ LINK_PATH="$(readlink "$LINK")"
 DIR="$(dirname "$LINK")"
 NAME="$(basename "$LINK")"
 
-cd "$DIR"
-rm "$NAME"
-mkdir "$NAME"
+cd -- "$DIR"
+rm -- "$NAME"
+mkdir -- "$NAME"
 
 case "$LINK_PATH" in
     /*) find "$LINK_PATH/" -mindepth 1 -maxdepth 1 | xargs -I {} ln -s "{}" "$NAME/" ;;

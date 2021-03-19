@@ -293,7 +293,7 @@ bd ()
 
 cdlf ()
 {
-    [ "$#" -gt 0 ] && cd "$@"
+    [ "$#" -gt 0 ] && cd -- "$@"
     [ -n "$id" ] &&
         lf -remote "send $id cd \"$(echo "$PWD" | sed 's/\"/\\\"/g')\""
 }
@@ -311,7 +311,7 @@ lfcd ()
     if [ -f "$tmp" ]; then
         local dir="$(cat "$tmp")"
         rm -f "$tmp"
-        [ -d "$dir" -a "$dir" != "$PWD" ] && cd "$dir" || true
+        [ -d "$dir" -a "$dir" != "$PWD" ] && cd -- "$dir" || true
     fi
 }
 

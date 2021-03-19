@@ -6,18 +6,18 @@ ARCHIVE_TYPE="$1"
 ARCHIVE_NAME="$2"
 shift 2
 
-case $ARCHIVE_TYPE in
+case "$ARCHIVE_TYPE" in
     tar|gz|xz|zstd|zip|7z) ;;
     *) echo "Unsupported archive type '$ARCHIVE_TYPE'."; exit 1 ;;
 esac
 
-tmpdir=$(mktemp -d -p .)
-cp -a "$@" $tmpdir/
-cd $tmpdir
+tmpdir="$(mktemp -d -p .)"
+cp -a -t "$tmpdir/" -- "$@"
+cd "$tmpdir"
 
-case $ARCHIVE_TYPE in
+case "$ARCHIVE_TYPE" in
     tar|gz|xz|zstd)
-        case $ARCHIVE_TYPE in
+        case "$ARCHIVE_TYPE" in
             tar) flag=""; ext="tar" ;;
             gz) flag="-z"; ext="tar.gz" ;;
             xz) flag="-J"; ext="tar.xz" ;;
@@ -35,7 +35,7 @@ case $ARCHIVE_TYPE in
         ;;
 esac
 
-mv "$ARCHIVE_NAME.$ext" ../
+mv -t ../ -- "$ARCHIVE_NAME.$ext"
 cd ..
-rm -rf $tmpdir
+rm -rf "$tmpdir"
 

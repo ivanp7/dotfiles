@@ -4,11 +4,11 @@ PARENT_SHELL_PID=$PARENT_SHELL_PID_EXPORTED
 export PARENT_SHELL_PID_EXPORTED=$$
 
 # zsh directories
-mkdir -p $XDG_CACHE_HOME/zsh
-mkdir -p $XDG_DATA_HOME/zsh
+mkdir -p "$XDG_CACHE_HOME/zsh"
+mkdir -p "$XDG_DATA_HOME/zsh"
 
 # options
-HISTFILE=$XDG_DATA_HOME/zsh/history
+HISTFILE="$XDG_DATA_HOME/zsh/history"
 HISTSIZE=100000
 SAVEHIST=10000
 setopt appendhistory extendedglob nomatch
@@ -28,13 +28,13 @@ autoload -Uz run-help-sudo
 alias help=run-help
 
 # completion
-fpath=($fpath $ZDOTDIR/completion)
+fpath=($fpath "$ZDOTDIR/completion")
 
 autoload -Uz compinit
 zmodload zsh/complist
-zstyle :compinstall filename $ZDOTDIR/.zshrc
+zstyle :compinstall filename "$ZDOTDIR/.zshrc"
 zstyle ':completion:*' menu select
-compinit -d $XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION
+compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
 _comp_options+=(globdots) # Include hidden files
 
 # auto prehash
@@ -147,7 +147,7 @@ bindkey -M vicmd '^v' edit_command_in_vim
 
 fzf_cd ()
 {
-    dir=$({
+    dir="$({
         if [ "$PWD" != "/" ]
         then
             cur="${PWD%/*}"
@@ -160,9 +160,9 @@ fzf_cd ()
         fi
 
         find -L . -mindepth 1 -maxdepth 10 -type d -printf '%P\n' 2> /dev/null
-    } | fzf +m --header="$PWD") || return 0
+    } | fzf +m --header="$PWD")" || return 0
 
-    cd "$dir"
+    cd -- "$dir"
     zle push-line
     zle accept-line
 }
@@ -207,16 +207,16 @@ _pstree="$(echo "$_pstree" | head -1 | sed -Ef "$HOME/.scripts/df/pstree.sed")"
 eval $(dircolors)
 
 # functions
-. $ZDOTDIR/functions
+. "$ZDOTDIR/functions"
 
 # aliases
 alias sudo='sudo '
-. $ZDOTDIR/aliases
+. "$ZDOTDIR/aliases"
 { command -v xhost > /dev/null && xhost > /dev/null 2>&1 &&
-    [ -f $ZDOTDIR/xaliases ] && . $ZDOTDIR/xaliases; } || true
+    [ -f "$ZDOTDIR/xaliases" ] && . "$ZDOTDIR/xaliases"; } || true
 
 # extra configuration
-[ -f "$ZDOTDIR/config" ] && . $ZDOTDIR/config
+[ -f "$ZDOTDIR/config" ] && . "$ZDOTDIR/config"
 
 # }}}
 # Prompt {{{

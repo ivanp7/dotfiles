@@ -94,7 +94,7 @@ cmd fzf_jump ${{
             cur="$cur/.."
             cd ..
         done
-        cd "$old_pwd"
+        cd -- "$old_pwd"
 
         find . $@ -printf '%P\n' 2> /dev/null
     } | fzf +m --header="Jump from $PWD") || return 0
@@ -166,7 +166,7 @@ map au %du -chD ${(f)fx} | tail -1
 # Quick action ('t' keys) {{{
 
 # create directory
-cmd mkdir %mkdir -p "$(echo "$@")"; lf -remote "send $id reload"
+cmd mkdir %mkdir -p -- "$(echo "$@")"; lf -remote "send $id reload"
 map td push ::mkdir<space>
 
 # touch
@@ -242,7 +242,7 @@ map to-t setperm o-t
 cmd unmount %umount ${(f)fx}; lf -remote "send $id reload"
 cmd unmount_rmdir %{{
     for dir in ${(f)fx}; do
-        umount "$dir" && rmdir "$dir"
+        umount "$dir" && rmdir -- "$dir"
     done
     lf -remote "send $id reload"
 }}
@@ -333,7 +333,7 @@ cmd open ${{
                         [ -z "$first_file" ] && first_file="$file"
                         mntdir="$file$postfix"
                         mountpoint -q "$mntdir" || {
-                            mkdir -p "$mntdir"
+                            mkdir -p -- "$mntdir"
                             archivemount "$file" "$mntdir"
                         }
                     done
@@ -440,10 +440,10 @@ cmd paste %{{
                     fi
                 fi
 
-                cp --backup=numbered -aT "$file" "$target_name"
+                cp --backup=numbered -a -T "$file" "$target_name"
             elif [ "$mode" = "move" ]; then
                 if [ "$(dirname "$file")" != "$PWD" ]; then
-                    mv --backup=numbered -t . "$file"
+                    mv --backup=numbered -t . -- "$file"
                 fi
             fi
         fi
@@ -518,7 +518,7 @@ cmd smart_delete ${{
     if [ "$ans" = "y" ]
     then
         lf -remote "send clear"
-        rm -rf ${(f)fx}
+        rm -rf -- ${(f)fx}
         lf -remote "send $id reload"
     fi
 }}
