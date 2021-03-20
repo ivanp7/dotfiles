@@ -39,7 +39,7 @@ _color_no_blink ()
 
 separator ()
 {
-    echo "$(_color 15)$(dd if=/dev/zero bs=1 count=$COLUMNS status=none | sed "s/./·/g")$(_color_reset)"
+    echo "$(_color 15)$(dd if=/dev/zero bs=1 count=${1:-$COLUMNS} status=none | sed "s/./·/g")$(_color_reset)"
 }
 
 spectrum ()

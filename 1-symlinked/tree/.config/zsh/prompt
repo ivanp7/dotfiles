@@ -22,7 +22,7 @@ _p_downarrow="↓"
 _p_updownarrow="↕"
 
 # }}}
-# Prompt counter {{{
+# Shell info {{{
 
 _p_command_number_f ()
 {
@@ -76,18 +76,11 @@ _p_preexec ()
 add-zsh-hook preexec _p_preexec
 
 # }}}
-# Last command duration {{{
+# Last command duration info {{{
 
 _p_cmdtimeinfo_f ()
 {
-    if [ -z "$_p_timer_delta" ]
-    then
-        _p_cmdtimeinfo_length=0
-        _p_cmdtimeinfo=""
-        return
-    fi
-
-    if [ "$_p_timer_delta" -eq 0 ]
+    if [ -z "$_p_timer_delta" -o "$_p_timer_delta" -eq 0 ]
     then
         _p_cmdtimeinfo_length=0
         _p_cmdtimeinfo=""
@@ -101,45 +94,36 @@ _p_cmdtimeinfo_f ()
         local BgColor=$(_color 0 6)
     fi
 
-    local UnitColor=$(_color 248)
-    local SecondsColor=$(_color 15)
-    local MinutesColor=$(_color 15)
-    local HoursColor=$(_color 15)
-    local DaysColor=$(_color 15)
+    local UnitColor=$(_color 250)
+    local ValueColor=$(_color 15)
 
-    local delta_minutes="$((${_p_timer_delta} / 60))"
-    local delta_hours="$((${delta_minutes} / 60))"
-    local delta_days="$((${delta_hours} / 24))"
-
-    local seconds_digits="$((${_p_timer_delta} % 60))"
-    local seconds="${SecondsColor}${seconds_digits}${UnitColor}s"
-    if [ "$delta_minutes" -gt 0 ]
+    if [ "$_p_timer_delta" -lt 60 ]
     then
-        local minutes_digits="$((${delta_minutes} % 60))"
-        local minutes="${MinutesColor}${minutes_digits}${UnitColor}m"
-        local minutes_length=$((${#minutes_digits} + 1))
-    fi
-    if [ "$delta_hours" -gt 0 ]
+        _p_cmdtimeinfo_length=$((4 + ${#_p_timer_delta}))
+        _p_cmdtimeinfo="${BgColor} ${UnitColor}~${ValueColor}${_p_timer_delta}${UnitColor}s "
+    elif [ "$_p_timer_delta" -lt 3600 ]
     then
-        local hours_digits="$((${delta_hours} % 24))"
-        local hours="${HoursColor}${hours_digits}${UnitColor}h"
-        local hours_length=$((${#hours_digits} + 1))
-    fi
-    if [ "$delta_days" -gt 0 ]
+        local minutes=$(($_p_timer_delta / 60))
+        local seconds=$(($_p_timer_delta % 60))
+        _p_cmdtimeinfo_length=$((5 + ${#minutes} + ${#seconds}))
+        _p_cmdtimeinfo="${BgColor} ${UnitColor}~${ValueColor}${minutes}${UnitColor}m${ValueColor}${seconds}${UnitColor}s "
+    elif [ "$_p_timer_delta" -lt 86400 ]
     then
-        local days_digits="${delta_days}"
-        local days="${DaysColor}${days_digits}${UnitColor}d"
-        local days_length=$((${#days_digits} + 1))
+        local hours=$(($_p_timer_delta / 3600))
+        local minutes=$(($_p_timer_delta / 60 % 60))
+        _p_cmdtimeinfo_length=$((5 + ${#hours} + ${#minutes}))
+        _p_cmdtimeinfo="${BgColor} ${UnitColor}~${ValueColor}${hours}${UnitColor}h${ValueColor}${minutes}${UnitColor}m "
+    else
+        local days=$(($_p_timer_delta / 86400))
+        local hours=$(($_p_timer_delta / 3600 % 24))
+        _p_cmdtimeinfo_length=$((5 + ${#days} + ${#hours}))
+        _p_cmdtimeinfo="${BgColor} ${UnitColor}~${ValueColor}${days}${UnitColor}d${ValueColor}${hours}${UnitColor}h "
     fi
-
-    _p_cmdtimeinfo_length=$((2 + $days_length + $hours_length +
-    $minutes_length + ${#seconds_digits} + 1))
-    _p_cmdtimeinfo="${BgColor} ${days}${hours}${minutes}${seconds} "
 }
 add-zsh-hook precmd _p_cmdtimeinfo_f
 
 # }}}
-# Last command status {{{
+# Last command exit code info {{{
 
 _p_signal_name ()
 {
@@ -185,10 +169,10 @@ _p_cmdstatusinfo_f ()
     if [ "$_colors" -ge 256 ]
     then
         local SuccessColor="$(_color_reset)$(_color 7 35)"
-        local FailureColor="$(_color_reset)$(_color 0 124)"
+        local FailureColor="$(_color_reset)$(_color 7 124)"
     else
         local SuccessColor="$(_color_reset)$(_color 7 2)"
-        local FailureColor="$(_color_reset)$(_color 0 1)"
+        local FailureColor="$(_color_reset)$(_color 7 1)"
     fi
     local Delimiter=":"
 
@@ -223,7 +207,7 @@ _p_cmdstatusinfo_f ()
 add-zsh-hook precmd _p_cmdstatusinfo_f
 
 # }}}
-# git info {{{
+# Git info {{{
 
 _p_gitinfo_f ()
 {
@@ -329,7 +313,7 @@ _p_gitinfo_f ()
 add-zsh-hook precmd _p_gitinfo_f
 
 # }}}
-# Current directory {{{
+# Present working directory info {{{
 
 _p_pwdinfo_f ()
 {
