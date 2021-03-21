@@ -25,11 +25,10 @@ autoload -Uz run-help-sudo
 alias help=run-help
 
 # completion
-fpath=($fpath "$ZDOTDIR/completion")
+fpath=($fpath "$(realpath -L "$ZDOTDIR/../completion")")
 
 autoload -Uz compinit
 zmodload zsh/complist
-zstyle :compinstall filename "$ZDOTDIR/.zshrc"
 zstyle ':completion:*' menu select
 compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
 _comp_options+=(globdots) # Include hidden files
@@ -207,7 +206,7 @@ fi
 _p_command_number=0
 
 # shell prompt
-. $ZDOTDIR/prompt
+. "$ZDOTDIR/prompt"
 
 if [[ ! -o login ]]
 then
