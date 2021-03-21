@@ -1,6 +1,6 @@
-case $(tty) in
-    /dev/tty*) clear ;;
-esac
+# case $(tty) in
+#     /dev/tty*) clear ;;
+# esac
 
 ssh_add
 

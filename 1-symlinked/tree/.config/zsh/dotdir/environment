@@ -43,29 +43,31 @@ export PLAYER=/usr/bin/mpv
 export PDFVIEWER=/usr/bin/zathura
 export BROWSER=$HOME/bin/xdf/applications/tabbed/tabbed-surf.sh
 
-# cleanup
+# X11
 
 export XINITRC=$XDG_CONFIG_HOME/X11/xinitrc
 export XSERVERRC=$XDG_CONFIG_HOME/X11/xserverrc
 
-. $XDG_CONFIG_HOME/zsh/cleanup
+export DEFAULT_FONT="xos4 Terminus:size=10"
 
-# default font
-if [ -r "$XDG_CONFIG_HOME/default_font" ]
-then export DEFAULT_FONT=$(cat "$XDG_CONFIG_HOME/default_font")
-else export DEFAULT_FONT="xos4 Terminus:size=10"
-fi
-
-# default commands and flags
+# sudo
 
 export SUDO_PRESERVE_ENV="TMPDIR_CURRENT,PARENT_SHELL_PID_EXPORTED,_p_interactive_shells,_p_interactive_shells_this_tty"
 
+# fzf
+
 export FZF_DEFAULT_COMMAND="find . -path './.git' -prune -o -printf '%P\\n'"
 export FZF_DEFAULT_OPTS="--bind=ctrl-j:accept,ctrl-k:kill-line -m"
-export GNUMAKEFLAGS="--no-print-directory"
 
 # extra configuration
 
-[ -f "$ZDOTDIR/env_config" ] && . $ZDOTDIR/env_config
+_ZSH_ENV_DIR="$(realpath -L "$ZDOTDIR/../env")"
+if [ -d "$_ZSH_ENV_DIR" ]
+then
+    for file in $(find "$_ZSH_ENV_DIR/" -type f,l)
+    do . "$file"
+    done
+fi
+unset _ZSH_ENV_DIR
 
 # vim: ft=zsh:

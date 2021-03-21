@@ -1,6 +1,4 @@
-# auxilliary functions and variables {{{
-
-_colors=$(tput colors)
+# auxilliary functions {{{
 
 _color ()
 {
@@ -9,37 +7,12 @@ _color ()
         echo -en "\033[38;5;${1}m\033[48;5;${2}m"
 }
 
-_color_reset ()
-{
-    echo -en "\033[0m"
-}
-
-_color_underline ()
-{
-    echo -en "\033[4m"
-}
-
-_color_no_underline ()
-{
-    echo -en "\033[24m"
-}
-
-_color_blink ()
-{
-    echo -en "\033[5m"
-}
-
-_color_no_blink ()
-{
-    echo -en "\033[25m"
-}
-
 # }}}
 # separator {{{
 
 separator ()
 {
-    echo "$(_color 15)$(dd if=/dev/zero bs=1 count=${1:-$COLUMNS} status=none | sed "s/./·/g")$(_color_reset)"
+    echo "$(_color 15)$(dd if=/dev/zero bs=1 count=${1:-$COLUMNS} status=none | sed "s/./·/g")${_color_reset}"
 }
 
 spectrum ()
@@ -66,12 +39,12 @@ spectrum ()
 
 userhost ()
 {
-    local UserColor="$(_color 15)$(_color_underline)"
-    [ "$(id -u)" -eq 0 ] && UserColor="$(_color 196)$(_color_underline)"
-    local AtColor="$(_color_no_underline)$(_color 244)"
-    local HostColor="$(_color 15)$(_color_underline)"
+    local UserColor="$(_color 15)${_color_underline}"
+    [ "$(id -u)" -eq 0 ] && UserColor="$(_color 196)${_color_underline}"
+    local AtColor="${_color_no_underline}$(_color 244)"
+    local HostColor="$(_color 15)${_color_underline}"
 
-    echo "$(_color_reset)${UserColor}$USERNAME${AtColor}@${HostColor}$HOST$(_color_reset)"
+    echo "${_color_reset}${UserColor}$USERNAME${AtColor}@${HostColor}$HOST${_color_reset}"
 }
 
 process_chain ()
@@ -79,8 +52,9 @@ process_chain ()
     [ -z "$_pstree" ] && return
 
     local Chain=(${(s/---/)_pstree})
+    [ "$1" = "no_zsh" -a "${Chain[${#Chain}]}" = "zsh" ] && local Chain=(${(@)Chain[1,${#Chain}-1]})
 
-    local ArrowColor="$(_color_reset)$(_color 244)"
+    local ArrowColor="${_color_reset}$(_color 244)"
     local Arrow=" → "
 
     if [ "$_colors" -ge 256 ]
@@ -88,7 +62,7 @@ process_chain ()
         local ZshColor="$(_color 15 240)"
         local LfColor="$(_color 0 35)"
         local TmuxColor="$(_color 15 31)"
-        local SshColor="$(_color 0 226)$(_color_blink)"
+        local SshColor="$(_color 0 226)${_color_blink}"
         local SuColor="$(_color 0 202)"
         local OtherColor="$(_color 250)"
     else
@@ -116,7 +90,7 @@ process_chain ()
             local ProcessChainStr="$proc"
     done
 
-    echo "$(_color_reset)${ProcessChainStr}$(_color_reset)"
+    echo "${_color_reset}${ProcessChainStr}${_color_reset}"
 }
 
 shell_info ()
@@ -130,10 +104,10 @@ shell_info ()
     local IpAddress="$(timeout 0.5 public-ip.sh)"
     [ -n "$IpAddress" ] && local IpAddress="${TextColor} ($IpAddress)"
 
-    echo "${TextColor}current date/time: ${ValueColor}$(date)$(_color_reset)"
-    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors$(_color_reset)"
+    echo "${TextColor}current date/time: ${ValueColor}$(date)${_color_reset}"
+    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors${_color_reset}"
     echo "${TextColor}process chain: $(process_chain)${TextColor}"
-    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)$(_color_reset)$IpAddress"
+    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)${_color_reset}$IpAddress"
 }
 
 # }}}
@@ -225,7 +199,7 @@ dir_colors ()
 
 sudo_shell ()
 {
-    sudo -s --preserve-env=$SUDO_PRESERVE_ENV "$@"
+    sudo -s --preserve-env="$SUDO_PRESERVE_ENV" "$@"
 }
 
 # }}}

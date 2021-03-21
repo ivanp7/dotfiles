@@ -1,7 +1,4 @@
-# Options & initialization {{{
-
-PARENT_SHELL_PID=$PARENT_SHELL_PID_EXPORTED
-export PARENT_SHELL_PID_EXPORTED=$$
+# Configuration {{{
 
 # zsh directories
 mkdir -p "$XDG_CACHE_HOME/zsh"
@@ -49,17 +46,25 @@ rehash_precmd ()
     fi
   fi
 }
-
 add-zsh-hook -Uz precmd rehash_precmd
 
 # syntax highlighting
 . /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# dircolors
+eval $(dircolors)
 
 # "command not found"
 . /usr/share/doc/pkgfile/command-not-found.zsh
 
 # disable ctrl+s/ctrl+q
 stty -ixon -ixoff
+
+# freeze terminal (disable changes of the settings except screen size)
+ttyctl -f
+
+# }}}
+# Temporary files {{{
 
 # pid file handling
 mkdir -p "$TMPDIR_CURRENT/pid/$TTY"
@@ -196,33 +201,7 @@ if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
 fi
 
 # }}}
-# Constants {{{
-
-_pstree="$(exec pstree -ls $$)"
-_pstree="$(echo "$_pstree" | head -1 | sed -Ef "$HOME/.scripts/df/pstree.sed")"
-
-# }}}
-# Extra configuration {{{
-
-eval $(dircolors)
-
-# functions
-. "$ZDOTDIR/functions"
-
-# aliases
-alias sudo='sudo '
-. "$ZDOTDIR/aliases"
-{ command -v xhost > /dev/null && xhost > /dev/null 2>&1 &&
-    [ -f "$ZDOTDIR/xaliases" ] && . "$ZDOTDIR/xaliases"; } || true
-
-# extra configuration
-[ -f "$ZDOTDIR/config" ] && . "$ZDOTDIR/config"
-
-# }}}
 # Prompt {{{
-
-# unfreeze terminal if left frozen
-ttyctl -f
 
 # initialize variables
 _p_command_number=0

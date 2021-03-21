@@ -39,8 +39,4 @@ export CUDA_CACHE_PATH=$XDG_CACHE_HOME/nv
 export SOKSAVEDIR=$XDG_DATA_HOME/csokoban
 export BLKSAVEDIR=$XDG_DATA_HOME/cblocks
 
-# custom
-
-[ -x "$XDG_CONFIG_HOME/zsh/extra-cleanup" ] && . $XDG_CONFIG_HOME/zsh/extra-cleanup
-
 # vim: ft=zsh:

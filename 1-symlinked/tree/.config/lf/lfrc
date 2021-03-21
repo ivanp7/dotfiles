@@ -141,8 +141,7 @@ map Ynt $tmux set-buffer -- "$(basename "$f")"
 
 # process tree
 map ap %{{
-    PsTree="$(exec pstree -ls $$)"
-    echo "$PsTree" | head -1 | sed -Ef "$HOME/.scripts/df/pstree.sed"
+    NON_INTERACTIVE=true zsh -ic 'process_chain no_zsh'
 }}
 
 # display owner & group

@@ -167,11 +167,11 @@ _p_cmdstatusinfo_f ()
 {
     if [ "$_colors" -ge 256 ]
     then
-        local SuccessColor="$(_color_reset)$(_color 7 35)"
-        local FailureColor="$(_color_reset)$(_color 7 124)"
+        local SuccessColor="${_color_reset}$(_color 7 35)"
+        local FailureColor="${_color_reset}$(_color 7 124)"
     else
-        local SuccessColor="$(_color_reset)$(_color 7 2)"
-        local FailureColor="$(_color_reset)$(_color 7 1)"
+        local SuccessColor="${_color_reset}$(_color 7 2)"
+        local FailureColor="${_color_reset}$(_color 7 1)"
     fi
     local Delimiter=":"
 
@@ -387,7 +387,7 @@ _p_set_insert_prompt ()
 
 _p_set_vicommand_prompt ()
 {
-    RPROMPT="%{$(_color 0 15)%}vicmd%{$(_color_reset)%}"
+    RPROMPT="%{$(_color 0 15)%}vicmd%{${_color_reset}%}"
     _p_set_cursor_shape block
 }
 
@@ -430,7 +430,7 @@ zle -N zle-line-finish
 
 _p_prompt_postcommand_preexec ()
 {
-    echo "$(_color_reset)"
+    echo "${_color_reset}"
 }
 
 # Fix a bug when you C-c in CMD mode and you'd be prompted with CMD mode indicator, while in fact you would be in INS mode
@@ -451,7 +451,7 @@ trap '_p_trap_exit' EXIT
 
 _p_prompt ()
 {
-    echo "$(_color_reset)"
+    echo "${_color_reset}"
     if [ ! -f "$TMPDIR_CURRENT/shell_info/$TTY/$$" ]
     then
         touch "$TMPDIR_CURRENT/shell_info/$TTY/$$"
@@ -459,7 +459,7 @@ _p_prompt ()
         shell_info
         echo
     fi
-    echo "${_p_shell_info}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_pwdinfo}${_p_gitinfo}$(_color_reset)"
+    echo "${_p_shell_info}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_pwdinfo}${_p_gitinfo}${_color_reset}"
 
     PROMPT=""
     PROMPT2=""
