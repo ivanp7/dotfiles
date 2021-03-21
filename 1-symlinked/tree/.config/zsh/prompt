@@ -16,7 +16,6 @@ _p_intsh_indicator="${_p_interactive_shells:0:-${_p_interactive_shells_this_tty}
 
 _p_dot="·"
 _p_bullet="•"
-_p_rightarrow="→"
 _p_uparrow="↑"
 _p_downarrow="↓"
 _p_updownarrow="↕"
