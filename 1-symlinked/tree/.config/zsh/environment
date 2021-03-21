@@ -35,7 +35,7 @@ export TMPDIR=/tmp
 export PAGER=$HOME/.scripts/df/pager.sh
 export EDITOR=/usr/bin/nvim
 export VISUAL=$EDITOR
-export FILE=lfcd
+export FILE=/usr/bin/lf
 
 export TERMINAL=/usr/bin/st
 export VIEWER=/usr/bin/sxiv
