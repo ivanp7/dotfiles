@@ -79,7 +79,7 @@ unset _ZSH_RC_DIR
 # }}}
 # Configuration of interactive session {{{
 
-[ -z "$NON_INTERACTIVE" ] && . "$ZDOTDIR/interactive" || true
+[ -n "$NON_INTERACTIVE" ] || . "$ZDOTDIR/interactive"
 
 # }}}
 
