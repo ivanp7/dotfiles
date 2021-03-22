@@ -157,7 +157,9 @@ map am %file --mime-type "$f" -b
 map aM link_mime
 
 # display git branch
-map ag %echo "${$(git symbolic-ref -q HEAD 2> /dev/null || git name-rev --name-only --no-undefined --always HEAD 2> /dev/null)#(refs/heads/|tags/)}"
+map ag %{{
+    NON_INTERACTIVE=true zsh -ic 'git_info'
+}}
 
 # calculate used space
 map au %du -chD ${(f)fx} | tail -1

@@ -128,7 +128,7 @@ userhost ()
     local AtColor="${_color_no_underline}$(_color 244)"
     local HostColor="$(_color 15)${_color_underline}"
 
-    echo "${_color_reset}${UserColor}$USERNAME${AtColor}@${HostColor}$HOST${_color_reset}"
+    echo "${_color_reset}$1${UserColor}$USERNAME${AtColor}@${HostColor}$HOST${_color_reset}"
 }
 
 process_chain ()
@@ -192,6 +192,117 @@ shell_info ()
     echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors${_color_reset}"
     echo "${TextColor}process chain: $(process_chain)${TextColor}"
     echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)${_color_reset}$IpAddress"
+}
+
+# }}}
+# git info {{{
+
+git_info ()
+{
+    local LocationColor="$(_color 228)"
+    local DotGitWarningColor=$(_color 1)
+
+    # Exit if not inside a Git repository
+    if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1
+    then
+        echo "${_color_reset}"
+        [ -z "$2" ] || echo "0"
+        return
+    fi
+
+    # Git branch/tag, or name-rev if on detached head
+    local GIT_LOCATION=${$(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)#(refs/heads/|tags/)}
+    local _gitinfo_length=${#GIT_LOCATION}
+
+    # Exit if inside a .git directory
+    if [ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" = "true" ]
+    then
+        local _gitinfo_length=$(($_gitinfo_length + 5))
+        echo "${_color_reset}$1${LocationColor}$GIT_LOCATION ${DotGitWarningColor}.git${_color_reset}"
+        [ -z "$2" ] || echo "$_gitinfo_length"
+        return
+    fi
+
+    local AheadColor="$(_color 15)"
+    local BehindColor="$(_color 166)"
+
+    local MergingColor="$(_color 33)"
+    local UntrackedColor="$(_color 160)"
+    local ModifiedColor="$(_color 214)"
+    local StagedColor="$(_color 34)"
+
+    local UpArrow="↑"
+    local DownArrow="↓"
+    local UpDownArrow="↕"
+    local Bullet="•"
+
+    local AHEAD="${AheadColor}${UpArrow}NUM"
+    local BEHIND="${BehindColor}${DownArrow}NUM"
+
+    local MERGING="${MergingColor}${UpDownArrow}"
+    local UNTRACKED="${UntrackedColor}${Bullet}"
+    local MODIFIED="${ModifiedColor}${Bullet}"
+    local STAGED="${StagedColor}${Bullet}"
+
+    local -a DIVERGENCES
+    local -a FLAGS
+
+    local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+    if [ "$NUM_AHEAD" -gt 0 ]
+    then
+        local _gitinfo_div=true
+        local _gitinfo_length=$(($_gitinfo_length + 1 + ${#NUM_AHEAD}))
+        DIVERGENCES+=( "${AHEAD//NUM/$NUM_AHEAD}" )
+    fi
+
+    local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+    if [ "$NUM_BEHIND" -gt 0 ]
+    then
+        local _gitinfo_div=true
+        local _gitinfo_length=$(($_gitinfo_length + 1 + ${#NUM_BEHIND}))
+        DIVERGENCES+=( "${BEHIND//NUM/$NUM_BEHIND}" )
+    fi
+
+    [ -n "$_gitinfo_div" ] && local _gitinfo_length=$(($_gitinfo_length + 1))
+
+    local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+    if [ -n "$GIT_DIR" -a -r "$GIT_DIR/MERGE_HEAD" ]
+    then
+        local _gitinfo_flag=true
+        local _gitinfo_length=$(($_gitinfo_length + 1))
+        FLAGS+=( "$MERGING" )
+    fi
+
+    if [ -n "$(git ls-files $(git rev-parse --show-toplevel) --other --exclude-standard 2> /dev/null)" ]
+    then
+        local _gitinfo_flag=true
+        local _gitinfo_length=$(($_gitinfo_length + 1))
+        FLAGS+=( "$UNTRACKED" )
+    fi
+
+    if ! git diff --quiet 2> /dev/null
+    then
+        local _gitinfo_flag=true
+        local _gitinfo_length=$(($_gitinfo_length + 1))
+        FLAGS+=( "$MODIFIED" )
+    fi
+
+    if ! git diff --cached --quiet 2> /dev/null
+    then
+        local _gitinfo_flag=true
+        local _gitinfo_length=$(($_gitinfo_length + 1))
+        FLAGS+=( "$STAGED" )
+    fi
+
+    [ -n "$_gitinfo_flag" ] && local _gitinfo_length=$(($_gitinfo_length + 1))
+
+    local -a GIT_INFO
+    GIT_INFO+=( "${LocationColor}$GIT_LOCATION" )
+    [ "${#DIVERGENCES[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
+    [ "${#FLAGS[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)FLAGS}" )
+
+    echo "${_color_reset}$1${(j: :)GIT_INFO}${_color_reset}"
+    [ -z "$2" ] || echo "$_gitinfo_length"
 }
 
 # }}}

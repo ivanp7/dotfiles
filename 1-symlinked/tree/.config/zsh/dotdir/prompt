@@ -14,13 +14,6 @@
 
 _p_intsh_indicator="${_p_interactive_shells:0:-${_p_interactive_shells_this_tty}}[${_p_interactive_shells: -${_p_interactive_shells_this_tty}}]"
 
-_p_dot="·"
-_p_bullet="•"
-_p_uparrow="↑"
-_p_downarrow="↓"
-_p_updownarrow="↕"
-_p_righttriangle="▶"
-
 # }}}
 # Shell info {{{
 
@@ -33,12 +26,13 @@ add-zsh-hook precmd _p_command_number_f
 
 _p_shell_info_f ()
 {
+    local Dot="·"
     [ -z "$_p_root" ] &&
         local BgColor="$(_color 248 238)" ||
         local BgColor="$(_color 0 202)"
 
     _p_shell_info_length=$((1 + ${#_p_intsh_indicator} + 1 + ${#_p_command_number} + 1))
-    _p_shell_info="${BgColor} ${_p_intsh_indicator}${_p_dot}${_p_command_number} "
+    _p_shell_info="${BgColor} ${_p_intsh_indicator}${Dot}${_p_command_number} "
 }
 add-zsh-hook precmd _p_shell_info_f
 
@@ -174,6 +168,7 @@ _p_cmdstatusinfo_f ()
         local SuccessColor="${_color_reset}$(_color 7 2)"
         local FailureColor="${_color_reset}$(_color 7 1)"
     fi
+    local DownArrow="↓"
     local Delimiter=":"
 
     if [ -n "$_p_exitcode" ]
@@ -197,7 +192,7 @@ _p_cmdstatusinfo_f ()
             [ -n "$description" ] && local description="${Delimiter}$description"
 
             _p_cmdstatusinfo_length=$((3 + ${#_p_exitcode} + ${#description}))
-            _p_cmdstatusinfo="${FailureColor} ${_p_downarrow}${_p_exitcode}${description} "
+            _p_cmdstatusinfo="${FailureColor} ${DownArrow}${_p_exitcode}${description} "
         fi
     else
         _p_cmdstatusinfo_length=0
@@ -212,108 +207,20 @@ add-zsh-hook precmd _p_cmdstatusinfo_f
 _p_gitinfo_f ()
 {
     local BgColor=$(_color 0 238)
-    local LocationColor="$(_color 228)"
 
-    # Exit if not inside a Git repository
-    if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1
-    then
-        _p_gitinfo_length=0
-        _p_gitinfo=""
-        return
-    fi
+    local GitInfo="$(git_info "${BgColor}" true)"
 
-    # Git branch/tag, or name-rev if on detached head
-    local GIT_LOCATION=${$(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)#(refs/heads/|tags/)}
-    _p_gitinfo_length=$((2 + ${#GIT_LOCATION}))
+    _p_gitinfo_length="$(echo "$GitInfo" | tail -1)"
+    _p_gitinfo=""
+    [ "$_p_gitinfo_length" -eq 0 ] && return
 
-    # Exit if inside a .git directory
-    if [ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" = "true" ]
-    then
-        local DotGitWarningColor=$(_color 1)
-
-        _p_gitinfo_length=$(($_p_gitinfo_length + 5))
-        _p_gitinfo="${BgColor} ${LocationColor}$GIT_LOCATION ${DotGitWarningColor}.git "
-        return
-    fi
-
-    local AheadColor="$(_color 15)"
-    local BehindColor="$(_color 166)"
-
-    local MergingColor="$(_color 33)"
-    local UntrackedColor="$(_color 160)"
-    local ModifiedColor="$(_color 214)"
-    local StagedColor="$(_color 34)"
-
-    local AHEAD="${AheadColor}${_p_uparrow}NUM"
-    local BEHIND="${BehindColor}${_p_downarrow}NUM"
-
-    local MERGING="${MergingColor}${_p_updownarrow}"
-    local UNTRACKED="${UntrackedColor}${_p_bullet}"
-    local MODIFIED="${ModifiedColor}${_p_bullet}"
-    local STAGED="${StagedColor}${_p_bullet}"
-
-    local -a DIVERGENCES
-    local -a FLAGS
-
-    local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
-    if [ "$NUM_AHEAD" -gt 0 ]
-    then
-        local _p_gitinfo_div=true
-        _p_gitinfo_length=$(($_p_gitinfo_length + 1 + ${#NUM_AHEAD}))
-        DIVERGENCES+=( "${AHEAD//NUM/$NUM_AHEAD}" )
-    fi
-
-    local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
-    if [ "$NUM_BEHIND" -gt 0 ]
-    then
-        local _p_gitinfo_div=true
-        _p_gitinfo_length=$(($_p_gitinfo_length + 1 + ${#NUM_BEHIND}))
-        DIVERGENCES+=( "${BEHIND//NUM/$NUM_BEHIND}" )
-    fi
-
-    [ -n "$_p_gitinfo_div" ] && _p_gitinfo_length=$(($_p_gitinfo_length + 1))
-
-    local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-    if [ -n "$GIT_DIR" -a -r "$GIT_DIR/MERGE_HEAD" ]
-    then
-        local _p_gitinfo_flag=true
-        _p_gitinfo_length=$(($_p_gitinfo_length + 1))
-        FLAGS+=( "$MERGING" )
-    fi
-
-    if [ -n "$(git ls-files $(git rev-parse --show-toplevel) --other --exclude-standard 2> /dev/null)" ]
-    then
-        local _p_gitinfo_flag=true
-        _p_gitinfo_length=$(($_p_gitinfo_length + 1))
-        FLAGS+=( "$UNTRACKED" )
-    fi
-
-    if ! git diff --quiet 2> /dev/null
-    then
-        local _p_gitinfo_flag=true
-        _p_gitinfo_length=$(($_p_gitinfo_length + 1))
-        FLAGS+=( "$MODIFIED" )
-    fi
-
-    if ! git diff --cached --quiet 2> /dev/null
-    then
-        local _p_gitinfo_flag=true
-        _p_gitinfo_length=$(($_p_gitinfo_length + 1))
-        FLAGS+=( "$STAGED" )
-    fi
-
-    [ -n "$_p_gitinfo_flag" ] && _p_gitinfo_length=$(($_p_gitinfo_length + 1))
-
-    local -a GIT_INFO
-    GIT_INFO+=( "${LocationColor}$GIT_LOCATION" )
-    [ "${#DIVERGENCES[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
-    [ "${#FLAGS[@]}" -ne 0 ] && GIT_INFO+=( "${(j::)FLAGS}" )
-    _p_gitinfo="${BgColor} ${(j: :)GIT_INFO} "
+    _p_gitinfo_length=$(($_p_gitinfo_length + 2))
+    _p_gitinfo="${BgColor} $(echo "$GitInfo" | head -1)${BgColor} "
 }
 add-zsh-hook precmd _p_gitinfo_f
 
 # }}}
-# Present working directory read/write permissions info {{{
+# Present working directory info {{{
 
 _p_pwdperminfo_f ()
 {
@@ -338,15 +245,13 @@ _p_pwdperminfo_f ()
 }
 add-zsh-hook precmd _p_pwdperminfo_f
 
-# }}}
-# Present working directory info {{{
-
 _p_pwdinfo_f ()
 {
     local BgColor=$(_color 0 240)
     local DirColor=$(_color 15)
     local SlashColor=$(_color 236)
-    local SkipCharacter="$(_color 1)${_p_righttriangle}"
+    local RightTriangle="▶"
+    local SkipCharacter="$(_color 1)${RightTriangle}"
 
     [ "$PWD" = "/" ] && { _p_pwdinfo="${BgColor} ${DirColor}/ "; return; }
 
