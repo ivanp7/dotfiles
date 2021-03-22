@@ -1,0 +1,16 @@
+remote_si ()
+{
+    remote "$@" && { echo; separator; shell_info; }
+}
+
+alias remote='remote_si'
+
+alias yaft=''
+alias yaft_wall=''
+
+# jokes
+
+alias fucking='sudo '
+alias fuck='sudo '
+
+# vim: ft=zsh:

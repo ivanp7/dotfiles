@@ -35,82 +35,6 @@ spectrum ()
 }
 
 # }}}
-# shell info {{{
-
-userhost ()
-{
-    local UserColor="$(_color 15)${_color_underline}"
-    [ "$(id -u)" -eq 0 ] && UserColor="$(_color 196)${_color_underline}"
-    local AtColor="${_color_no_underline}$(_color 244)"
-    local HostColor="$(_color 15)${_color_underline}"
-
-    echo "${_color_reset}${UserColor}$USERNAME${AtColor}@${HostColor}$HOST${_color_reset}"
-}
-
-process_chain ()
-{
-    [ -z "$_pstree" ] && return
-
-    local Chain=(${(s/---/)_pstree})
-    [ "$1" = "no_zsh" -a "${Chain[${#Chain}]}" = "zsh" ] && local Chain=(${(@)Chain[1,${#Chain}-1]})
-
-    local ArrowColor="${_color_reset}$(_color 244)"
-    local Arrow=" → "
-
-    if [ "$_colors" -ge 256 ]
-    then
-        local ZshColor="$(_color 15 240)"
-        local LfColor="$(_color 0 35)"
-        local TmuxColor="$(_color 15 31)"
-        local SshColor="$(_color 0 226)${_color_blink}"
-        local SuColor="$(_color 0 202)"
-        local OtherColor="$(_color 250)"
-    else
-        local ZshColor="$(_color 0 15)"
-        local LfColor="$(_color 0 2)"
-        local TmuxColor="$(_color 15 6)"
-        local SshColor="$(_color 0 3)"
-        local SuColor="$(_color 0 1)"
-        local OtherColor="$(_color 7)"
-    fi
-
-    for proc in $Chain
-    do
-        case "$proc" in
-            zsh) local proc="${ZshColor} $proc " ;;
-            lf) local proc="${LfColor} $proc " ;;
-            \(tmux\)) local proc="${TmuxColor} $proc " ;;
-            \(ssh\)) local proc="${SshColor} $proc " ;;
-            sudo|su) local proc="${SuColor} $proc " ;;
-            *) local proc="${OtherColor}$proc" ;;
-        esac
-
-        [ -n "$ProcessChainStr" ] &&
-            local ProcessChainStr="${ProcessChainStr}${ArrowColor}${Arrow}$proc" ||
-            local ProcessChainStr="$proc"
-    done
-
-    echo "${_color_reset}${ProcessChainStr}${_color_reset}"
-}
-
-shell_info ()
-{
-    local TextColor="$(_color 244)"
-    local ValueColor="$(_color 15)"
-
-    local Login=
-    [[ -o login ]] && local Login="login "
-
-    local IpAddress="$(timeout 0.5 public-ip.sh)"
-    [ -n "$IpAddress" ] && local IpAddress="${TextColor} ($IpAddress)"
-
-    echo "${TextColor}current date/time: ${ValueColor}$(date)${_color_reset}"
-    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors${_color_reset}"
-    echo "${TextColor}process chain: $(process_chain)${TextColor}"
-    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)${_color_reset}$IpAddress"
-}
-
-# }}}
 # colors {{{
 
 colorgrid ()
@@ -192,6 +116,82 @@ dir_colors ()
         printf '(\e[%sm%s\e[m) ' $color $name
     done
     echo
+}
+
+# }}}
+# shell info {{{
+
+userhost ()
+{
+    local UserColor="$(_color 15)${_color_underline}"
+    [ "$(id -u)" -eq 0 ] && UserColor="$(_color 196)${_color_underline}"
+    local AtColor="${_color_no_underline}$(_color 244)"
+    local HostColor="$(_color 15)${_color_underline}"
+
+    echo "${_color_reset}${UserColor}$USERNAME${AtColor}@${HostColor}$HOST${_color_reset}"
+}
+
+process_chain ()
+{
+    [ -z "$_pstree" ] && return
+
+    local Chain=(${(s/---/)_pstree})
+    [ "$1" = "no_zsh" -a "${Chain[${#Chain}]}" = "zsh" ] && local Chain=(${(@)Chain[1,${#Chain}-1]})
+
+    local ArrowColor="${_color_reset}$(_color 244)"
+    local Arrow=" → "
+
+    if [ "$_colors" -ge 256 ]
+    then
+        local ZshColor="$(_color 15 240)"
+        local LfColor="$(_color 0 35)"
+        local TmuxColor="$(_color 15 31)"
+        local SshColor="$(_color 0 226)${_color_blink}"
+        local SuColor="$(_color 0 202)"
+        local OtherColor="$(_color 250)"
+    else
+        local ZshColor="$(_color 0 15)"
+        local LfColor="$(_color 0 2)"
+        local TmuxColor="$(_color 15 6)"
+        local SshColor="$(_color 0 3)"
+        local SuColor="$(_color 0 1)"
+        local OtherColor="$(_color 7)"
+    fi
+
+    for proc in $Chain
+    do
+        case "$proc" in
+            zsh) local proc="${ZshColor} $proc " ;;
+            lf) local proc="${LfColor} $proc " ;;
+            \(tmux\)) local proc="${TmuxColor} $proc " ;;
+            \(ssh\)) local proc="${SshColor} $proc " ;;
+            sudo|su) local proc="${SuColor} $proc " ;;
+            *) local proc="${OtherColor}$proc" ;;
+        esac
+
+        [ -n "$ProcessChainStr" ] &&
+            local ProcessChainStr="${ProcessChainStr}${ArrowColor}${Arrow}$proc" ||
+            local ProcessChainStr="$proc"
+    done
+
+    echo "${_color_reset}${ProcessChainStr}${_color_reset}"
+}
+
+shell_info ()
+{
+    local TextColor="$(_color 244)"
+    local ValueColor="$(_color 15)"
+
+    local Login=
+    [[ -o login ]] && local Login="login "
+
+    local IpAddress="$(timeout 0.5 public-ip.sh)"
+    [ -n "$IpAddress" ] && local IpAddress="${TextColor} ($IpAddress)"
+
+    echo "${TextColor}current date/time: ${ValueColor}$(date)${_color_reset}"
+    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors${_color_reset}"
+    echo "${TextColor}process chain: $(process_chain)${TextColor}"
+    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)${_color_reset}$IpAddress"
 }
 
 # }}}
@@ -287,14 +287,6 @@ lfcd ()
         rm -f "$tmp"
         [ -d "$dir" -a "$dir" != "$PWD" ] && cd -- "$dir" || true
     fi
-}
-
-# }}}
-# remote {{{
-
-remote_si ()
-{
-    remote "$@" && { echo; separator; shell_info; }
 }
 
 # }}}

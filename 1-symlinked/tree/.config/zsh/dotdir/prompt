@@ -19,6 +19,7 @@ _p_bullet="•"
 _p_uparrow="↑"
 _p_downarrow="↓"
 _p_updownarrow="↕"
+_p_righttriangle="▶"
 
 # }}}
 # Shell info {{{
@@ -345,7 +346,7 @@ _p_pwdinfo_f ()
     local BgColor=$(_color 0 240)
     local DirColor=$(_color 15)
     local SlashColor=$(_color 236)
-    local SkipCharacter="$(_color 1)~"
+    local SkipCharacter="$(_color 1)${_p_righttriangle}"
 
     [ "$PWD" = "/" ] && { _p_pwdinfo="${BgColor} ${DirColor}/ "; return; }
 
@@ -414,7 +415,7 @@ _p_set_insert_prompt ()
 
 _p_set_vicommand_prompt ()
 {
-    RPROMPT="%{$(_color 0 15)%}vicmd%{${_color_reset}%}"
+    RPROMPT="%{$(_color 0 15)%}vicmd%{$(echo "${_color_reset}")%}"
     _p_set_cursor_shape block
 }
 
