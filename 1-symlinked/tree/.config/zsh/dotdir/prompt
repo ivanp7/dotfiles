@@ -312,6 +312,32 @@ _p_gitinfo_f ()
 add-zsh-hook precmd _p_gitinfo_f
 
 # }}}
+# Present working directory read/write permissions info {{{
+
+_p_pwdperminfo_f ()
+{
+    local IndicatorColor="$(_color 1)"
+
+    if [ ! -r "." -a ! -w "." ]
+    then
+        _p_pwdperminfo_length=3
+        _p_pwdperminfo="${IndicatorColor}rw "
+    elif [ ! -w "." ]
+    then
+        _p_pwdperminfo_length=2
+        _p_pwdperminfo="${IndicatorColor}w "
+    elif [ ! -r "." ]
+    then
+        _p_pwdperminfo_length=2
+        _p_pwdperminfo="${IndicatorColor}r "
+    else
+        _p_pwdperminfo_length=0
+        _p_pwdperminfo=""
+    fi
+}
+add-zsh-hook precmd _p_pwdperminfo_f
+
+# }}}
 # Present working directory info {{{
 
 _p_pwdinfo_f ()
@@ -323,7 +349,8 @@ _p_pwdinfo_f ()
 
     [ "$PWD" = "/" ] && { _p_pwdinfo="${BgColor} ${DirColor}/ "; return; }
 
-    local PromptLength=$(($_p_shell_info_length + $_p_cmdtimeinfo_length + $_p_cmdstatusinfo_length + $_p_gitinfo_length + 2))
+    local PromptLength=$(($_p_shell_info_length + $_p_cmdtimeinfo_length + $_p_cmdstatusinfo_length +
+                            $_p_pwdperminfo_length + $_p_gitinfo_length + 2))
     local MaxOutputLength=$(($COLUMNS - $PromptLength))
 
     local PathLength=${#PWD}
@@ -459,7 +486,7 @@ _p_prompt ()
         shell_info
         echo
     fi
-    echo "${_p_shell_info}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_pwdinfo}${_p_gitinfo}${_color_reset}"
+    echo "${_p_shell_info}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_pwdinfo}${_p_pwdperminfo}${_p_gitinfo}${_color_reset}"
 
     PROMPT=""
     PROMPT2=""
