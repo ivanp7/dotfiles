@@ -216,6 +216,12 @@ _p_gitinfo_f ()
 
     _p_gitinfo_length=$(($_p_gitinfo_length + 2))
     _p_gitinfo="${BgColor} $(echo "$GitInfo" | head -1)${BgColor} "
+
+    local RightTriangle="▶"
+    local LocationColor="$(_color 228)"
+
+    _p_gitindicator_length=3
+    _p_gitindicator="${BgColor}${LocationColor} ${RightTriangle} "
 }
 add-zsh-hook precmd _p_gitinfo_f
 
@@ -262,12 +268,12 @@ _p_pwdinfo_f ()
     local PathLength=${#PWD}
     local PathExcess=$(($PathLength - $MaxOutputLength))
 
-    if [ "$_p_gitinfo_length" -le "$PathExcess" ]
+    if [ "$(($_p_gitinfo_length - $_p_gitindicator_length))" -le "$PathExcess" ]
     then
-        local MaxOutputLength=$(($MaxOutputLength + $_p_gitinfo_length))
+        local MaxOutputLength=$(($MaxOutputLength + $_p_gitinfo_length - $_p_gitindicator_length))
         local PathExcess=$(($PathLength - $MaxOutputLength))
-        _p_gitinfo_length=0
-        unset _p_gitinfo
+        _p_gitinfo_length=$_p_gitindicator_length
+        _p_gitinfo="$_p_gitindicator"
     fi
 
     local PathDirs=(${(s@/@)${PWD:1}}) # split path into components
