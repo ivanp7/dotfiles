@@ -1,4 +1,4 @@
 #!/bin/sh
 
-exec nvimpager -p "$@"
+exec nvimpager -p "+set number" "$@"
 
