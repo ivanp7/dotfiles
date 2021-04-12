@@ -185,13 +185,10 @@ shell_info ()
     local Login=
     [[ -o login ]] && local Login="login "
 
-    local IpAddress="$(timeout 0.5 public-ip.sh)"
-    [ -n "$IpAddress" ] && local IpAddress="${TextColor} ($IpAddress)"
-
     echo "${TextColor}current date/time: ${ValueColor}$(date)${_color_reset}"
     echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors${_color_reset}"
     echo "${TextColor}process chain: $(process_chain)${TextColor}"
-    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)${_color_reset}$IpAddress"
+    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)${_color_reset}"
 }
 
 # }}}
