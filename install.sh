@@ -9,6 +9,7 @@ then
     exit 1
 fi
 
+mkdir -p $HOME/.config
 echo '#!/bin/sh' > $UNINST_SCRIPT
 chmod 744 $UNINST_SCRIPT
 
@@ -20,7 +21,7 @@ delete_empty_directory ()
 ' >> $UNINST_SCRIPT
 
 for category in $(find "$CONF_DIR" -mindepth 1 -maxdepth 1 -type d \! -name ".git" | sort)
-do 
+do
     echo "> Installing '$(basename $category)'..."
     $category/install.sh $UNINST_SCRIPT
     echo >> $UNINST_SCRIPT
