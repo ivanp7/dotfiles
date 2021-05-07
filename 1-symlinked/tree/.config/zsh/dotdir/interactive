@@ -178,7 +178,6 @@ exit_zsh ()
 {
     _p_set_abandoned_prompt
     zle reset-prompt
-    _p_prompt_on_exit
     uninit_shell
     exit 0
 }
