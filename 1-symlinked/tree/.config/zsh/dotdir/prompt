@@ -362,6 +362,8 @@ zle-line-finish ()
 {
     (( ${+terminfo[rmkx]} )) && echoti rmkx
 
+    _p_buffers[$_p_command_number]="$BUFFER"
+
     _p_set_abandoned_prompt
     zle reset-prompt
 }
