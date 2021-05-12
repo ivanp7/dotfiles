@@ -222,6 +222,7 @@ _p_command_number=0
 if [[ ! -o login ]]
 then
     echo
+    sleep 0.1
     separator
     shell_info
 fi
