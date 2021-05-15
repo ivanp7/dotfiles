@@ -361,13 +361,19 @@ txclip ()
 
 bd ()
 {
-    local Path="./"
     [ "$#" -eq 0 ] && { cd ..; return; }
-    for i in $(seq $1)
+
+    local Path="./"
+    local Arg="$@"
+    local Num="${Arg%%/*}"
+    local Postfix="${Arg#*/}"
+
+    for i in $(seq $Num)
     do
         local Path="$Path/.."
     done
-    cd "$Path"
+
+    cd -- "$Path/$Postfix"
 }
 
 # }}}
@@ -377,7 +383,7 @@ cdlf ()
 {
     [ "$#" -gt 0 ] && cd -- "$@"
     [ -n "$id" ] &&
-        lf -remote "send $id cd \"$(echo "$PWD" | sed 's/\"/\\\"/g')\""
+        lf -remote "send $id cd -- \"$(echo "$PWD" | sed 's/\"/\\\"/g')\""
 }
 
 lfcd ()
