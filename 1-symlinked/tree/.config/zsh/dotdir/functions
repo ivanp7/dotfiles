@@ -364,7 +364,7 @@ bd ()
     [ "$#" -eq 0 ] && { cd ..; return; }
 
     local Path="./"
-    local Arg="$@"
+    local Arg="$@/"
     local Num="${Arg%%/*}"
     local Postfix="${Arg#*/}"
 
