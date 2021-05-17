@@ -49,7 +49,9 @@ alias less="$PAGER"
 alias nv='nvim'
 
 alias lf='lfcd'
+
 alias d='dirs -v | head'
+alias 0=':'
 alias 1='cd -'
 alias 2='cd -2'
 alias 3='cd -3'
