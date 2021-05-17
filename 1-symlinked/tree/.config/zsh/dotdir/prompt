@@ -19,8 +19,7 @@ _p_intsh_indicator="${_p_interactive_shells:0:-${_p_interactive_shells_this_tty}
 
 _p_command_number_f ()
 {
-    # [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
-    _p_command_number=$(($_p_command_number+1))
+    [ -n "$_p_command_executed" ] && _p_command_number=$(($_p_command_number+1))
 }
 add-zsh-hook precmd _p_command_number_f
 

@@ -214,7 +214,7 @@ fi
 # Prompt {{{
 
 # initialize variables
-_p_command_number=0
+_p_command_number=1
 
 # shell prompt
 . "$ZDOTDIR/prompt"
