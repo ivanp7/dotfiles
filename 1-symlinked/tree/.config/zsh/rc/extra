@@ -5,8 +5,7 @@ remote_si ()
 
 alias remote='remote_si'
 
-alias yaft=''
-alias yaft_wall=''
+alias fbterm='fbterm.sh'
 
 # jokes
 
