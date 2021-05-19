@@ -2,9 +2,14 @@
 
 _color ()
 {
-    [ -z "$2" ] &&
-        echo -en "\033[38;5;${1}m" ||
-        echo -en "\033[38;5;${1}m\033[48;5;${2}m"
+    if [ -n "$1" -a -z "$2" ]
+    then echo -en "\033[38;5;${1}m"
+    elif [ -n "$1" -a -n "$2" ]
+    then echo -en "\033[38;5;${1}m\033[48;5;${2}m"
+    elif [ -z "$1" -a -n "$2" ]
+    then echo -en "\033[48;5;${2}m"
+    else echo -en "\033[0m"
+    fi
 }
 
 # }}}
@@ -42,7 +47,7 @@ colorgrid ()
     local iter=0
     while [ $iter -lt 16 ]
     do
-        echo -en "\033[48;5;$(echo $iter)m \033[0m\033[38;5;$(echo $iter)m█ "
+        echo -en "$(_color "" $iter) ${_color_reset}$(_color $iter)█ "
         printf "%03d" $iter
 
         [ $(($iter % 8)) = 7 ] && printf '\r\n' || printf ' '
@@ -62,20 +67,20 @@ colorgrid ()
         local sixth=$(($fifth+36))
         local seventh=$(($sixth+36))
 
-        echo -en "\033[48;5;$(echo $iter)m \033[0m\033[38;5;$(echo $iter)m█ "
+        echo -en "$(_color "" $iter) ${_color_reset}$(_color $iter)█ "
         printf "%03d" $iter
-        echo -en " \033[48;5;$(echo $second)m \033[0m\033[38;5;$(echo $second)m█ "
+        echo -en " $(_color "" $second) ${_color_reset}$(_color $second)█ "
         printf "%03d" $second
-        echo -en " \033[48;5;$(echo $third)m \033[0m\033[38;5;$(echo $third)m█ "
+        echo -en " $(_color "" $third) ${_color_reset}$(_color $third)█ "
         printf "%03d" $third
-        echo -en " \033[48;5;$(echo $fourth)m \033[0m\033[38;5;$(echo $fourth)m█ "
+        echo -en " $(_color "" $fourth) ${_color_reset}$(_color $fourth)█ "
         printf "%03d" $fourth
-        echo -en " \033[48;5;$(echo $fifth)m \033[0m\033[38;5;$(echo $fifth)m█ "
+        echo -en " $(_color "" $fifth) ${_color_reset}$(_color $fifth)█ "
         printf "%03d" $fifth
-        echo -en " \033[48;5;$(echo $sixth)m \033[0m\033[38;5;$(echo $sixth)m█ "
+        echo -en " $(_color "" $sixth) ${_color_reset}$(_color $sixth)█ "
         printf "%03d" $sixth
         if [ $seventh -lt 256 ]; then
-            echo -en " \033[48;5;$(echo $seventh)m \033[0m\033[38;5;$(echo $seventh)m█ "
+            echo -en " $(_color "" $seventh) ${_color_reset}$(_color $seventh)█ "
             printf "%03d" $seventh
         fi
 
