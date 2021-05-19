@@ -161,10 +161,10 @@ _p_cmdstatusinfo_f ()
 {
     if [ "$_colors" -ge 256 ]
     then
-        local SuccessColor="${_color_reset}$(_color 7 35)"
+        local SuccessColor="${_color_reset}$(_color 15 35)"
         local FailureColor="${_color_reset}$(_color 7 124)"
     else
-        local SuccessColor="${_color_reset}$(_color 7 2)"
+        local SuccessColor="${_color_reset}$(_color 15 2)"
         local FailureColor="${_color_reset}$(_color 7 1)"
     fi
     local DownArrow="↓"
