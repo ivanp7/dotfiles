@@ -319,7 +319,7 @@ cmd open ${{
     case $mime_type in
         "") ;;
         application/pdf|application/postscript|image/vnd.djvu)
-            setsid $PDFVIEWER ${(f)fx} > /dev/null 2>&1 & ;;
+            $PDFVIEWER ${(f)fx} ;;
         image/*)
             $VIEWER ${(f)fx} ;;
         video/*|audio/*)
@@ -358,6 +358,8 @@ cmd alt_open ${{
         "") ;;
         inode/directory)
             ncdu -e2 "$f" ;;
+        application/pdf|application/postscript|image/vnd.djvu)
+            setsid $PDFVIEWER ${(f)fx} > /dev/null 2>&1 & ;;
         image/*)
             setsid $VIEWER ${(f)fx} > /dev/null 2>&1 & ;;
         video/*|audio/*)

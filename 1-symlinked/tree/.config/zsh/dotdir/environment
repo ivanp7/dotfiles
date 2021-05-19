@@ -32,13 +32,15 @@ export TMPDIR=/tmp
 
 # default applications
 
-export PAGER=$HOME/.scripts/df/pager.sh
-export EDITOR=/usr/bin/nvim
-export VISUAL=$EDITOR
-export FILE=/usr/bin/lf
+export PAGER="$HOME/.scripts/df/pager.sh"
+export EDITOR="/usr/bin/nvim"
+export VISUAL="$EDITOR"
+export FILE="/usr/bin/lf"
 
-export PLAYER=/usr/bin/mpv
-export BROWSER=/usr/bin/w3m
+export VIEWER="$HOME/.scripts/df/viewer.sh"
+export PLAYER="$HOME/.scripts/df/player.sh"
+export BROWSER="$HOME/.scripts/df/browser.sh"
+export PDFVIEWER="$HOME/.scripts/df/pdfviewer.sh"
 
 # sudo
 
