@@ -69,53 +69,6 @@ _p_preexec ()
 add-zsh-hook preexec _p_preexec
 
 # }}}
-# Last command duration info {{{
-
-_p_cmdtimeinfo_f ()
-{
-    if [ -z "$_p_timer_delta" -o "$_p_timer_delta" -eq 0 ]
-    then
-        _p_cmdtimeinfo_length=0
-        _p_cmdtimeinfo=""
-        return
-    fi
-
-    if [ "$_colors" -ge 256 ]
-    then
-        local BgColor=$(_color 0 33)
-    else
-        local BgColor=$(_color 0 6)
-    fi
-
-    local UnitColor=$(_color 250)
-    local ValueColor=$(_color 15)
-
-    if [ "$_p_timer_delta" -lt 60 ]
-    then
-        _p_cmdtimeinfo_length=$((4 + ${#_p_timer_delta}))
-        _p_cmdtimeinfo="${BgColor} ${UnitColor}~${ValueColor}${_p_timer_delta}${UnitColor}s "
-    elif [ "$_p_timer_delta" -lt 3600 ]
-    then
-        local minutes=$(($_p_timer_delta / 60))
-        local seconds=$(($_p_timer_delta % 60))
-        _p_cmdtimeinfo_length=$((5 + ${#minutes} + ${#seconds}))
-        _p_cmdtimeinfo="${BgColor} ${UnitColor}~${ValueColor}${minutes}${UnitColor}m${ValueColor}${seconds}${UnitColor}s "
-    elif [ "$_p_timer_delta" -lt 86400 ]
-    then
-        local hours=$(($_p_timer_delta / 3600))
-        local minutes=$(($_p_timer_delta / 60 % 60))
-        _p_cmdtimeinfo_length=$((5 + ${#hours} + ${#minutes}))
-        _p_cmdtimeinfo="${BgColor} ${UnitColor}~${ValueColor}${hours}${UnitColor}h${ValueColor}${minutes}${UnitColor}m "
-    else
-        local days=$(($_p_timer_delta / 86400))
-        local hours=$(($_p_timer_delta / 3600 % 24))
-        _p_cmdtimeinfo_length=$((5 + ${#days} + ${#hours}))
-        _p_cmdtimeinfo="${BgColor} ${UnitColor}~${ValueColor}${days}${UnitColor}d${ValueColor}${hours}${UnitColor}h "
-    fi
-}
-add-zsh-hook precmd _p_cmdtimeinfo_f
-
-# }}}
 # Last command exit code info {{{
 
 _p_signal_name ()
@@ -159,6 +112,12 @@ _p_signal_name ()
 
 _p_cmdstatusinfo_f ()
 {
+    local Triangle=""
+    [ -z "$_p_root" ] &&
+        local TriangleColor="$(_color 238)" ||
+        local TriangleColor="$(_color 202)"
+    local PwdBgColor=$(_color 0 240)
+
     if [ "$_colors" -ge 256 ]
     then
         local SuccessColor="${_color_reset}$(_color 15 35)"
@@ -174,8 +133,8 @@ _p_cmdstatusinfo_f ()
     then
         if [ "$_p_exitcode" -eq 0 ]
         then
-            _p_cmdstatusinfo_length=4
-            _p_cmdstatusinfo="${SuccessColor} ok "
+            _p_cmdstatusinfo_length=5
+            _p_cmdstatusinfo="${SuccessColor}${TriangleColor}${Triangle}${SuccessColor} ok "
         else
             if [ "$_p_exitcode" -gt 128 -a "$_p_exitcode" -lt 163 ]
             then
@@ -190,15 +149,57 @@ _p_cmdstatusinfo_f ()
             fi
             [ -n "$description" ] && local description="${Delimiter}$description"
 
-            _p_cmdstatusinfo_length=$((3 + ${#_p_exitcode} + ${#description}))
-            _p_cmdstatusinfo="${FailureColor} ${DownArrow}${_p_exitcode}${description} "
+            _p_cmdstatusinfo_length=$((4 + ${#_p_exitcode} + ${#description}))
+            _p_cmdstatusinfo="${FailureColor}${TriangleColor}${Triangle}${FailureColor} ${DownArrow}${_p_exitcode}${description} "
         fi
     else
-        _p_cmdstatusinfo_length=0
-        _p_cmdstatusinfo=""
+        _p_cmdstatusinfo_length=1
+        _p_cmdstatusinfo="${PwdBgColor}${TriangleColor}${Triangle}"
     fi
 }
 add-zsh-hook precmd _p_cmdstatusinfo_f
+
+# }}}
+# Last command duration info {{{
+
+_p_cmdtimeinfo_f ()
+{
+    if [ -z "$_p_timer_delta" -o "$_p_timer_delta" -eq 0 ]
+    then
+        _p_cmdtimeinfo_length=0
+        _p_cmdtimeinfo=""
+        return
+    fi
+
+    local BgColor=$(_color 0 238)
+
+    local UnitColor=$(_color 33)
+    local ValueColor=$(_color 33)
+
+    if [ "$_p_timer_delta" -lt 60 ]
+    then
+        _p_cmdtimeinfo_length=$((4 + ${#_p_timer_delta}))
+        _p_cmdtimeinfo="${BgColor} ${ValueColor}${_p_timer_delta}${UnitColor}s "
+    elif [ "$_p_timer_delta" -lt 3600 ]
+    then
+        local minutes=$(($_p_timer_delta / 60))
+        local seconds=$(($_p_timer_delta % 60))
+        _p_cmdtimeinfo_length=$((5 + ${#minutes} + ${#seconds}))
+        _p_cmdtimeinfo="${BgColor} ${ValueColor}${minutes}${UnitColor}m${ValueColor}${seconds}${UnitColor}s "
+    elif [ "$_p_timer_delta" -lt 86400 ]
+    then
+        local hours=$(($_p_timer_delta / 3600))
+        local minutes=$(($_p_timer_delta / 60 % 60))
+        _p_cmdtimeinfo_length=$((5 + ${#hours} + ${#minutes}))
+        _p_cmdtimeinfo="${BgColor} ${ValueColor}${hours}${UnitColor}h${ValueColor}${minutes}${UnitColor}m "
+    else
+        local days=$(($_p_timer_delta / 86400))
+        local hours=$(($_p_timer_delta / 3600 % 24))
+        _p_cmdtimeinfo_length=$((4 + ${#days} + ${#hours}))
+        _p_cmdtimeinfo="${BgColor} ${ValueColor}${days}${UnitColor}d${ValueColor}${hours}${UnitColor}h "
+    fi
+}
+add-zsh-hook precmd _p_cmdtimeinfo_f
 
 # }}}
 # Git info {{{
@@ -399,7 +400,7 @@ _p_prompt ()
         shell_info
         echo
     fi
-    echo "${_p_shell_info}${_p_cmdtimeinfo}${_p_cmdstatusinfo}${_p_pwdinfo}${_p_pwdperminfo}${_p_gitinfo}${_color_reset}"
+    echo "${_p_shell_info}${_p_cmdstatusinfo}${_p_cmdtimeinfo}${_p_pwdinfo}${_p_pwdperminfo}${_p_gitinfo}${_color_reset}"
 
     PROMPT=""
     PROMPT2=""
