@@ -191,9 +191,10 @@ shell_info ()
     [[ -o login ]] && local Login="login "
 
     echo "${TextColor}current date/time: ${ValueColor}$(date)${_color_reset}"
-    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells, ${ValueColor}${_colors}${TextColor} colors${_color_reset}"
-    echo "${TextColor}process chain: $(process_chain)${TextColor}"
-    echo "${TextColor}running ${Login}${ValueColor}$SHELL${TextColor} shell as $(userhost)${_color_reset}"
+    echo "${TextColor}tty: ${ValueColor}$TTY${TextColor}, X display: ${ValueColor}${DISPLAY:-none}${_p_color_reset}"
+    echo "${TextColor}terminal: ${ValueColor}$TERM${TextColor}, ${ValueColor}${_colors}${TextColor} colors, ${ValueColor}${COLUMNS}${TextColor}x${ValueColor}${LINES}${TextColor} cells${_color_reset}"
+    echo "${TextColor}process chain: $(process_chain)${_p_color_reset}"
+    echo "${TextColor}running ${Login}${ValueColor}${SHELL}${TextColor} shell as $(userhost)${_color_reset}"
 }
 
 # }}}
