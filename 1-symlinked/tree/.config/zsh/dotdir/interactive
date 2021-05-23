@@ -56,9 +56,6 @@ eval $(dircolors)
 # "command not found"
 . /usr/share/doc/pkgfile/command-not-found.zsh
 
-# disable ctrl+s/ctrl+q
-stty -ixon -ixoff
-
 # freeze terminal (disable changes of the settings except screen size)
 ttyctl -f
 
