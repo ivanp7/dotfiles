@@ -54,7 +54,7 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-j:accept,ctrl-k:kill-line -m"
 # default font
 
 export DEFAULT_FONT_NAME="xos4 Terminus"
-export DEFAULT_FONT_SIZE="10"
+export DEFAULT_FONT_SIZE="12"
 export DEFAULT_FONT="${DEFAULT_FONT_NAME}:size=${DEFAULT_FONT_SIZE}"
 
 # extra configuration
