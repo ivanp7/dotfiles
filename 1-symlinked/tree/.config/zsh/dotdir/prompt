@@ -50,6 +50,8 @@ then
     _p_git_info_color_triangle="$(_color 238)"
     _p_git_info_color_skip="$(_color 228)"
 
+    _p_prompt_postfix_color="$(_color 244)"
+
     _p_rprompt_color="$(_color 0 15)"
 else # fallback colors in case of incorrect conversion to 8 colors
     if [ -z "$_p_root" ]
@@ -80,6 +82,8 @@ else # fallback colors in case of incorrect conversion to 8 colors
     _p_git_info_color_triangle="$(_color 0)"
     _p_git_info_color_skip="$(_color 11)"
 
+    _p_prompt_postfix_color="$(_color 7)"
+
     _p_rprompt_color="$(_color 0 15)"
 fi
 
@@ -87,6 +91,7 @@ fi
 # Shared characters {{{
 
 _p_triangle=""
+_p_bracket=""
 _p_skip="▶"
 
 # }}}
@@ -284,17 +289,19 @@ _p_git_info_f ()
 
     local GitInfo="$(git_info "${BgColor}" true)"
 
+    local Postfix="${_p_bracket}"
+
     _p_git_info_length="$(echo "$GitInfo" | tail -1)"
     _p_git_info=""
     if [ "$_p_git_info_length" -eq 0 ]
     then
-        _p_git_info_length=1
-        _p_git_info="${_color_reset}${_p_pwd_info_color_triangle}${_p_triangle}"
+        _p_git_info_length=$((1 + ${#Postfix}))
+        _p_git_info="${_color_reset}${_p_pwd_info_color_triangle}${_p_triangle}${_p_prompt_postfix_color}${Postfix}"
         return
     fi
 
-    _p_git_info_length=$(($_p_git_info_length + 4))
-    _p_git_info="${BgColor}${_p_pwd_info_color_triangle}${_p_triangle} $(echo "$GitInfo" | head -1)${BgColor} ${_color_reset}${_p_git_info_color_triangle}${_p_triangle}"
+    _p_git_info_length=$(($_p_git_info_length + 4 + ${#Postfix}))
+    _p_git_info="${BgColor}${_p_pwd_info_color_triangle}${_p_triangle} $(echo "$GitInfo" | head -1)${BgColor} ${_color_reset}${_p_git_info_color_triangle}${_p_triangle}${_p_prompt_postfix_color}${Postfix}"
 
     _p_gitindicator_length=1
     _p_gitindicator="${_color_reset}${_p_git_info_color_skip}${_p_triangle}"
