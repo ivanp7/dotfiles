@@ -129,7 +129,7 @@ dir_colors ()
 his ()
 {
     unset "_p_buffers[$_p_command_number]"
-    _p_command_number=$(($_p_command_number-1))
+    unset _p_command_executed
 
     for n in {1..$#_p_buffers}; do
         if [ -z "$*" ] || echo "${_p_buffers[$n]}" | grep -q "$*"
