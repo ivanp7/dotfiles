@@ -281,8 +281,8 @@ _p_cmd_time_info_f ()
 
     local BgColor="$_p_cmd_time_info_color_bg"
 
-    local UnitColor="$_p_cmd_time_info_color_fg"
-    local ValueColor="$_p_cmd_time_info_color_fg"
+    local UnitColor="$_p_next_triangle_color"
+    local ValueColor="$_p_next_triangle_color"
 
     if [ "$_p_timer_delta" -lt 60 ]
     then
