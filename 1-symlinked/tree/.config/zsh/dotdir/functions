@@ -131,6 +131,8 @@ his ()
     unset "_p_buffers[$_p_command_number]"
     unset _p_command_executed
 
+    [ "${#_p_buffers}" -eq 0 ] && return
+
     for n in {1..$#_p_buffers}; do
         if [ -z "$*" ] || echo "${_p_buffers[$n]}" | grep -q "$*"
         then

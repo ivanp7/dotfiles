@@ -130,6 +130,7 @@ _p_prev_command_info_f ()
         fi
     else
         unset _p_timer_delta
+        unset _p_timer
         unset _p_exitcode
     fi
 
