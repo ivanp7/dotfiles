@@ -12,7 +12,9 @@
     export _p_interactive_shells_this_tty=$(($_p_interactive_shells_this_tty + 1)) ||
     export _p_interactive_shells_this_tty=1
 
-_p_intsh_indicator="${_p_interactive_shells:0:-${_p_interactive_shells_this_tty}}[${_p_interactive_shells: -${_p_interactive_shells_this_tty}}]"
+[ "${#_p_interactive_shells}" -ne "$_p_interactive_shells_this_tty" ] &&
+    _p_intsh_indicator="${_p_interactive_shells:0:-${_p_interactive_shells_this_tty}}+${_p_interactive_shells: -${_p_interactive_shells_this_tty}}" ||
+    _p_intsh_indicator="$_p_interactive_shells"
 
 # }}}
 # Color theme {{{
