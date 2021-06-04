@@ -50,7 +50,7 @@ then
     _p_cmd_time_info_color_fg="$(_color 33)"
     _p_cmd_time_info_color_triangle="$(_color 238)"
 
-    _p_prompt_postfix_color="$(_color 244)"
+    _p_prompt_postfix_color_default="$(_color 244)"
 
     _p_rprompt_color="$(_color 0 15)"
 else # fallback colors in case of incorrect conversion to 8 colors
@@ -82,7 +82,7 @@ else # fallback colors in case of incorrect conversion to 8 colors
     _p_cmd_time_info_color_fg="$(_color 12)"
     _p_cmd_time_info_color_triangle="$(_color 0)"
 
-    _p_prompt_postfix_color="$(_color 7)"
+    _p_prompt_postfix_color_default="$(_color 15)"
 
     _p_rprompt_color="$(_color 0 15)"
 fi
@@ -239,6 +239,7 @@ _p_cmd_status_info_f ()
             _p_cmd_status_info="${SuccessColorBg}${TriangleColor}${_p_triangle}${SuccessColorFg} ok "
 
             _p_next_triangle_color="$_p_cmd_status_info_color_triangle_success"
+            _p_prompt_postfix_color="$_p_cmd_status_info_color_triangle_success"
         else
             if [ "$_p_exitcode" -gt 128 -a "$_p_exitcode" -lt 163 ]
             then
@@ -257,10 +258,13 @@ _p_cmd_status_info_f ()
             _p_cmd_status_info="${FailureColorBg}${TriangleColor}${_p_triangle}${FailureColorFg} ${DownArrow}${_p_exitcode}${description} "
 
             _p_next_triangle_color="$_p_cmd_status_info_color_triangle_failure"
+            _p_prompt_postfix_color="$_p_cmd_status_info_color_triangle_failure"
         fi
     else
         _p_cmd_status_info_length=0
         _p_cmd_status_info=""
+
+        _p_prompt_postfix_color="$_p_prompt_postfix_color_default"
     fi
 }
 add-zsh-hook precmd _p_cmd_status_info_f
