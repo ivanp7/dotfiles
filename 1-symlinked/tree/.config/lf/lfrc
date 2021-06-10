@@ -428,7 +428,7 @@ map R $vidir ${(f)fs}; lf -remote "send $id reload"
 cmd paste %{{
     mode=""
     files=""
-    lf -remote 'load' | while read file
+    cat "$XDG_DATA_HOME/lf/files" | while read file
     do
         if [ -z "$mode" ]
         then mode="$file"
@@ -465,7 +465,7 @@ cmd paste %{{
 map p paste
 
 cmd rsync !{{
-    load=$(lf -remote 'load')
+    load=$(cat "$XDG_DATA_HOME/lf/files")
     mode=$(echo "$load" | sed -n '1p')
     list=$(echo "$load" | sed '1d')
     if [ $mode = 'copy' ]; then
@@ -479,7 +479,7 @@ map -p rsync
 cmd link %{{
     mode=""
     files=""
-    lf -remote 'load' | while read file
+    cat "$XDG_DATA_HOME/lf/files" | while read file
     do
         if [ -z "$mode" ]
         then mode="$file"
