@@ -290,6 +290,7 @@ map =-I !sudo cat "$f"
 
 # edit files
 map e $$EDITOR ${(f)fx}
+map -e $$EDITOR_RO ${(f)fx}
 map =e $sudo -e ${(f)fx}
 
 # edit symlink path

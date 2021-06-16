@@ -34,6 +34,7 @@ export TMPDIR=/tmp
 
 export PAGER="$HOME/.scripts/df/pager.sh"
 export EDITOR="/usr/bin/nvim"
+export EDITOR_RO="$HOME/.scripts/df/editor_ro.sh"
 export VISUAL="$EDITOR"
 export FILE="/usr/bin/lf"
 
