@@ -416,11 +416,9 @@ lfcd ()
     [ -n "$LF_LEVEL" ] && echo "$_pstree" | grep -q -- '---lf---zsh$' && exit
 
     local tmp="$(mktemp)"
-    local fid="$(mktemp)"
 
-    lf -command '$printf $id > '"$fid"'' -last-dir-path="$tmp" "$@"
+    $HOME/.scripts/df/lf.sh "$tmp" "$@"
 
-    local id="$(cat "$fid")"
     if [ -f "$tmp" ]; then
         local dir="$(cat "$tmp")"
         rm -f "$tmp"
