@@ -6,5 +6,7 @@
 *.orig
 *.rej
 
+tags
+TAGS
 Session.vim
 

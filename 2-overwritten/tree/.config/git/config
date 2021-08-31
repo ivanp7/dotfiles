@@ -6,6 +6,7 @@
 [alias]
     dif = difftool
     root = rev-parse --show-toplevel
+    ctags = !.git/hooks/ctags
 
 [diff]
     tool = nvim
@@ -28,4 +29,5 @@
 
 [init]
     defaultBranch = master
+    templatedir = ~/.config/git/template
 

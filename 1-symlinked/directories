@@ -1,3 +1,4 @@
+.config/git/template
 .config/zsh/dotdir
 .scripts/df
 bin/df
