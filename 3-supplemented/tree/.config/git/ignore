@@ -7,6 +7,6 @@
 *.rej
 
 tags
-TAGS
+*.tags
 Session.vim
 
