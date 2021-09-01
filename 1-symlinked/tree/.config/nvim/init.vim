@@ -500,6 +500,11 @@ nnoremap <silent> <leader>il :call SwitchBufferDiff('l')<CR>
 
 " }}}
 " }}}
+" built-in plugins {{{
+
+packadd termdebug
+
+" }}}
 " plug.vim {{{
 
 call plug#begin($XDG_CACHE_HOME . '/nvim/plugged')
