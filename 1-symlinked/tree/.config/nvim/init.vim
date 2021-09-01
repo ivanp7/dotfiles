@@ -514,7 +514,10 @@ nnoremap <silent> <leader>il :call SwitchBufferDiff('l')<CR>
 " }}}
 " built-in plugins {{{
 
+" ******************** termdebug **************************
+
 packadd termdebug
+let g:termdebug_wide = 1
 
 " }}}
 " plug.vim {{{
