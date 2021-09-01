@@ -85,8 +85,26 @@ inoremap <silent> <C-S> <C-O>:let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 tnoremap <silent> <C-\><C-\> <C-\><C-N>
 
 " GDB
+nnoremap <silent> <C-F5> :Program<CR>
 nnoremap <silent> <F5> :Run<CR>
 nnoremap <silent> <S-F5> :Stop<CR>
+
+nnoremap <silent> <C-F6> :Asm<CR>
+
+nnoremap <silent> <C-F7> :Source<CR>
+nnoremap <F7> :Evaluate<Space>
+
+nnoremap <silent> <C-F8> :Gdb<CR>
+nnoremap <silent> <F8><F8> :call TermDebugSendCommand(input('gdb> '))<CR>
+nnoremap <silent> <F8>c :call TermDebugSendCommand('continue')<CR>
+nnoremap <silent> <F8>d :call TermDebugSendCommand('down')<CR>
+nnoremap <silent> <F8>f :call TermDebugSendCommand('finish')<CR>
+nnoremap <silent> <F8>n :call TermDebugSendCommand('next')<CR>
+nnoremap <silent> <F8>r :call TermDebugSendCommand('run')<CR>
+nnoremap <silent> <F8>s :call TermDebugSendCommand('step')<CR>
+nnoremap <silent> <F8>u :call TermDebugSendCommand('up')<CR>
+nnoremap <silent> <F8>v :call TermDebugSendCommand('info locals')<CR>
+nnoremap <silent> <F8>w :call TermDebugSendCommand('where')<CR>
 
 nnoremap <silent> <F9> :Break<CR>
 nnoremap <silent> <S-F9> :Clear<CR>
@@ -94,13 +112,6 @@ nnoremap <silent> <S-F9> :Clear<CR>
 nnoremap <silent> <F10> :Over<CR>
 nnoremap <silent> <F11> :Step<CR>
 nnoremap <silent> <S-F11> :Finish<CR>
-
-nnoremap <C-F7> :call TermDebugSendCommand('')<left><left>
-nnoremap <silent> <F7>c :call TermDebugSendCommand('continue')<CR>
-nnoremap <silent> <F7>u :call TermDebugSendCommand('up')<CR>
-nnoremap <silent> <F7>d :call TermDebugSendCommand('down')<CR>
-nnoremap <silent> <F7>v :call TermDebugSendCommand('info locals')<CR>
-nnoremap <silent> <F7>w :call TermDebugSendCommand('where')<CR>
 
 " }}}
 " movement mappings {{{
@@ -691,7 +702,7 @@ command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-hea
 
 " ********************* tagbar ******************************
 
-nmap <F8> :TagbarToggle<CR>
+nmap <F4> :TagbarToggle<CR>
 
 " }}}
 " tmux integration {{{
