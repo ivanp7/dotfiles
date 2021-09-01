@@ -57,9 +57,6 @@ set shada+='1000,n$XDG_CACHE_HOME/nvim/info
 " }}}
 " custom mappings {{{
 
-" Reload vimrc
-map <F5> :source $MYVIMRC<CR>
-
 " Record into register 'q', playback with 'Q'
 nnoremap Q @q
 
@@ -86,6 +83,24 @@ inoremap <silent> <C-S> <C-O>:let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 
 " Lose terminal focus
 tnoremap <silent> <C-\><C-\> <C-\><C-N>
+
+" GDB
+nnoremap <silent> <F5> :Run<CR>
+nnoremap <silent> <S-F5> :Stop<CR>
+
+nnoremap <silent> <F9> :Break<CR>
+nnoremap <silent> <S-F9> :Clear<CR>
+
+nnoremap <silent> <F10> :Over<CR>
+nnoremap <silent> <F11> :Step<CR>
+nnoremap <silent> <S-F11> :Finish<CR>
+
+nnoremap <C-F7> :call TermDebugSendCommand('')<left><left>
+nnoremap <silent> <F7>c :call TermDebugSendCommand('continue')<CR>
+nnoremap <silent> <F7>u :call TermDebugSendCommand('up')<CR>
+nnoremap <silent> <F7>d :call TermDebugSendCommand('down')<CR>
+nnoremap <silent> <F7>v :call TermDebugSendCommand('info locals')<CR>
+nnoremap <silent> <F7>w :call TermDebugSendCommand('where')<CR>
 
 " }}}
 " movement mappings {{{
@@ -144,9 +159,6 @@ nnoremap <silent> <leader>yd :CopyFileDirectory<CR>
 " Visual mode blockwise indent
 vmap > >gv
 vmap < <gv
-
-" Ident the whole buffer
-map <F7> mzgg=G`z
 
 " }}}
 " search&replace mappings {{{
@@ -577,6 +589,9 @@ highlight LineNr            guifg=#999999
 highlight MatchParen        guifg=#ffffff guibg=#ff0000
 highlight ColorColumn       guibg=#3a3a3a
 highlight IncSearch         guifg=#aa2200 guibg=#ffffff
+
+highlight debugPC           guibg=#4444aa
+highlight debugBreakPoint   guibg=#aa0000
 
 " terminal colors
 
