@@ -157,12 +157,12 @@ command! CopyAbsolutePathAndLine let @" = expand("%:p") . ":" . line('.') | exe 
 command! CopyFileName            let @" = expand("%:t")                   | exe 'CCO' | call TmuxYank()
 command! CopyFileDirectory       let @" = expand("%:p:h")                 | exe 'CCO' | call TmuxYank()
 
-nnoremap <silent> <leader>yp :CopyRelativePath<CR>
-nnoremap <silent> <leader>yl :CopyRelativePathAndLine<CR>
-nnoremap <silent> <leader>yP :CopyAbsolutePath<CR>
-nnoremap <silent> <leader>yL :CopyAbsolutePathAndLine<CR>
 nnoremap <silent> <leader>yn :CopyFileName<CR>
 nnoremap <silent> <leader>yd :CopyFileDirectory<CR>
+nnoremap <silent> <leader>ypp :CopyAbsolutePath<CR>
+nnoremap <silent> <leader>ypl :CopyAbsolutePathAndLine<CR>
+nnoremap <silent> <leader>ypP :CopyRelativePath<CR>
+nnoremap <silent> <leader>ypL :CopyRelativePathAndLine<CR>
 
 " }}}
 " indentation mappings {{{
@@ -214,9 +214,22 @@ function! GetVisual(type) range
     return escaped_selection
 endfunction
 
-vmap <leader>v <Esc>/<c-r>=GetVisual(0)<cr>
+function! ReplaceWith() abort
+    let expr = GetVisual(0)
+    let expr_str = GetVisual(1)
+
+    call inputsave()
+    let new_expr = input('replace /' . expr . '/ with: ', expr_str)
+    call inputrestore()
+
+    if new_expr != expr_str
+        execute '%s/' . expr . '/' . new_expr . '/gc'
+    endif
+endfunction
+
+vmap <leader>v <Esc>/<C-r>=GetVisual(0)<CR><CR>
 vmap <leader>z <Esc>:%s/<c-r>=GetVisual(0)<cr>//gc<left><left><left>
-vmap <leader>Z <Esc>:%s/<c-r>=GetVisual(0)<cr>/<c-r>=GetVisual(1)<cr>/gc<left><left><left>
+vmap <silent> <leader>Z <Esc>:call ReplaceWith()<CR>
 
 " }}}
 " user interface operations mappings {{{
@@ -711,10 +724,10 @@ nmap <F4> :TagbarToggle<CR>
 
 let g:tmux_navigator_no_mappings = 1
 
-nnoremap <silent> <C-M-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <C-M-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <C-M-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <C-M-l> :TmuxNavigateRight<cr>
+nnoremap <silent> <C-M-h> :TmuxNavigateLeft<CR>
+nnoremap <silent> <C-M-j> :TmuxNavigateDown<CR>
+nnoremap <silent> <C-M-k> :TmuxNavigateUp<CR>
+nnoremap <silent> <C-M-l> :TmuxNavigateRight<CR>
 
 " Disable tmux navigator when zooming the Vim pane
 let g:tmux_navigator_disable_when_zoomed = 1
@@ -781,8 +794,8 @@ let g:vlime_force_default_keys = v:true
 
 function! VlimeEnableInteractionMode()
     let b:vlime_interaction_mode = v:true
-    nnoremap <buffer> <silent> <cr> :call vlime#plugin#SendToREPL(vlime#ui#CurExprOrAtom())<cr>
-    vnoremap <buffer> <silent> <cr> :<c-u>call vlime#plugin#SendToREPL(vlime#ui#CurSelection())<cr>
+    nnoremap <buffer> <silent> <CR> :call vlime#plugin#SendToREPL(vlime#ui#CurExprOrAtom())<CR>
+    vnoremap <buffer> <silent> <CR> :<c-u>call vlime#plugin#SendToREPL(vlime#ui#CurSelection())<CR>
 endfunction
 
 autocmd FileType lisp call VlimeEnableInteractionMode()
