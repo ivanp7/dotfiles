@@ -214,7 +214,7 @@ function! GetVisual(type) range
     return escaped_selection
 endfunction
 
-function! ReplaceWith() abort
+function! ReplaceWith()
     let expr = GetVisual(0)
     let expr_str = GetVisual(1)
 
@@ -232,7 +232,9 @@ function! ReplaceWith() abort
     execute scope . 's/' . expr . '/' . new_expr . '/gc'
 endfunction
 
+vmap <leader>/ <Esc>/<C-r>=GetVisual(0)<CR>
 vmap <leader>v <Esc>/<C-r>=GetVisual(0)<CR><CR>
+vmap <leader>V <Esc>/\<<C-r>=GetVisual(0)<CR>\><CR>
 vmap <leader>z <Esc>:%s/<c-r>=GetVisual(0)<cr>//gc<left><left><left>
 vmap <silent> <leader>Z <Esc>:call ReplaceWith()<CR>
 
