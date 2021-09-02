@@ -220,11 +220,16 @@ function! ReplaceWith() abort
 
     call inputsave()
     let new_expr = input('replace /' . expr . '/ with: ', expr_str)
+
+    if new_expr == expr_str
+        call inputrestore()
+        return
+    endif
+
+    let scope = input('replace /' . expr . '/ with /' . new_expr . '/ in: ', '%')
     call inputrestore()
 
-    if new_expr != expr_str
-        execute '%s/' . expr . '/' . new_expr . '/gc'
-    endif
+    execute scope . 's/' . expr . '/' . new_expr . '/gc'
 endfunction
 
 vmap <leader>v <Esc>/<C-r>=GetVisual(0)<CR><CR>
