@@ -701,8 +701,8 @@ set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 " ********************* fzf.vim *****************************
 
 nnoremap <silent> <leader>u :Buffers<CR>
-nnoremap <silent> <leader>f :Files<CR>
-nnoremap <silent> <leader>F :GFiles<CR>
+nnoremap <silent> <leader>f :GFiles<CR>
+nnoremap <silent> <leader>F :Files<CR>
 
 nnoremap <silent> <leader>g :Rg<CR>
 nnoremap <silent> <leader>G :Lines<CR>
