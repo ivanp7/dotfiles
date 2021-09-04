@@ -174,6 +174,27 @@ vmap < <gv
 " }}}
 " search&replace mappings {{{
 
+" Get the current visual block for search and replaces
+" This function passed the visual block through a string escape function
+" Based on this - https://stackoverflow.com/questions/676600/vim-replace-selected-text/677918#677918
+function! GetVisual() range
+    " Save the current register and clipboard
+    let reg_save = getreg('"')
+    let regtype_save = getregtype('"')
+    let cb_save = &clipboard
+    set clipboard&
+
+    " Put the current visual selection in the " register
+    normal! ""gvy
+    let selection = getreg('"')
+
+    " Put the saved registers and clipboards back
+    call setreg('"', reg_save, regtype_save)
+    let &clipboard = cb_save
+
+    return selection
+endfunction
+
 " Escape special characters in a string for exact matching.
 " This is useful to copying strings from the file to the search tool
 " Based on this - http://peterodding.com/code/vim/profile/autoload/xolox/escape.vim
@@ -193,20 +214,8 @@ endfunction
 " Get the current visual block for search and replaces
 " This function passed the visual block through a string escape function
 " Based on this - https://stackoverflow.com/questions/676600/vim-replace-selected-text/677918#677918
-function! GetVisual(type) range
-    " Save the current register and clipboard
-    let reg_save = getreg('"')
-    let regtype_save = getregtype('"')
-    let cb_save = &clipboard
-    set clipboard&
-
-    " Put the current visual selection in the " register
-    normal! ""gvy
-    let selection = getreg('"')
-
-    " Put the saved registers and clipboards back
-    call setreg('"', reg_save, regtype_save)
-    let &clipboard = cb_save
+function! GetEscapedVisual(type) range
+    let selection = GetVisual()
 
     "Escape any special characters in the selection
     let escaped_selection = EscapeString(selection, a:type)
@@ -214,9 +223,13 @@ function! GetVisual(type) range
     return escaped_selection
 endfunction
 
+vnoremap <leader>v <Esc>/<C-r>=GetEscapedVisual(0)<CR><CR>
+vnoremap <leader>V <Esc>/\<<C-r>=GetEscapedVisual(0)<CR>\><CR>
+vnoremap <leader>z <Esc>:%s/<c-r>=GetEscapedVisual(0)<cr>//gc<left><left><left>
+
 function! ReplaceWith()
-    let expr = GetVisual(0)
-    let expr_str = GetVisual(1)
+    let expr = GetEscapedVisual(0)
+    let expr_str = GetEscapedVisual(1)
 
     call inputsave()
     let new_expr = input('replace /' . expr . '/ with: ', expr_str)
@@ -232,11 +245,7 @@ function! ReplaceWith()
     execute scope . 's/' . expr . '/' . new_expr . '/gc'
 endfunction
 
-vmap <leader>/ <Esc>/<C-r>=GetVisual(0)<CR>
-vmap <leader>v <Esc>/<C-r>=GetVisual(0)<CR><CR>
-vmap <leader>V <Esc>/\<<C-r>=GetVisual(0)<CR>\><CR>
-vmap <leader>z <Esc>:%s/<c-r>=GetVisual(0)<cr>//gc<left><left><left>
-vmap <silent> <leader>Z <Esc>:call ReplaceWith()<CR>
+vnoremap <silent> <leader>Z <Esc>:call ReplaceWith()<CR>
 
 " }}}
 " user interface operations mappings {{{
@@ -705,10 +714,15 @@ nnoremap <silent> <leader>f :GFiles<CR>
 nnoremap <silent> <leader>F :Files<CR>
 
 nnoremap <silent> <leader>g :Rg<CR>
+vnoremap <silent> <leader>g <Esc>:execute ':Rg ' . GetVisual()<CR>
 nnoremap <silent> <leader>G :Lines<CR>
+vnoremap <silent> <leader>G <Esc>:execute ':Lines ' . GetVisual()<CR>
 nnoremap <silent> <leader>/ :BLines<CR>
-nnoremap <silent> <leader>' :Marks<CR>
+vnoremap <silent> <leader>/ <Esc>:execute ':BLines ' . GetVisual()<CR>
 nnoremap <silent> <leader>a :Tags<CR>
+vnoremap <silent> <leader>a <Esc>:execute ':Tags ' . GetVisual()<CR>
+
+nnoremap <silent> <leader>' :Marks<CR>
 
 nnoremap <silent> <leader>: :Commands<CR>
 
