@@ -174,6 +174,8 @@ vmap < <gv
 " }}}
 " search&replace mappings {{{
 
+nnoremap <silent> <leader>o :noh<CR>
+
 " Get the current visual block for search and replaces
 " This function passed the visual block through a string escape function
 " Based on this - https://stackoverflow.com/questions/676600/vim-replace-selected-text/677918#677918
