@@ -603,6 +603,9 @@ Plug 'jabirali/vim-tmux-yank'
 Plug 'tmux-plugins/vim-tmux'
 Plug 'edkolev/tmuxline.vim'
 
+" Development
+Plug 'neomake/neomake'
+
 " S-expressions and Lisp
 Plug 'guns/vim-sexp'
 Plug 'tpope/vim-sexp-mappings-for-regular-people'
@@ -754,6 +757,24 @@ nnoremap <silent> <C-M-l> :TmuxNavigateRight<CR>
 
 " Disable tmux navigator when zooming the Vim pane
 let g:tmux_navigator_disable_when_zoomed = 1
+
+" }}}
+" development {{{
+
+" Neomake
+let g:neomake_c_enabled_makers = ['cppcheck']
+let g:neomake_c_cppcheck_maker = {
+   \ 'args': ['--enable=warning,style,performance,portability,information', '--language=c'],
+   \}
+
+let g:neomake_cpp_enabled_makers = ['cppcheck']
+let g:neomake_cpp_cppcheck_maker = {
+   \ 'args': ['--enable=warning,style,performance,portability,information', '--language=c++'],
+   \}
+
+" Full config: when writing or reading a buffer, and on changes in insert and
+" normal mode (after 500ms; no delay when writing).
+call neomake#configure#automake('nrwi', 500)
 
 " }}}
 " s-expressions and Lisp {{{
