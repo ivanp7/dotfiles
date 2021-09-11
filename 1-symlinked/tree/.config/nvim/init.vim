@@ -81,38 +81,52 @@ nnoremap <silent> <C-^> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 nnoremap <silent> <C-S> :let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 inoremap <silent> <C-S> <C-O>:let &iminsert = (&iminsert == 0 ? 1 : 0)<CR>
 
-" Lose terminal focus
+" Unfocus terminal
 tnoremap <silent> <C-\><C-\> <C-\><C-N>
 
-" GDB
-nnoremap <silent> <C-F5> :Program<CR>
-nnoremap <silent> <F5> :Run<CR>
-nnoremap <silent> <S-F5> :Stop<CR>
+" GDB ------------------------------------------------------------------------
 
-nnoremap <silent> <C-F6> :Asm<CR>
-
-nnoremap <silent> <C-F7> :Source<CR>
-nnoremap <F7> :Evaluate<Space>
-
-nnoremap <silent> <C-F8> :Gdb<CR>
-nnoremap <silent> <F8><F8> :call TermDebugSendCommand(input('gdb> '))<CR>
+" info
 nnoremap <silent> <F8>a :call TermDebugSendCommand('info args')<CR>
-nnoremap <silent> <F8>c :call TermDebugSendCommand('continue')<CR>
-nnoremap <silent> <F8>d :call TermDebugSendCommand('down')<CR>
-nnoremap <silent> <F8>f :call TermDebugSendCommand('finish')<CR>
-nnoremap <silent> <F8>n :call TermDebugSendCommand('next')<CR>
-nnoremap <silent> <F8>r :call TermDebugSendCommand('run')<CR>
-nnoremap <silent> <F8>s :call TermDebugSendCommand('step')<CR>
-nnoremap <silent> <F8>u :call TermDebugSendCommand('up')<CR>
+nnoremap <silent> <F8>t :call TermDebugSendCommand('info threads')<CR>
 nnoremap <silent> <F8>v :call TermDebugSendCommand('info locals')<CR>
 nnoremap <silent> <F8>w :call TermDebugSendCommand('where')<CR>
 
+" stack navigation
+nnoremap <silent> <F8>u :call TermDebugSendCommand('up')<CR>
+nnoremap <silent> <F8>d :call TermDebugSendCommand('down')<CR>
+
+" stepping
+nnoremap <silent> <F8>c :call TermDebugSendCommand('continue')<CR>
+nnoremap <silent> <F8>f :call TermDebugSendCommand('finish')<CR>
+nnoremap <silent> <F8>n :call TermDebugSendCommand('next')<CR>
+nnoremap <silent> <F8>N :call TermDebugSendCommand('nexti')<CR>
+nnoremap <silent> <F8>s :call TermDebugSendCommand('step')<CR>
+nnoremap <silent> <F8>S :call TermDebugSendCommand('stepi')<CR>
+
+" starting
+nnoremap <silent> <F8>r :call TermDebugSendCommand('run')<CR>
+nnoremap <silent> <F8>R :call TermDebugSendCommand('start')<CR>
+
+" other
+nnoremap <silent> <F8><F8> :call TermDebugSendCommand(input('gdb> '))<CR>
+nnoremap <F8><Space> :Evaluate<Space>
+
+" quick actions
+nnoremap <silent> <F5> :Run<CR>
+nnoremap <silent> <F6> :Stop<CR>
+
+nnoremap <silent> <F7> :Gdb<CR>A
+
+nnoremap <silent> <F8>b :Break<CR>
+nnoremap <silent> <F8>B :Clear<CR>
 nnoremap <silent> <F9> :Break<CR>
 nnoremap <silent> <S-F9> :Clear<CR>
 
 nnoremap <silent> <F10> :Over<CR>
 nnoremap <silent> <F11> :Step<CR>
 nnoremap <silent> <S-F11> :Finish<CR>
+nnoremap <silent> <F12> :Finish<CR>
 
 " }}}
 " movement mappings {{{
