@@ -245,7 +245,9 @@ function! ReplaceWith()
     let scope = input('replace /' . expr . '/ with /' . new_expr . '/ in: ', '%')
     call inputrestore()
 
-    execute scope . 's/' . expr . '/' . new_expr . '/gc'
+    let command = scope . 's/' . expr . '/' . new_expr . '/gc'
+    execute command
+    call histadd("cmd", command)
 endfunction
 
 vnoremap <silent> <leader>Z <Esc>:call ReplaceWith()<CR>
