@@ -96,6 +96,7 @@ nnoremap <F7> :Evaluate<Space>
 
 nnoremap <silent> <C-F8> :Gdb<CR>
 nnoremap <silent> <F8><F8> :call TermDebugSendCommand(input('gdb> '))<CR>
+nnoremap <silent> <F8>a :call TermDebugSendCommand('info args')<CR>
 nnoremap <silent> <F8>c :call TermDebugSendCommand('continue')<CR>
 nnoremap <silent> <F8>d :call TermDebugSendCommand('down')<CR>
 nnoremap <silent> <F8>f :call TermDebugSendCommand('finish')<CR>
