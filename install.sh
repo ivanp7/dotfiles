@@ -1,33 +1,83 @@
 #!/bin/sh
 
-CONF_DIR="$(realpath "$(dirname "$0")")"
-UNINST_SCRIPT=$HOME/.config/uninstall-dotfiles.sh
+: ${INSTALLATION_DIRECTORY:="/usr/local/share/dotfiles"}
+: ${HOME_DOTFILES_PATH:=".local/share/dotfiles"}
+: ${HOME_UNINSTALLER_PATH:=".local/share/uninstall-dotfiles.sh"}
 
-if [ -f "$UNINST_SCRIPT" ]
+if [ "$(id -u)" -ne 0 ]
 then
-    echo 'dotfiles seems to be already installed!'
+    echo "This script must be run under root. Terminating..."
     exit 1
 fi
 
-mkdir -p $HOME/.config
-echo '#!/bin/sh' > $UNINST_SCRIPT
-chmod 744 $UNINST_SCRIPT
+if [ -d "$INSTALLATION_DIRECTORY" ]
+then
+    echo "Installation directory '$INSTALLATION_DIRECTORY' already exist. Terminating..."
+    exit 1
+fi
+
+guard_path ()
+{
+    echo "'$(echo "$1" | sed "s/'/'\"'\"'/g")'"
+}
+
+mkdir -p -- "$INSTALLATION_DIRECTORY"
+
+echo "#!/bin/sh
+exec $(guard_path "$HOME/$HOME_UNINSTALLER_PATH")
+" > "$INSTALLATION_DIRECTORY/uninstall.sh"
+chmod 755 "$INSTALLATION_DIRECTORY/uninstall.sh"
+
+echo "#!/bin/sh
+cd -- \"\$(dirname \"\$0\")\"
+
+guard_path ()
+{
+    echo \"'\$(echo \"\$1\" | sed \"s/'/'\\\"'\\\"'/g\")'\"
+}
+
+DOTFILES=$(guard_path "$HOME/$HOME_DOTFILES_PATH")
+UNINSTALLER=$(guard_path "$HOME/$HOME_UNINSTALLER_PATH")
+
+[ -f \"\$UNINSTALLER\" ] && {
+    echo \"dotfiles seems to be already installed!\"
+    exit 1
+}
+
+mkdir -p -- \"\$(dirname -- \"\$DOTFILES\")\"
+ln -sfT -- \"$INSTALLATION_DIRECTORY\" \"\$DOTFILES\"
+" > "$INSTALLATION_DIRECTORY/install.sh"
+chmod 755 "$INSTALLATION_DIRECTORY/install.sh"
 
 echo '
-delete_empty_directory ()
-{
-    [ -d "$1" ] && rmdir --ignore-fail-on-non-empty -p "$1"
-}
-' >> $UNINST_SCRIPT
+mkdir -p -- "$(dirname -- "$UNINSTALLER")"
+echo "#!/bin/sh" > "$UNINSTALLER"
+chmod 755 "$UNINSTALLER"
 
-for category in $(find "$CONF_DIR" -mindepth 1 -maxdepth 1 -type d \! -name ".git" | sort)
+add_directory_uninstallation_instruction ()
+{
+    echo "uninstall_directory_if_empty $(guard_path "$HOME/$1")" >> "$UNINSTALLER"
+}
+
+echo "
+uninstall_directory_if_empty ()
+{
+    [ -d \"\$1\" ] && rmdir --ignore-fail-on-non-empty -p -- \"\$1\"
+}
+" >> "$UNINSTALLER"
+
+' >> "$INSTALLATION_DIRECTORY/install.sh"
+
+for category in $(find . -mindepth 1 -maxdepth 1 -type d \! -name ".git" | sort)
 do
-    echo "> Installing '$(basename $category)'..."
-    $category/install.sh $UNINST_SCRIPT
-    echo >> $UNINST_SCRIPT
+    cd -- "$(dirname "$0")/$category"
+    . "./.install.sh"
 done
 
 echo '
-rm -f "$(realpath "$0")"
-' >> $UNINST_SCRIPT
+echo "
+rm -f -- $(guard_path "$DOTFILES")
+rm -f -- \"\$(realpath -- \"\$0\")\"
+" >> "$UNINSTALLER"
+' >> "$INSTALLATION_DIRECTORY/install.sh"
 

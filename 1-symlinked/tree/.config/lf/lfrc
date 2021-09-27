@@ -174,7 +174,7 @@ map td push ::mkdir<space>
 # touch
 map tt %touch ${(f)fx}; lf -remote "send $id reload"
 # create file
-cmd touch %touch "$(echo "$@")"; lf -remote "send $id reload"
+cmd touch %touch -- "$(echo "$@")"; lf -remote "send $id reload"
 map tf push ::touch<space>
 
 # set permissions

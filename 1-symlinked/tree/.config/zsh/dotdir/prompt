@@ -496,7 +496,7 @@ _p_prompt ()
 
     if [ ! -f "$TMPDIR_CURRENT/shell_info/$TTY/$$" ]
     then
-        touch "$TMPDIR_CURRENT/shell_info/$TTY/$$"
+        touch -- "$TMPDIR_CURRENT/shell_info/$TTY/$$"
         separator
         shell_info
         echo

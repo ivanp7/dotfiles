@@ -25,7 +25,6 @@ _color_no_blink="\033[25m"
 # Aliases {{{
 
 alias sudo='sudo '
-
 alias sudoenv="sudo --preserve-env=$SUDO_PRESERVE_ENV "
 alias sush='sudo_shell '
 
@@ -37,18 +36,15 @@ alias ls='ls --group-directories-first --color=auto'
 alias ll='ls --group-directories-first -alF'
 alias la='ls --group-directories-first -A'
 alias l='ls --group-directories-first -CF'
-
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-
 alias diff='diff --color=auto'
 
 alias less="$PAGER"
-
 alias nv='nvim'
-
 alias lf='lfcd'
+alias w3m="$HOME/.scripts/df/browser.sh"
 
 alias d='dirs -v | head'
 alias 0=':'
@@ -63,7 +59,6 @@ alias 8='cd -8'
 alias 9='cd -9'
 
 alias ssh_='TERM=xterm-256color ssh '
-
 alias pwd_='printf "%q\n" "$(pwd)"'
 
 # }}}

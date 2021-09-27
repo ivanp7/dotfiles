@@ -1,8 +1,8 @@
 # Configuration {{{
 
 # zsh directories
-mkdir -p "$XDG_CACHE_HOME/zsh"
-mkdir -p "$XDG_DATA_HOME/zsh"
+mkdir -p -- "$XDG_CACHE_HOME/zsh"
+mkdir -p -- "$XDG_DATA_HOME/zsh"
 
 # options
 HISTFILE="$XDG_DATA_HOME/zsh/history"
@@ -63,22 +63,22 @@ ttyctl -f
 # Temporary files {{{
 
 # pid file handling
-mkdir -p "$TMPDIR_CURRENT/pid/$TTY"
+mkdir -p -- "$TMPDIR_CURRENT/pid/$TTY"
 echo "$PARENT_SHELL_PID" > "$TMPDIR_CURRENT/pid/$TTY/$$"
 
 # shell_info file handling
-mkdir -p "$TMPDIR_CURRENT/shell_info/$TTY"
-touch "$TMPDIR_CURRENT/shell_info/$TTY/$$"
+mkdir -p -- "$TMPDIR_CURRENT/shell_info/$TTY"
+touch -- "$TMPDIR_CURRENT/shell_info/$TTY/$$"
 
 [ -n "$PARENT_SHELL_PID" -a -f "$TMPDIR_CURRENT/shell_info/$TTY/$PARENT_SHELL_PID" ] &&
-    rm "$TMPDIR_CURRENT/shell_info/$TTY/$PARENT_SHELL_PID"
+    rm -- "$TMPDIR_CURRENT/shell_info/$TTY/$PARENT_SHELL_PID"
 
 uninit_shell ()
 {
     [ -f "$TMPDIR_CURRENT/pid/$TTY/$$" ] &&
-        rm "$TMPDIR_CURRENT/pid/$TTY/$$"
+        rm -- "$TMPDIR_CURRENT/pid/$TTY/$$"
     [ -f "$TMPDIR_CURRENT/shell_info/$TTY/$$" ] &&
-        rm "$TMPDIR_CURRENT/shell_info/$TTY/$$"
+        rm -- "$TMPDIR_CURRENT/shell_info/$TTY/$$"
     true
 }
 

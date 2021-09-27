@@ -20,7 +20,7 @@ if mountpoint -q "$MOUNTPOINT"
 then echo "Error: directory '$MOUNTPOINT' is a mountpoint already."; exit 1
 fi
 
-sudo mkdir -p "$MOUNTPOINT"
+sudo mkdir -p -- "$MOUNTPOINT"
 
 MOUNT_OPTIONS="$3"
 MOUNT_OPTIONS_EXTRA="$4"
