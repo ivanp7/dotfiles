@@ -36,8 +36,8 @@ guard_path ()
     echo \"'\$(echo \"\$1\" | sed \"s/'/'\\\"'\\\"'/g\")'\"
 }
 
-DOTFILES=$(guard_path "$HOME/$HOME_DOTFILES_PATH")
-UNINSTALLER=$(guard_path "$HOME/$HOME_UNINSTALLER_PATH")
+DOTFILES=\"\$HOME\"/$(guard_path "$HOME_DOTFILES_PATH")
+UNINSTALLER=\"\$HOME\"/$(guard_path "$HOME_UNINSTALLER_PATH")
 
 [ -f \"\$UNINSTALLER\" ] && {
     echo \"dotfiles seems to be already installed!\"
