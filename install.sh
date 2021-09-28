@@ -1,8 +1,9 @@
 #!/bin/sh
 
-: ${INSTALLATION_DIRECTORY:="/usr/local/share/dotfiles"}
-: ${HOME_DOTFILES_PATH:=".local/share/dotfiles"}
-: ${HOME_UNINSTALLER_PATH:=".local/share/uninstall-dotfiles.sh"}
+: ${NAME:="dotfiles"}
+: ${INSTALLATION_DIRECTORY:="/usr/local/share/$NAME"}
+: ${HOME_DOTFILES_PATH:=".local/share/$NAME"}
+: ${HOME_UNINSTALLER_PATH:=".local/share/uninstall-$NAME.sh"}
 
 if [ "$(id -u)" -ne 0 ]
 then
@@ -40,7 +41,7 @@ DOTFILES=\"\$HOME\"/$(guard_path "$HOME_DOTFILES_PATH")
 UNINSTALLER=\"\$HOME\"/$(guard_path "$HOME_UNINSTALLER_PATH")
 
 [ -f \"\$UNINSTALLER\" ] && {
-    echo \"dotfiles seems to be already installed!\"
+    echo \"$NAME seems to be already installed!\"
     exit 1
 }
 
