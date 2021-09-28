@@ -146,30 +146,10 @@ zle -N edit_command_in_vim
 bindkey '^v' edit_command_in_vim
 bindkey -M vicmd '^v' edit_command_in_vim
 
-fzf_cd ()
-{
-    dir="$({
-        if [ "$PWD" != "/" ]
-        then
-            cur="${PWD%/*}"
-            while [ -n "$cur" ]
-            do
-                echo "$cur"
-                cur="${cur%/*}"
-            done
-            echo "/"
-        fi
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
 
-        find -L . -mindepth 1 -maxdepth 10 -type d -printf '%P\n' 2> /dev/null
-    } | fzf +m --header="$PWD")" || return 0
-
-    cd -- "$dir"
-    zle push-line
-    zle accept-line
-}
-zle -N fzf_cd
-
-bindkey '^g' fzf_cd
+bindkey '^y' fzf-cd-widget
 
 typeset -A _p_buffers
 
@@ -181,7 +161,7 @@ rep ()
 }
 zle -N rep
 
-bindkey '^r' rep
+bindkey '^g' rep
 
 exit_zsh ()
 {
