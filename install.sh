@@ -1,15 +1,29 @@
 #!/bin/sh
 
-: ${NAME:="dotfiles"}
-: ${INSTALLATION_DIRECTORY:="/usr/local/share/$NAME"}
-: ${HOME_DOTFILES_PATH:=".local/share/$NAME"}
-: ${HOME_UNINSTALLER_PATH:=".local/share/uninstall-$NAME.sh"}
-
 if [ "$(id -u)" -ne 0 ]
 then
     echo "This script must be run under root. Terminating..."
     exit 1
 fi
+
+cd -- "$(dirname -- "$0")"
+
+if [ -n "$1" ]
+then
+    if [ ! -d "plugins/$1" ]
+    then
+        echo "Plugin '$1' does not exist. Terminating..."
+        exit 1
+    fi
+
+    NAME="$1"
+    cd "plugins/$1"
+fi
+
+: ${NAME:="dotfiles"}
+: ${INSTALLATION_DIRECTORY:="/usr/local/share/$NAME"}
+: ${HOME_DOTFILES_PATH:=".local/share/$NAME"}
+: ${HOME_UNINSTALLER_PATH:=".local/share/uninstall-$NAME.sh"}
 
 if [ -d "$INSTALLATION_DIRECTORY" ]
 then
@@ -17,7 +31,6 @@ then
     exit 1
 fi
 
-cd -- "$(dirname -- "$0")"
 SCRIPT_DIRECTORY="$PWD"
 
 guard_path ()
