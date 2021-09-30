@@ -7,6 +7,7 @@ then
 fi
 
 cd -- "$(dirname -- "$0")"
+SCRIPT_DIRECTORY="$PWD"
 
 if [ -n "$1" ]
 then
@@ -31,7 +32,7 @@ then
     exit 1
 fi
 
-SCRIPT_DIRECTORY="$PWD"
+PLUGIN_DIRECTORY="$PWD"
 
 guard_path ()
 {
@@ -41,7 +42,7 @@ guard_path ()
 mkdir -p -- "$INSTALLATION_DIRECTORY"
 
 echo "#!/bin/sh
-exec $(guard_path "$HOME/$HOME_UNINSTALLER_PATH")
+exec \"\$HOME\"/$(guard_path "$HOME_UNINSTALLER_PATH")
 " > "$INSTALLATION_DIRECTORY/uninstall.sh"
 chmod 755 "$INSTALLATION_DIRECTORY/uninstall.sh"
 
@@ -85,10 +86,19 @@ uninstall_directory_if_empty ()
 
 ' >> "$INSTALLATION_DIRECTORY/install.sh"
 
-for category in $(find . -mindepth 1 -maxdepth 1 -type d \! -name ".git" | sort)
+for category in $(find . -mindepth 1 -maxdepth 1 -type d \! -name ".git" \! -name "plugins" | sort)
 do
-    cd -- "$SCRIPT_DIRECTORY/$category"
-    . "./.install.sh"
+    cd -- "$PLUGIN_DIRECTORY/$category"
+    CATEGORY_INSTALLER="./.install.sh"
+    if [ -f "$CATEGORY_INSTALLER" ]
+    then . "$CATEGORY_INSTALLER"
+    else
+        CATEGORY_INSTALLER="$SCRIPT_DIRECTORY/$category/.install.sh"
+        if [ -f "$CATEGORY_INSTALLER" ]
+        then . "$CATEGORY_INSTALLER"
+        else echo "Installer is not available for $category in $NAME"
+        fi
+    fi
 done
 
 echo '
