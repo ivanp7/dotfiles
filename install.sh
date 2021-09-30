@@ -17,7 +17,8 @@ then
     exit 1
 fi
 
-SCRIPT_DIRECTORY="$(dirname -- "$0")"
+cd -- "$(dirname -- "$0")"
+SCRIPT_DIRECTORY="$PWD"
 
 guard_path ()
 {
