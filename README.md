@@ -13,5 +13,5 @@ Dotfiles
 
 5) To uninstall dotfiles for a user, run `/usr/local/share/dotfiles/uninstall.sh` as that user
 
-6) Repeat for each plugin to be uninstalled, but run `/usr/local/share/<plugin name>/install.sh` this time
+6) Repeat for each plugin to be uninstalled, but run `/usr/local/share/<plugin name>/uninstall.sh` this time
 
