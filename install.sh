@@ -17,6 +17,8 @@ then
     exit 1
 fi
 
+SCRIPT_DIRECTORY="$(dirname -- "$0")"
+
 guard_path ()
 {
     echo "'$(echo "$1" | sed "s/'/'\"'\"'/g")'"
@@ -71,7 +73,7 @@ uninstall_directory_if_empty ()
 
 for category in $(find . -mindepth 1 -maxdepth 1 -type d \! -name ".git" | sort)
 do
-    cd -- "$(dirname "$0")/$category"
+    cd -- "$SCRIPT_DIRECTORY/$category"
     . "./.install.sh"
 done
 
