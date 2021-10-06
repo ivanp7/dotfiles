@@ -254,8 +254,16 @@ map tM unmount_rmdir
 # }}}
 # Previewing & editing {{{
 
-# preview
-cmd preview ${{
+# preview files
+map i $$PAGER "$f"
+map I $$PAGER_BIN "$f"
+map =i $sudo --preserve-env=$SUDO_PRESERVE_ENV $PAGER "$f"
+map =I $sudo --preserve-env=$SUDO_PRESERVE_ENV $PAGER_BIN "$f"
+
+map -i !cat "$f"
+map =-i !sudo cat "$f"
+
+cmd smart_preview ${{
     set -f
     mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
     case $mime_type in
@@ -279,22 +287,21 @@ cmd preview ${{
                 *) $PAGER "$f"
             esac
             ;;
-        *) $PAGER "$f"
+        text/*) $PAGER "$f" ;;
+        *) $PAGER_BIN "$f"
     esac
 }}
-map i preview
-map I $$PAGER "$f"
-map =I $sudo --preserve-env=$SUDO_PRESERVE_ENV $PAGER "$f"
-map -I !cat "$f"
-map =-I !sudo cat "$f"
+map -I smart_preview
 
 # edit files
 map e $$EDITOR ${(f)fx}
-map -e $$EDITOR_RO ${(f)fx}
+map E $$EDITOR_BIN ${(f)fx}
 map =e $sudo -e ${(f)fx}
+map =E $sudo --preserve-env=$SUDO_PRESERVE_ENV $EDITOR_BIN ${(f)fx}
 
 # edit symlink path
-map E $edit-symlink.sh "$f"
+map -e $edit-symlink.sh "$f"
+map =-e $sudo --preserve-env=$SUDO_PRESERVE_ENV edit-symlink.sh "$f"
 
 # }}}
 # Execution {{{
