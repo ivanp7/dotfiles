@@ -8,7 +8,3 @@ guard_path ()
 DIR="$HOME/.cache/tmux/plugins/tpm"
 [ -d "$DIR" ] || git clone "https://github.com/tmux-plugins/tpm" "$DIR"
 
-echo "
-rm -rf -- $(guard_path "$HOME/.cache/tmux/plugins")
-" >> "$1"
-
