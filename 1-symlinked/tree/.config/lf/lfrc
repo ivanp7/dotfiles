@@ -255,10 +255,10 @@ map tM unmount_rmdir
 # Previewing & editing {{{
 
 # preview files
-map i $$PAGER "$f"
-map I $$PAGER_BIN "$f"
-map =i $sudo --preserve-env=$SUDO_PRESERVE_ENV $PAGER "$f"
-map =I $sudo --preserve-env=$SUDO_PRESERVE_ENV $PAGER_BIN "$f"
+map i $"$PAGER" "$f"
+map I $"$PAGER_BIN" "$f"
+map =i $sudo --preserve-env=$SUDO_PRESERVE_ENV "$PAGER" "$f"
+map =I $sudo --preserve-env=$SUDO_PRESERVE_ENV "$PAGER_BIN" "$f"
 
 map -i !cat "$f"
 map =-i !sudo cat "$f"
@@ -269,7 +269,7 @@ cmd smart_preview ${{
     case $mime_type in
         "") ;;
         inode/directory)
-            tree -ad -L 3 -I ".git" -n "$f" | sed 's/ / /g' | $PAGER ;;
+            tree -ad -L 3 -I ".git" -n "$f" | sed 's/ / /g' | "$PAGER" ;;
         image/*|video/*)
             preview.sh "$f"
             read -sk
@@ -277,27 +277,39 @@ cmd smart_preview ${{
         application/*)
             case $(echo $mime_type | tail -c +13) in
                 pdf)
-                    pdftotext -layout "$f" - | $PAGER ;;
+                    pdftotext -layout "$f" - | "$PAGER" ;;
                 postscript)
-                    ps2ascii "$f" | $PAGER ;;
+                    ps2ascii "$f" | "$PAGER" ;;
                 x-tar|x-bzip|x-bzip2|gzip|x-xz|zstd|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
-                    list-files.sh "$f" | $PAGER ;;
+                    list-files.sh "$f" | "$PAGER" ;;
                 pgp|pgp-encrypted)
-                    gpg -d "$f" | $PAGER ;;
-                *) $PAGER "$f"
+                    gpg -d "$f" | "$PAGER" ;;
+                *) "$PAGER" "$f"
             esac
             ;;
-        text/*) $PAGER "$f" ;;
-        *) $PAGER_BIN "$f"
+        text/*) "$PAGER" "$f" ;;
+        *) "$PAGER_BIN" "$f"
     esac
 }}
 map -I smart_preview
 
+cmd edit ${{
+    set -f
+    binary="$1"
+    mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
+    case $mime_type in
+        "") ;;
+        inode/directory)
+            ncdu -e2 "$f" ;;
+        *) [ -z "$binary" ] && "$EDITOR" ${(f)fx} || "$EDITOR_BIN" ${(f)fx}
+    esac
+}}
+
 # edit files
-map e $$EDITOR ${(f)fx}
-map E $$EDITOR_BIN ${(f)fx}
+map e edit ''
+map E edit binary
 map =e $sudo -e ${(f)fx}
-map =E $sudo --preserve-env=$SUDO_PRESERVE_ENV $EDITOR_BIN ${(f)fx}
+map =E $sudo --preserve-env=$SUDO_PRESERVE_ENV "$EDITOR_BIN" ${(f)fx}
 
 # edit symlink path
 map -e $edit-symlink.sh "$f"
@@ -321,19 +333,29 @@ map tX push &setsid<space>"$f"<space>
 # This command is called when current file is not a directory. You may want to
 # use either file extensions and/or mime types here. Below uses an editor for
 # text files and a file opener for the rest.
-cmd open ${{
+cmd open
+
+cmd opener ${{
     set -f
+    async="$1"
     mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
     case $mime_type in
         "") ;;
+        inode/directory) ;;
         application/pdf|application/postscript|image/vnd.djvu)
-            $PDFVIEWER ${(f)fx} ;;
+            [ -z "$async" ] && "$PDFVIEWER" ${(f)fx} ||
+                setsid "$PDFVIEWER" ${(f)fx} > /dev/null 2>&1 &
+            ;;
         image/*)
-            $VIEWER ${(f)fx} ;;
+            [ -z "$async" ] && "$VIEWER" ${(f)fx} ||
+                setsid "$VIEWER" ${(f)fx} > /dev/null 2>&1 &
+            ;;
         video/*|audio/*)
-            $PLAYER ${(f)fx} ;;
+            [ -z "$async" ] && "$PLAYER" ${(f)fx} ||
+                setsid "$PLAYER" ${(f)fx} > /dev/null 2>&1 &
+            ;;
         text/html)
-            $BROWSER ${(f)fx} ;;
+            "$BROWSER" ${(f)fx} ;;
         application/*)
             case $(echo $mime_type | tail -c +13) in
                 x-tar|x-bzip|x-bzip2|gzip|x-xz|zstd|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
@@ -351,40 +373,28 @@ cmd open ${{
                     lf -remote "send $id cd \"$file\""
                     lf -remote "send $id reload"
                     ;;
-                *) $EDITOR ${(f)fx}
+                *)
+                    [ -z "$async" ] && "$OPENER" "$f" || {
+                        for file in ${(f)fx}
+                        do setsid "$OPENER" "$file" > /dev/null 2>&1 &
+                        done
+                    }
             esac
             ;;
-        *) $EDITOR ${(f)fx}
+        *)
+            [ -z "$async" ] && "$OPENER" "$f" || {
+                for file in ${(f)fx}
+                do setsid "$OPENER" "$file" > /dev/null 2>&1 &
+                done
+            }
     esac
 }}
-
-# alternative 'open' operation
-cmd alt_open ${{
-    set -f
-    mime_type=$(file --mime-type "$f" -bLE) || mime_type=""
-    case $mime_type in
-        "") ;;
-        inode/directory)
-            ncdu -e2 "$f" ;;
-        application/pdf|application/postscript|image/vnd.djvu)
-            setsid $PDFVIEWER ${(f)fx} > /dev/null 2>&1 & ;;
-        image/*)
-            setsid $VIEWER ${(f)fx} > /dev/null 2>&1 & ;;
-        video/*|audio/*)
-            setsid $PLAYER ${(f)fx} > /dev/null 2>&1 & ;;
-    esac
-}}
-map L alt_open
+map o opener ''
+map O opener async
 
 # dedicated keys for file opener actions
 # map o &mimeopen "$f"
 # map O $mimeopen --ask "$f"
-cmd opener ${{
-    for file in ${(f)fx}; do
-        setsid $OPENER "$file" > /dev/null 2>&1 &
-    done
-}}
-map o opener
 
 # }}}
 # Renaming {{{
@@ -398,7 +408,7 @@ cmd bulk_rename !{{
         echo "$file" >> $original_names_file
         echo "$file" >> $changed_names_file
     done
-    $EDITOR $changed_names_file
+    "$EDITOR" $changed_names_file
 
     NAME_FIX="s/'/'\\\\''/g; s/^/'/; s/\$/'/"
     sed -i "$NAME_FIX" $original_names_file
@@ -412,7 +422,7 @@ cmd bulk_rename !{{
         paste -d" " $original_names_file $changed_names_file > $commands_file
         rm $original_names_file $changed_names_file
         sed -i 's/^/mv -vi -- /' $commands_file
-        $EDITOR $commands_file
+        "$EDITOR" $commands_file
 
         for cmd in $(cat $commands_file)
         do $SHELL -c "$cmd; true"
