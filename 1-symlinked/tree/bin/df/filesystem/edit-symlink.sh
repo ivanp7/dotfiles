@@ -1,9 +1,14 @@
 #!/bin/sh
 
-if [ -L "$1" ]
+LINK="$1"
+
+if [ ! -L "$LINK" ]
 then
-    LINK_PATH="$(readlink "$1")"
-    rm -- "$1"
-    ln -s -T "$(echo "$LINK_PATH" | vipe)" "$1"
+    echo "'$LINK' is not a symlink."
+    exit 1
 fi
+
+LINK_PATH="$(readlink "$LINK")"
+NEW_LINK_PATH="$(echo "$LINK_PATH" | vipe)"
+[ "$LINK_PATH" = "$NEW_LINK_PATH" ] || ln -sfT "$NEW_LINK_PATH" "$LINK"
 
