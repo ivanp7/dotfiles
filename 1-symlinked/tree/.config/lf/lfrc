@@ -375,8 +375,10 @@ cmd opener ${{
                     lf -remote "send $id cd \"$file\""
                     lf -remote "send $id reload"
                     ;;
+                *) lf -remote "send $id echoerr no method to open this type of file"
             esac
             ;;
+        *) lf -remote "send $id echoerr no method to open this type of file"
     esac
 }}
 map o opener ''
