@@ -355,7 +355,9 @@ cmd opener ${{
                 setsid "$PLAYER" ${(f)fx} > /dev/null 2>&1 &
             ;;
         text/html)
-            "$BROWSER" ${(f)fx} ;;
+            [ -z "$async" ] && "$BROWSER" ${(f)fx} ||
+                setsid "$BROWSER" ${(f)fx} > /dev/null 2>&1 &
+            ;;
         application/*)
             case $(echo $mime_type | tail -c +13) in
                 x-tar|x-bzip|x-bzip2|gzip|x-xz|zstd|zip|x-zip-compressed|x-7z-compressed|x-iso9660-image|x-rar|vnd.rar|x-cpio)
@@ -373,24 +375,15 @@ cmd opener ${{
                     lf -remote "send $id cd \"$file\""
                     lf -remote "send $id reload"
                     ;;
-                *)
-                    [ -z "$async" ] && "$OPENER" "$f" || {
-                        for file in ${(f)fx}
-                        do setsid "$OPENER" "$file" > /dev/null 2>&1 &
-                        done
-                    }
             esac
             ;;
-        *)
-            [ -z "$async" ] && "$OPENER" "$f" || {
-                for file in ${(f)fx}
-                do setsid "$OPENER" "$file" > /dev/null 2>&1 &
-                done
-            }
     esac
 }}
 map o opener ''
 map O opener async
+
+map -o $"$OPENER" "$f"
+map -O $setsid "$OPENER" "$f" > /dev/null 2>&1 &
 
 # dedicated keys for file opener actions
 # map o &mimeopen "$f"
