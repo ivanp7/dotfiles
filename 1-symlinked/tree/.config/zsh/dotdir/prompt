@@ -24,9 +24,11 @@ then
     if [ -z "$_p_root" ]
     then
         _p_shell_info_color="$(_color 248 238)"
+        _p_shell_status_color="$(_color 252 238)"
         _p_shell_info_color_triangle="$(_color 238)"
     else
-        _p_shell_info_color="$(_color 0 202)"
+        _p_shell_info_color="$(_color 8 202)"
+        _p_shell_status_color="$(_color 0 202)"
         _p_shell_info_color_triangle="$(_color 202)"
     fi
 
@@ -109,8 +111,11 @@ _p_shell_info_f ()
 {
     local Dot="·"
 
-    _p_shell_info_length=$((1 + ${#_p_intsh_indicator} + 1 + ${#_p_command_number} + 1))
-    _p_shell_info="${_p_shell_info_color} ${_p_intsh_indicator}${Dot}${_p_command_number} "
+    local PromptStatus="$STATUS "
+    [ "$PromptStatus" = " " ] && local PromptStatus=
+
+    _p_shell_info_length=$((1 + ${#_p_intsh_indicator} + 1 + ${#_p_command_number} + 1 + ${#PromptStatus}))
+    _p_shell_info="${_p_shell_info_color} ${_p_intsh_indicator}${Dot}${_p_command_number}${_p_shell_status_color} ${PromptStatus}"
 
     _p_next_triangle_color="$_p_shell_info_color_triangle"
 }

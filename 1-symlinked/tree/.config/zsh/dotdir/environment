@@ -47,7 +47,7 @@ export PDFVIEWER="$HOME/.scripts/df/pdfviewer.sh"
 
 # sudo
 
-export SUDO_PRESERVE_ENV="TMPDIR_CURRENT,PARENT_SHELL_PID_EXPORTED,_p_interactive_shells,_p_interactive_shells_this_tty"
+export SUDO_PRESERVE_ENV="STATUS,TMPDIR_CURRENT,PARENT_SHELL_PID_EXPORTED,_p_interactive_shells,_p_interactive_shells_this_tty"
 
 # fzf
 
