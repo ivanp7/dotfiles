@@ -406,8 +406,9 @@ bd ()
 
 mkcd ()
 {
-    mkdir -p -- "$@"
-    cd -- "$@"
+    local DIRS="$@"
+    mkdir -p -- "$DIRS"
+    cd -- "$DIRS"
 }
 
 # }}}
