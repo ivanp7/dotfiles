@@ -386,23 +386,19 @@ txclip ()
 
 bd ()
 {
-    [ "$#" -eq 0 ] && { cd ..; return; }
+    local Num="$1"
+    [ -z "$Num" ] && { cd ..; return; }
 
     local Path="./"
-    local Arg="$@/"
-    local Num="${Arg%%/*}"
-    local Postfix="${Arg#*/}"
-
     for i in $(seq $Num)
-    do
-        local Path="$Path/.."
+    do local Path="$Path/.."
     done
 
-    cd -- "$Path/$Postfix"
+    cd -- "$Path"
 }
 
 # }}}
-# mkcd {{{
+# mkcd & bdrm {{{
 
 mkcd ()
 {
@@ -411,14 +407,19 @@ mkcd ()
     cd -- "$DIRS"
 }
 
+bdrm ()
+{
+    bd "$1"
+    rmdir -p -- "$(realpath -s --relative-to "$PWD" "$OLDPWD")"
+}
+
 # }}}
 # lf {{{
 
 cdlf ()
 {
     [ "$#" -gt 0 ] && cd -- "$@"
-    [ -n "$id" ] &&
-        lf -remote "send $id cd -- \"$(echo "$PWD" | sed 's/\"/\\\"/g')\""
+    [ -n "$id" ] && lf -remote "send $id cd \"$(echo "$PWD" | sed 's/"/\\"/g')\""
 }
 
 lfcd ()
