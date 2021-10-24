@@ -1,0 +1,3 @@
+[submodule "plugins/x-dotfiles"]
+	path = plugins/x-dotfiles
+	url = git@github.com:ivanp7/x-dotfiles.git
