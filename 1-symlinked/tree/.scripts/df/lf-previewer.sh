@@ -2,7 +2,7 @@
 
 FILE="$1"
 COLUMNS=$2
-ROWS=$(($(tput lines) - 4))
+ROWS=$3
 
 mime_type=$(file --mime-type "$FILE" -bLE) || mime_type=""
 case $mime_type in
