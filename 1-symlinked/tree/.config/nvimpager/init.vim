@@ -131,6 +131,8 @@ let maplocalleader=" "
 " }}}
 " user interface operations mappings {{{
 
+let g:no_man_maps = v:true
+
 " Close window
 nnoremap <silent> <C-Q> :q<CR>
 
